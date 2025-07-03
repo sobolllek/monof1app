@@ -11,6 +11,10 @@ const Navigation = () => {
     { path: '/market', icon: ShoppingCart },
     { path: '/games', icon: Gamepad2 },
   ];
+  
+  if (location.pathname.startsWith('/notifications') || location.pathname.startsWith('/profile')) {
+    return null;
+  }
 
   return (
     <>
