@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { Zap, Trophy, Package, Star, Users, TrendingUp, User, Bell } from 'lucide-react';
 import Navigation from '../components/Navigation';
 import { Link } from 'react-router-dom';
-import InfoButton from '../components/InfoButton';
 import DailyPacksSection from '../components/DailyPacksSection';
 
 const Index = () => {
@@ -25,10 +24,10 @@ const Index = () => {
     <div className="min-h-screen bg-f1-gradient-dark pb-20">
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 bg-f1-gray/95 backdrop-blur-lg border-b border-f1-gray-light/50 z-40">
-        <div className="p-4 pt-12">
+        <div className="p-4 pt-28">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-white">F1 Card Chase</h1>
+              <h1 className="text-2xl font-bold text-white">Mono F1</h1>
               <p className="text-gray-400">
                 {currentTime.toLocaleDateString('ru-RU', { 
                   weekday: 'long', 
@@ -39,10 +38,6 @@ const Index = () => {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <InfoButton 
-                title="О главном меню"
-                description="Добро пожаловать в F1 Card Chase! Здесь вы можете видеть свою статистику, открывать паки, переходить в профиль и уведомления. Собирайте карты и становитесь лучшим коллекционером!"
-              />
               <Link to="/profile" className="p-2 rounded-lg hover:bg-gray-800/50 transition-colors">
                 <User className="text-gray-400 hover:text-white" size={20} />
               </Link>
