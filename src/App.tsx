@@ -25,8 +25,10 @@ const queryClient = new QueryClient();
 
 const AppRoutes = () => {
   const location = useLocation();
-  const noTabbarRoutes = ["/profile"];
-  const showNavigation = !noTabbarRoutes.includes(location.pathname);
+  const noTabbarRoutes = ["/profile", "/notifications"];
+  const showNavigation = !noTabbarRoutes.some(route => location.pathname.startsWith(route));
+
+  console.log("Current pathname:", location.pathname);
 
   return (
     <div className="relative min-h-screen pb-24">
