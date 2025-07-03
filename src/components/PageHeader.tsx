@@ -24,7 +24,7 @@ const PageHeader = ({
   return (
     <header
       className="flex items-center justify-between 
-               pt-16 pb-6 px-6
+               pt-28 pb-6 px-6
                bg-gradient-to-b from-black via-black/70 to-black/0
                sticky top-0 z-40 text-white font-sf"
     >  
