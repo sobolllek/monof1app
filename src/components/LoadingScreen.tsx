@@ -47,8 +47,8 @@ const LoadingScreen = ({ onLoadingComplete }: { onLoadingComplete: () => void })
           <Zap className="text-white" size={32} />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-white">F1 Card Chase</h1>
-          <p className="text-f1-orange">Mania</p>
+          <h1 className="text-3xl font-bold text-white">Mono F1</h1>
+          <p className="text-f1-orange">Кларк, я работаю!</p>
         </div>
       </div>
 
