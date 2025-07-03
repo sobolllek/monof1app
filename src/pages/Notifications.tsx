@@ -54,7 +54,7 @@ const Notifications = () => {
   const hasNotifications = notifications.length > 0;
 
   return (
-    <div className="min-h-screen bg-f1-gradient-dark pb-20">
+    <div className="min-h-screen pb-20">
       <PageHeader title="Notifications" showBack />
       
       {hasNotifications ? (
