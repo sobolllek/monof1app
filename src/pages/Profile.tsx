@@ -1,14 +1,12 @@
-
 import { useState } from 'react';
-import { ChevronRight, Package, Star } from 'lucide-react';
+import { ChevronRight, Star } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
-import Navigation from '../components/Navigation';
 import StatsCard from '../components/StatsCard';
 import AchievementCard from '../components/AchievementCard';
 import ProfilePacksSection from '../components/ProfilePacksSection';
 
 const Profile = () => {
-  const [collectionProgress] = useState(55); // 55% complete
+  const [collectionProgress] = useState(55);
 
   const achievements = [
     { title: "Скорость? Мы здесь для продаж энергетиков!", completed: true },
@@ -22,8 +20,8 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-f1-gradient-dark pb-20">
-      <PageHeader title="Профиль" showSettings />
-      
+      <PageHeader showBack showSettings/>
+
       <div className="p-4 space-y-6">
         {/* User Info */}
         <div className="f1-card p-6">
@@ -34,7 +32,7 @@ const Profile = () => {
               <p className="text-gray-400 text-sm">ID: 123578765</p>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <StatsCard label="Обмены" value="153" />
             <StatsCard label="Монеты" value="10K" />
@@ -48,7 +46,7 @@ const Profile = () => {
         <div className="f1-card p-6">
           <h3 className="text-lg font-semibold mb-2">Collection</h3>
           <p className="text-gray-400 text-sm mb-4">267 карт в коллекции</p>
-          
+
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>0%</span>
@@ -56,7 +54,7 @@ const Profile = () => {
               <span>100%</span>
             </div>
             <div className="w-full bg-gray-700 rounded-full h-8 relative overflow-hidden">
-              <div 
+              <div
                 className="bg-f1-gradient h-full rounded-full transition-all duration-500 animate-pulse-glow"
                 style={{ width: `${collectionProgress}%` }}
               ></div>
@@ -98,10 +96,10 @@ const Profile = () => {
               <ChevronRight size={16} />
             </div>
           </div>
-          
+
           <div className="space-y-3">
             {achievements.map((achievement, index) => (
-              <AchievementCard 
+              <AchievementCard
                 key={index}
                 title={achievement.title}
                 completed={achievement.completed}
@@ -110,8 +108,6 @@ const Profile = () => {
           </div>
         </div>
       </div>
-
-      <Navigation />
     </div>
   );
 };
