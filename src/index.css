@@ -1,0 +1,276 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 3%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 4 95% 45%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 12%;
+    --secondary-foreground: 0 0% 95%;
+
+    --muted: 0 0% 9%;
+    --muted-foreground: 0 0% 65%;
+
+    --accent: 26 100% 50%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 0 0% 15%;
+    --input: 0 0% 9%;
+    --ring: 4 95% 45%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 3%;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 4 95% 45%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 9%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 4 95% 45%;
+
+    /* F1 Colors */
+    --f1-red: 4 95% 45%;
+    --f1-orange: 26 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    background: linear-gradient(135deg, #0A0A0A 0%, #151515 100%);
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .f1-card {
+    @apply bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl border border-gray-700/50 backdrop-blur-sm;
+  }
+  
+  .f1-button {
+    @apply bg-f1-gradient hover:bg-f1-gradient text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200 hover:scale-105;
+  }
+
+  .f1-gradient {
+    background: linear-gradient(135deg, hsl(var(--f1-red)) 0%, hsl(var(--f1-orange)) 100%);
+  }
+
+  .f1-gradient-dark {
+    background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 50%, #0F0F0F 100%);
+  }
+
+  .info-button-animate {
+    @apply transition-all duration-300 hover:scale-110 hover:rotate-12 active:scale-95;
+  }
+
+  .info-panel-enter {
+    animation: slideInRight 0.3s ease-out;
+  }
+
+  .info-panel-exit {
+    animation: slideOutRight 0.3s ease-out;
+  }
+
+  .card-modal-enter {
+    @apply animate-scale-in;
+    animation: modalSlideUp 0.4s ease-out;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s infinite;
+  }
+
+  /* Racing Animation Components */
+  .racing-track {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #444 0%, #666 50%, #444 100%);
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+
+  .racing-track::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 10px,
+      #fff 10px,
+      #fff 20px
+    );
+    transform: translateY(-50%);
+    animation: track-lines 1s linear infinite;
+  }
+
+  .racing-car {
+    position: absolute;
+    top: -30px;
+    left: calc(var(--progress) - 20px);
+    font-size: 2rem;
+    filter: drop-shadow(0 4px 8px rgba(225, 6, 0, 0.3));
+    animation: car-bounce 0.5s ease-in-out infinite alternate;
+    transition: left 0.1s ease-out;
+  }
+
+  .racing-lines {
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 20px,
+      rgba(255, 255, 255, 0.1) 20px,
+      rgba(255, 255, 255, 0.1) 40px
+    );
+    animation: racing-stripes 2s linear infinite;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(20px) scale(0.95);
+  }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(225, 6, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(225, 6, 0, 0.8);
+  }
+}
+
+/* Racing specific animations */
+@keyframes track-lines {
+  0% {
+    transform: translateY(-50%) translateX(0);
+  }
+  100% {
+    transform: translateY(-50%) translateX(-20px);
+  }
+}
+
+@keyframes car-bounce {
+  0% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  100% {
+    transform: translateY(-4px) rotate(2deg);
+  }
+}
+
+@keyframes racing-stripes {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-40px);
+  }
+}
+
+/* Roulette specific animations */
+@keyframes roulette-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(1800deg); /* 5 full rotations */
+  }
+}
+
+@keyframes prize-bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40%, 43% {
+    transform: translate3d(0, -30px, 0) scale(1.1);
+  }
+  70% {
+    transform: translate3d(0, -15px, 0) scale(1.05);
+  }
+  90% {
+    transform: translate3d(0, -4px, 0) scale(1.02);
+  }
+}
+
+.animate-prize-bounce {
+  animation: prize-bounce 1s ease-in-out;
+}
