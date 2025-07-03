@@ -1,3 +1,16 @@
+declare global {
+  interface TelegramWebApp {
+    expand: () => void;
+  }
+
+  interface Telegram {
+    WebApp: TelegramWebApp;
+  }
+
+  interface Window {
+    Telegram?: Telegram;
+  }
+}
 
 import { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
@@ -19,6 +32,12 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.expand();
+    }
+  }, []);
 
   const handleLoadingComplete = () => {
     setIsLoading(false);
@@ -42,7 +61,6 @@ const App = () => {
             <Route path="/daily-roulette" element={<DailyRoulette />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/notifications" element={<Notifications />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
