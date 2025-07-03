@@ -20,7 +20,7 @@ const Navigation = () => {
                       pointer-events-none" />
 
       {/* Сам таббар */}
-      <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
+      <nav className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
         <div
           className="flex justify-around items-center gap-6
                      w-[300px] h-[75px]
