@@ -55,13 +55,8 @@ All colors MUST be HSL.
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
   body {
-    @apply bg-background text-foreground font-sans;
-    background: linear-gradient(135deg, #0A0A0A 0%, #151515 100%);
+    @apply bg-black text-foreground font-sans;
     min-height: 100vh;
   }
 }
