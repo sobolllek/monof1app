@@ -21,7 +21,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-f1-gradient-dark pb-20">
+    <div className="min-h-screen pb-20">
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 bg-f1-gray/95 backdrop-blur-lg border-b border-f1-gray-light/50 z-40">
         <div className="p-4 pt-28">
