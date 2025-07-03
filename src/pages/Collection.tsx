@@ -76,7 +76,7 @@ const Collection = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black pb-20">
+    <div className="min-h-screen pb-20">
       <PageHeader 
         title="Коллекция карт" 
         infoTitle="О коллекции"
