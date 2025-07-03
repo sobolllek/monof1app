@@ -1,11 +1,17 @@
-
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation
+} from "react-router-dom";
+
 import LoadingScreen from "./components/LoadingScreen";
+import Navigation from "./components/Navigation";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
@@ -16,6 +22,28 @@ import Games from "./pages/Games";
 import DailyRoulette from "./pages/DailyRoulette";
 
 const queryClient = new QueryClient();
+
+const AppRoutes = () => {
+  const location = useLocation();
+  const noTabbarRoutes = ["/profile"];
+  const showNavigation = !noTabbarRoutes.includes(location.pathname);
+
+  return (
+    <div className="relative min-h-screen pb-24">
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/collection" element={<Collection />} />
+        <Route path="/market" element={<Market />} />
+        <Route path="/games" element={<Games />} />
+        <Route path="/daily-roulette" element={<DailyRoulette />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/notifications" element={<Notifications />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      {showNavigation && <Navigation />}
+    </div>
+  );
+};
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -34,17 +62,7 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/collection" element={<Collection />} />
-            <Route path="/market" element={<Market />} />
-            <Route path="/games" element={<Games />} />
-            <Route path="/daily-roulette" element={<DailyRoulette />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/notifications" element={<Notifications />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AppRoutes />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
