@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import InfoButton from './InfoButton';
 
 interface PageHeaderProps {
-  title: string;
+  title?: string;
   showBack?: boolean;
   showSettings?: boolean;
   infoTitle?: string;
@@ -23,7 +23,7 @@ const PageHeader = ({
 
   return (
     <header
-      className="flex items-center justify-between 
+    className="flex items-center justify-between 
                pt-28 pb-6 px-6
                bg-gradient-to-b from-black via-black to-black/0
                sticky top-0 z-40 text-white font-sf"
