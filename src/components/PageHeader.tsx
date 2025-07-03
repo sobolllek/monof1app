@@ -23,10 +23,11 @@ const PageHeader = ({
 
   return (
     <header
-      className="flex items-center justify-between p-6 
-                 bg-gradient-to-b from-black via-black/70 to-black/0
-                 sticky top-0 z-40 text-white font-sf"
-    >
+      className="flex items-center justify-between 
+               pt-10 pb-6 px-6
+               bg-gradient-to-b from-black via-black/70 to-black/0
+               sticky top-0 z-40 text-white font-sf"
+    >  
       <div className="flex items-center gap-3">
         {showBack && (
           <button
