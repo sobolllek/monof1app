@@ -42,7 +42,8 @@ const AppRoutes = () => {
         <Route path="/notifications" element={<Notifications />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      
+
+      {/* Нижний градиент поверх контента, но под Navigation */}
       <div className="pointer-events-none fixed bottom-0 left-0 w-full h-24 z-40 bg-gradient-to-t from-black via-black/40 to-black/0" />
 
       {showNavigation && <Navigation />}
