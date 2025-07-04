@@ -19,6 +19,12 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+			 sans: ['"SF Pro Display"', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+			 fira: ['"Fira Code"', 'monospace'],
+			 formula1: ['"Formula1"', 'sans-serif'],
+			 formulaDisplay: ['"Formula1 Display"', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
