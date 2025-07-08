@@ -37,15 +37,15 @@ const Profile = () => {
     <div className="min-h-screen">
       <PageHeader showBack showSettings />
 
-      <div className="flex flex-col items-center w-full max-w-[420px] mx-auto px-4 space-y-4">
+      <div className="flex flex-col items-center w-full mx-auto max-w-[400px] px-2 space-y-3">
         {/* User Profile Card */}
-        <div className="w-full flex justify-center">
+        <div className="w-full">
           <ProfileCard></ProfileCard>
         </div>
         
         {/* Stats Row */}
-        <div className="flex justify-center gap-[10px] w-full max-w-[380px]">
-          <div className="relative w-[185px]">
+        <div className="flex flex-wrap justify-between w-full gap-3">
+          <div className="relative flex-1 min-w-[140px] max-w-[180px]">
             <CardBackground />
             <div className="absolute inset-0 p-4 flex flex-col">
               <div className="h-[40px] flex items-end justify-center">
@@ -67,7 +67,7 @@ const Profile = () => {
           </div>
 
           {/* Weekly Rating */}
-          <div className="relative w-[185px]">
+          <div className="relative flex-1 min-w-[140px] max-w-[180px]">
             <CardBackground />
             <div className="absolute inset-0 p-4 flex flex-col">
               <div className="h-[40px] flex items-end justify-center">
@@ -94,10 +94,12 @@ const Profile = () => {
         </div>
 
         {/* Daily Packs Section */}
-        <ProfilePacksSection />
+        <div className="w-full">
+          <ProfilePacksSection />
+        </div>
 
         {/* Achievements Section */}
-        <div className="relative w-full flex justify-center">
+        <div className="w-full">
           <AchievementBackground
            achievements={currentAchievements}
            category={currentAchievementCategory}          
