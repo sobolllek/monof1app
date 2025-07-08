@@ -44,7 +44,7 @@ const CrossIcon = () => (
   </svg>
 );
 
-const horizontalPadding = 20;
+const horizontalPadding = 16;
 
 const DividerLine = () => (
   <svg width="374" height="2" viewBox="0 0 374 2" fill="none" xmlns="http://www.w3.org/2000/svg">
