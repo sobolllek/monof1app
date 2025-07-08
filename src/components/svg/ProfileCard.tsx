@@ -7,7 +7,7 @@ interface ProfileCardProps {
 
 const ProfileCard: React.FC<ProfileCardProps> = ({ children, className = "" }) => {
   return (
-    <div className={`relative w-[378px] h-[101px] ${className}`}>
+    <div className={`relative max-w-[380px] h-[101px] ${className}`}>
       {/* SVG Background */}
       <svg
         width="380"
@@ -15,7 +15,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ children, className = "" }) =
         viewBox="0 0 380 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="absolute top-0 left-0"
+        className="absolute top-0 left-0 w-full h-full"
       >
         <rect width="380" height="101" rx="22" fill="black" fillOpacity="0.4" />
         <rect
