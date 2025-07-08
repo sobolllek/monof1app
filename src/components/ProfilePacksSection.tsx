@@ -42,8 +42,7 @@ const ProfilePacksSection: React.FC = () => {
       <div className="absolute top-0 left-5 right-4 bottom-0 flex items-center justify-between pointer-events-none">
         {/* Left: "Packs" */}
         <span
-          className="text-[17px] font-bold text-white/30 leading-none"
-          style={{ fontFamily: 'SF Pro Display' }}
+          className="text-white/30 text-[17px] font-bold font-sans"
         >
           Packs
         </span>
