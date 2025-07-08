@@ -47,7 +47,7 @@ const CrossIcon = () => (
 const horizontalPadding = 20;
 
 const DividerLine = () => (
-  <svg width="374" height="2" viewBox="0 0 374 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="376" height="2" viewBox="0 0 374 2" fill="none" xmlns="http://www.w3.org/2000/svg">
     <line y1="1.25" x2="374" y2="1.25" stroke="url(#paint0_linear_327_1811)" stroke-width="1.5"/>
     <defs>
       <linearGradient id="paint0_linear_327_1811" x1="374" y1="2.5" x2="0" y2="2.5" gradientUnits="userSpaceOnUse">
