@@ -61,7 +61,7 @@ const DividerLine = () => (
 );
 
 const AchievementBackground: React.FC<AchievementBackgroundProps> = ({
-  width = 378,
+  width = 380,
   itemHeight = 30,
   achievements,
   category = 'Achievements',
