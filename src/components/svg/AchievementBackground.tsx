@@ -77,7 +77,7 @@ const AchievementBackground: React.FC<AchievementBackgroundProps> = ({
   const totalHeight = paddingTop + contentHeight + paddingBottom;
 
   return (
-    <div className={`relative ${className}`} style={{ width: '380px' }}>
+    <div className={`relative max-w-[380px] w-full ${className}`} style={{ height: totalHeight }}>
       {/* Категории Переключение */}
       <div className="absolute top-4 left-5 right-5 z-10 flex justify-between items-center">
       <div className="text-white/30 text-[17px] font-bold font-sans">Achievements</div>
@@ -118,13 +118,13 @@ const AchievementBackground: React.FC<AchievementBackgroundProps> = ({
 
       {/* SVG Background */}
       <svg
-        width="380"
+        width="100%"
         height={totalHeight}
         viewBox={`0 0 380 ${totalHeight}`}
         preserveAspectRatio="none"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        className="rounded-2xl"
+        className="rounded-2xl block"
       >
 
         {achievements.map((achievement, index) => {
