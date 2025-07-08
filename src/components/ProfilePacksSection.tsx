@@ -43,7 +43,7 @@ const ProfilePacksSection: React.FC = () => {
       </svg>
 
       {/* Texts aligned CENTER vertically, LEFT and RIGHT horizontally */}
-      <div className="absolute top-0 left-5 right-4 bottom-0 flex items-center justify-between pointer-events-none">
+      <div className="absolute top-0 left-4 right-4 bottom-0 flex items-center justify-between pointer-events-none">
         {/* Left: "Packs" */}
         <span className="text-white/30 text-[17px] font-bold font-sans">
           Packs
