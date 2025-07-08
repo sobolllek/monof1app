@@ -37,7 +37,7 @@ const Profile = () => {
     <div className="min-h-screen">
       <PageHeader showBack showSettings />
 
-      <div className="flex flex-col items-center w-full mx-auto max-w-[400px] space-y-3">
+      <div className="pt-32 p-4 space-y-3">
         {/* User Profile Card */}
         <div className="w-full">
           <ProfileCard></ProfileCard>
