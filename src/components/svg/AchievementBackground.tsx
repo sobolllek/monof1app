@@ -47,7 +47,7 @@ const CrossIcon = () => (
 const horizontalPadding = 20;
 
 const DividerLine = () => (
-  <svg width="376" height="2" viewBox="0 0 374 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="374" height="2" viewBox="0 0 374 2" fill="none" xmlns="http://www.w3.org/2000/svg">
     <line y1="1.25" x2="374" y2="1.25" stroke="url(#paint0_linear_327_1811)" stroke-width="1.5"/>
     <defs>
       <linearGradient id="paint0_linear_327_1811" x1="374" y1="2.5" x2="0" y2="2.5" gradientUnits="userSpaceOnUse">
@@ -61,7 +61,7 @@ const DividerLine = () => (
 );
 
 const AchievementBackground: React.FC<AchievementBackgroundProps> = ({
-  width = 380,
+  width = 378,
   itemHeight = 30,
   achievements,
   category = 'Achievements',
@@ -77,7 +77,7 @@ const AchievementBackground: React.FC<AchievementBackgroundProps> = ({
   const totalHeight = paddingTop + contentHeight + paddingBottom;
 
   return (
-    <div className={`relative ${className}`} style={{ width: typeof width === 'number' ? `${width}px` : width }}>
+    <div className={`relative ${className}`} style={{ width: '380px' }}>
       {/* Категории Переключение */}
       <div className="absolute top-4 left-5 right-5 z-10 flex justify-between items-center">
       <div className="text-white/30 text-[17px] font-bold font-sans">Achievements</div>
@@ -120,7 +120,7 @@ const AchievementBackground: React.FC<AchievementBackgroundProps> = ({
       <svg
         width="380"
         height={totalHeight}
-        viewBox={`0 0 ${width} ${totalHeight}`}
+        viewBox={`0 0 380 ${totalHeight}`}
         preserveAspectRatio="none"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -151,7 +151,7 @@ const AchievementBackground: React.FC<AchievementBackgroundProps> = ({
                 </div>
               </foreignObject>
               {index < achievements.length - 1 && (
-               <g transform={`translate(${(Number(width) - 374) / 2}, ${y + itemHeight + spacing/2 - 1})`}>
+               <g transform={`translate(${(380 - 376) / 2}, ${y + itemHeight + spacing/2 - 1})`}>
                 <DividerLine />
               </g>
               )}
