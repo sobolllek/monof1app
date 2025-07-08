@@ -5,7 +5,7 @@ const ProfilePacksSection: React.FC = () => {
     <div className="relative" style={{ width: '378px', height: '59px' }}>
       {/* SVG background */}
       <svg
-        width="378"
+        width="380"
         height="59"
         viewBox="0 0 378 59"
         fill="none"
