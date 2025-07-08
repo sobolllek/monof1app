@@ -44,8 +44,8 @@ const Profile = () => {
         </div>
         
         {/* Stats Row */}
-        <div className="flex justify-center gap-[12px] w-full max-w-[378px]">
-          <div className="relative w-[183px]">
+        <div className="flex justify-center gap-[12px] w-full max-w-[380px]">
+          <div className="relative w-[184px]">
             <CardBackground />
             <div className="absolute inset-0 p-4 flex flex-col">
               <div className="h-[40px] flex items-end justify-center">
@@ -67,7 +67,7 @@ const Profile = () => {
           </div>
 
           {/* Weekly Rating */}
-          <div className="relative w-[183px]">
+          <div className="relative w-[184px]">
             <CardBackground />
             <div className="absolute inset-0 p-4 flex flex-col">
               <div className="h-[40px] flex items-end justify-center">
