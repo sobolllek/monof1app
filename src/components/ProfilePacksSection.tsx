@@ -2,12 +2,12 @@ import React from 'react';
 
 const ProfilePacksSection: React.FC = () => {
   return (
-    <div className="relative" style={{ width: '378px', height: '59px' }}>
+    <div className="relative" style={{ width: '380px', height: '59px' }}>
       {/* SVG background */}
       <svg
         width="380"
         height="59"
-        viewBox="0 0 378 59"
+        viewBox="0 0 380 59"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="absolute inset-0"
