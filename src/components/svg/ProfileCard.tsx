@@ -10,14 +10,14 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ children, className = "" }) =
     <div className={`relative w-[378px] h-[101px] ${className}`}>
       {/* SVG Background */}
       <svg
-        width="378"
+        width="380"
         height="101"
-        viewBox="0 0 378 101"
+        viewBox="0 0 380 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className="absolute top-0 left-0"
       >
-        <rect width="378" height="101" rx="22" fill="black" fillOpacity="0.4" />
+        <rect width="380" height="101" rx="22" fill="black" fillOpacity="0.4" />
         <rect
           x="0.75"
           y="0.75"
