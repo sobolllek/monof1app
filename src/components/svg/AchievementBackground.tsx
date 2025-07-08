@@ -79,7 +79,7 @@ const AchievementBackground: React.FC<AchievementBackgroundProps> = ({
   return (
     <div className={`relative max-w-[380px] w-full ${className}`} style={{ height: totalHeight }}>
       {/* Категории Переключение */}
-      <div className="absolute top-4 left-5 right-5 z-10 flex justify-between items-center">
+      <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center">
       <div className="text-white/30 text-[17px] font-bold font-sans">Achievements</div>
       <div className="flex items-center gap-[2px] text-sm text-gray-400">
         <div
