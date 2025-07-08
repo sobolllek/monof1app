@@ -7,7 +7,7 @@ interface CardBackgroundProps {
 }
 
 const CardBackground: React.FC<CardBackgroundProps> = ({ 
-  width = 183, 
+  width = 184, 
   height = 183,
   className = ''
 }) => {
@@ -15,7 +15,7 @@ const CardBackground: React.FC<CardBackgroundProps> = ({
     <svg 
       width={width} 
       height={height} 
-      viewBox="0 0 183 183" 
+      viewBox="0 0 184 183" 
       fill="none" 
       xmlns="http://www.w3.org/2000/svg"
       className={`rounded-2xl ${className}`}
