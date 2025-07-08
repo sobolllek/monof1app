@@ -61,7 +61,7 @@ const DividerLine = () => (
 );
 
 const AchievementBackground: React.FC<AchievementBackgroundProps> = ({
-  width = 378,
+  width = 380,
   itemHeight = 30,
   achievements,
   category = 'Achievements',
@@ -118,7 +118,7 @@ const AchievementBackground: React.FC<AchievementBackgroundProps> = ({
 
       {/* SVG Background */}
       <svg
-        width="378"
+        width="380"
         height={totalHeight}
         viewBox={`0 0 ${width} ${totalHeight}`}
         preserveAspectRatio="none"
