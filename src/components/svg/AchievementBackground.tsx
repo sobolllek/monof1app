@@ -118,7 +118,7 @@ const AchievementBackground: React.FC<AchievementBackgroundProps> = ({
 
       {/* SVG Background */}
       <svg
-        width="100%"
+        width="378"
         height={totalHeight}
         viewBox={`0 0 ${width} ${totalHeight}`}
         preserveAspectRatio="none"
