@@ -16,12 +16,10 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
   const touchEndX = useRef(0);
   const isSwiping = useRef(false);
 
-  // Определяем центральную карту
   const getCenterCard = useCallback(() => {
     return cards[currentIndex];
   }, [cards, currentIndex]);
 
-  // Оповещаем об изменении карты
   useEffect(() => {
     if (onCardChange && cards.length > 0) {
       onCardChange(getCenterCard());
@@ -80,7 +78,6 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
   const getVisibleCards = useCallback(() => {
     if (cards.length === 0) return [];
     
-    // Всегда показываем ровно 3 карты
     const visible = [];
     const totalVisible = Math.min(3, cards.length);
     
@@ -88,7 +85,7 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
       const index = (currentIndex + i - 1 + cards.length) % cards.length;
       visible.push({
         card: cards[index],
-        position: i - 1, // -1, 0, 1 для позиций
+        position: i - 1,
         index
       });
     }
@@ -172,17 +169,17 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
   }
 
   return (
-    <div className="flex flex-col items-center">
-      {/* Отображение названия текущей карты */}
-      <div className="w-full text-center mb-4">
-        <h2 className="text-xl font-bold text-white">
+    <div className="w-full">
+      {/* Название текущей карты (единственное место) */}
+      <div className="text-center mb-4 h-6">
+        <p className="text-white text-lg font-medium truncate max-w-xs mx-auto">
           {getCenterCard()?.name || ''}
-        </h2>
+        </p>
       </div>
       
       <div 
         ref={carouselRef}
-        className="relative h-96 w-full flex items-center justify-center touch-none"
+        className="relative h-96 flex items-center justify-center touch-none"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
