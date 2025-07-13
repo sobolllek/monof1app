@@ -4,9 +4,10 @@ import { Card } from '../data/cards';
 interface CardCarouselProps {
   cards: Card[];
   onCardClick: (card: Card) => void;
+  onCardChange?: (card: Card) => void;
 }
 
-const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
+const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -14,6 +15,18 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   const touchStartY = useRef(0);
   const touchEndX = useRef(0);
   const isSwiping = useRef(false);
+
+  // Определяем центральную карту
+  const getCenterCard = useCallback(() => {
+    return cards[currentIndex];
+  }, [cards, currentIndex]);
+
+  // Оповещаем об изменении карты
+  useEffect(() => {
+    if (onCardChange && cards.length > 0) {
+      onCardChange(getCenterCard());
+    }
+  }, [currentIndex, cards, onCardChange, getCenterCard]);
 
   useEffect(() => {
     const preventDefault = (e: TouchEvent) => {
@@ -159,100 +172,109 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   }
 
   return (
-    <div 
-      ref={carouselRef}
-      className="relative h-96 flex items-center justify-center w-full touch-none"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onWheel={handleWheel}
-    >
-      {visibleCards.map(({ card, position, index }) => {
-        const isCenter = position === 0;
-        const scale = isCenter ? 1 : 0.85;
-        const translateX = position * 180;
-        const rotateY = position * 15;
-        const zIndex = isCenter ? 20 : 10 - Math.abs(position);
+    <div className="flex flex-col items-center">
+      {/* Отображение названия текущей карты */}
+      <div className="w-full text-center mb-4">
+        <h2 className="text-xl font-bold text-white">
+          {getCenterCard()?.name || ''}
+        </h2>
+      </div>
+      
+      <div 
+        ref={carouselRef}
+        className="relative h-96 w-full flex items-center justify-center touch-none"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onWheel={handleWheel}
+      >
+        {visibleCards.map(({ card, position, index }) => {
+          const isCenter = position === 0;
+          const scale = isCenter ? 1 : 0.85;
+          const translateX = position * 180;
+          const rotateY = position * 15;
+          const zIndex = isCenter ? 20 : 10 - Math.abs(position);
 
-        return (
-          <div
-            key={`${card.id}-${index}`}
-            className={`absolute transition-all duration-500 cursor-pointer ${
-              isCenter ? 'hover:scale-105' : 'hover:scale-95'
-            } touch-none`}
-            style={{
-              transform: `
-                translateX(${translateX + (isCenter ? mousePosition.x : 0)}px) 
-                translateY(${isCenter ? mousePosition.y : 0}px)
-                scale(${scale}) 
-                rotateY(${rotateY}deg)
-                perspective(1000px)
-              `,
-              zIndex,
-              filter: isCenter ? 'none' : 'blur(4px)',
-            }}
-            onClick={() => {
-              if (isCenter) {
-                onCardClick(card);
-              } else {
-                setCurrentIndex(index);
-              }
-            }}
-            onMouseMove={isCenter ? handleMouseMove : undefined}
-            onMouseLeave={isCenter ? handleMouseLeave : undefined}
-          >
+          return (
             <div
-              className={`w-64 h-80 rounded-2xl border-4 ${getRarityBorder(card.rarity)} 
-                        bg-gradient-to-br ${getRarityColor(card.rarity)} 
-                        shadow-2xl ${isCenter ? 'shadow-xl' : 'shadow-lg'} 
-                        overflow-hidden relative touch-none`}
+              key={`${card.id}-${index}`}
+              className={`absolute transition-all duration-500 cursor-pointer ${
+                isCenter ? 'hover:scale-105' : 'hover:scale-95'
+              } touch-none`}
+              style={{
+                transform: `
+                  translateX(${translateX + (isCenter ? mousePosition.x : 0)}px) 
+                  translateY(${isCenter ? mousePosition.y : 0}px)
+                  scale(${scale}) 
+                  rotateY(${rotateY}deg)
+                  perspective(1000px)
+                `,
+                zIndex,
+                filter: isCenter ? 'none' : 'blur(4px)',
+              }}
+              onClick={() => {
+                if (isCenter) {
+                  onCardClick(card);
+                } else {
+                  setCurrentIndex(index);
+                }
+              }}
+              onMouseMove={isCenter ? handleMouseMove : undefined}
+              onMouseLeave={isCenter ? handleMouseLeave : undefined}
             >
-              {card.image ? (
-                <div className="w-full h-48 bg-gray-800 flex items-center justify-center overflow-hidden touch-none">
-                  <img 
-                    src={card.image} 
-                    alt={card.name}
-                    className="w-full h-full object-cover touch-none"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const fallback = target.nextElementSibling as HTMLElement;
-                      if (fallback) fallback.style.display = 'flex';
-                    }}
-                  />
-                  <div className="w-full h-full bg-gray-800 items-center justify-center text-4xl hidden touch-none">
+              <div
+                className={`w-64 h-80 rounded-2xl border-4 ${getRarityBorder(card.rarity)} 
+                          bg-gradient-to-br ${getRarityColor(card.rarity)} 
+                          shadow-2xl ${isCenter ? 'shadow-xl' : 'shadow-lg'} 
+                          overflow-hidden relative touch-none`}
+              >
+                {card.image ? (
+                  <div className="w-full h-48 bg-gray-800 flex items-center justify-center overflow-hidden touch-none">
+                    <img 
+                      src={card.image} 
+                      alt={card.name}
+                      className="w-full h-full object-cover touch-none"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const fallback = target.nextElementSibling as HTMLElement;
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
+                    />
+                    <div className="w-full h-full bg-gray-800 items-center justify-center text-4xl hidden touch-none">
+                      {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full h-48 bg-gray-800 flex items-center justify-center text-4xl touch-none">
                     {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
                   </div>
-                </div>
-              ) : (
-                <div className="w-full h-48 bg-gray-800 flex items-center justify-center text-4xl touch-none">
-                  {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
-                </div>
-              )}
-              
-              <div className="p-4 bg-gray-900/90 h-32 touch-none">
-                <h3 className="text-white font-bold text-lg mb-1 truncate">{card.name}</h3>
-                {card.team && (
-                  <p className="text-gray-300 text-sm mb-1 truncate">{card.team}</p>
                 )}
-                {card.location && (
-                  <p className="text-gray-300 text-sm mb-1 truncate">{card.location}</p>
-                )}
-                <div className="flex justify-between items-center mt-2 touch-none">
-                  <span className={`px-2 py-1 rounded-full text-xs font-semibold uppercase
-                    ${card.rarity === 'legendary' ? 'bg-yellow-500/20 text-yellow-300' :
-                      card.rarity === 'epic' ? 'bg-purple-500/20 text-purple-300' :
-                      card.rarity === 'rare' ? 'bg-blue-500/20 text-blue-300' :
-                      'bg-gray-500/20 text-gray-300'}`}>
-                    {card.rarity}
-                  </span>
+                
+                <div className="p-4 bg-gray-900/90 h-32 touch-none">
+                  <h3 className="text-white font-bold text-lg mb-1 truncate">{card.name}</h3>
+                  {card.team && (
+                    <p className="text-gray-300 text-sm mb-1 truncate">{card.team}</p>
+                  )}
+                  {card.location && (
+                    <p className="text-gray-300 text-sm mb-1 truncate">{card.location}</p>
+                  )}
+                  <div className="flex justify-between items-center mt-2 touch-none">
+                    <span className={`px-2 py-1 rounded-full text-xs font-semibold uppercase
+                      ${card.rarity === 'legendary' ? 'bg-yellow-500/20 text-yellow-300' :
+                        card.rarity === 'epic' ? 'bg-purple-500/20 text-purple-300' :
+                        card.rarity === 'rare' ? 'bg-blue-500/20 text-blue-300' :
+                        'bg-gray-500/20 text-gray-300'}`}>
+                      {card.rarity}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        );
-      })}
-     </div>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 
