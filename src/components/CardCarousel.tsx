@@ -68,8 +68,9 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   const getVisibleCards = useCallback(() => {
     if (cards.length === 0) return [];
     
+    // Показываем только 3 карты: центральную и две боковые
     const visible = [];
-    const totalVisible = Math.min(5, cards.length);
+    const totalVisible = Math.min(3, cards.length);
     
     for (let i = 0; i < totalVisible; i++) {
       const index = (currentIndex + i - Math.floor(totalVisible / 2) + cards.length) % cards.length;
@@ -176,9 +177,8 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
     >
       {visibleCards.map(({ card, position, index }) => {
         const isCenter = position === 0;
-        const scale = isCenter ? 1 : 0.8;
-        const opacity = isCenter ? 1 : 0.6;
-        const translateX = position * 120;
+        const scale = isCenter ? 1 : 0.85;
+        const translateX = position * 180;
         const rotateY = position * 15;
         const zIndex = isCenter ? 20 : 10 - Math.abs(position);
 
@@ -186,7 +186,7 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
           <div
             key={`${card.id}-${index}`}
             className={`absolute transition-all duration-500 cursor-pointer ${
-              isCenter ? 'hover:scale-105' : 'hover:scale-90'
+              isCenter ? 'hover:scale-105' : 'hover:scale-95'
             } touch-none`}
             style={{
               transform: `
@@ -196,8 +196,8 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
                 rotateY(${rotateY}deg)
                 perspective(1000px)
               `,
-              opacity,
               zIndex,
+              filter: isCenter ? 'none' : 'blur(4px)',
             }}
             onClick={() => {
               if (isCenter) {
