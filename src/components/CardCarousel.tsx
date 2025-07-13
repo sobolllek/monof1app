@@ -252,17 +252,7 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
           </div>
         );
       })}
-      
-      {/* Убран блок с навигационными стрелками */}
-      
-      {/* Счетчик карт */}
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-30 
-                      bg-gray-800/80 px-4 py-2 rounded-full backdrop-blur-sm border border-gray-600 touch-none">
-        <span className="text-white text-sm">
-          {currentIndex + 1} / {cards.length}
-        </span>
-      </div>
-    </div>
+     </div>
   );
 };
 
