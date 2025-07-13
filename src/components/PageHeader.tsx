@@ -1,4 +1,3 @@
-
 import { ArrowLeft, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import InfoButton from './InfoButton';
@@ -21,28 +20,34 @@ const PageHeader = ({
   const navigate = useNavigate();
 
   return (
-    <header className="flex items-center justify-between p-4 bg-f1-dark/90 backdrop-blur-lg border-b border-f1-gray-light/20 sticky top-0 z-40">
-      <div className="flex items-center gap-3">
-        {showBack && (
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 rounded-lg hover:bg-f1-gray-light/50 transition-colors"
-          >
-            <ArrowLeft size={20} />
-          </button>
-        )}
-        <h1 className="text-xl font-bold">{title}</h1>
-      </div>
+    <header className="fixed top-0 left-0 w-full z-50">
+      {/* Градиент сверху (аналогичный Layout) */}
+      <div className="absolute top-0 left-0 w-full h-36 bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none" />
       
-      <div className="flex items-center gap-2">
-        {infoTitle && infoDescription && (
-          <InfoButton title={infoTitle} description={infoDescription} />
-        )}
-        {showSettings && (
-          <button className="p-2 rounded-lg hover:bg-f1-gray-light/50 transition-colors">
-            <Settings size={20} />
-          </button>
-        )}
+      {/* Контент шапки */}
+      <div className="relative flex items-center justify-between p-4">
+        <div className="flex items-center gap-3">
+          {showBack && (
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
+          )}
+          <h1 className="text-xl font-bold">{title}</h1>
+        </div>
+        
+        <div className="flex items-center gap-2">
+          {infoTitle && infoDescription && (
+            <InfoButton title={infoTitle} description={infoDescription} />
+          )}
+          {showSettings && (
+            <button className="p-2 rounded-lg hover:bg-white/10 transition-colors">
+              <Settings size={20} />
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );
