@@ -8,11 +8,11 @@ interface CardCarouselProps {
 
 const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [swipeOffset, setSwipeOffset] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
-  const touchEndX = useRef(0);
   const isSwiping = useRef(false);
+  const animationRef = useRef<number>();
 
   // Блокировка прокрутки страницы
   useEffect(() => {
@@ -54,37 +54,73 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
     ];
   }, [cards, currentIndex]);
 
+  const animateSwipe = (targetOffset: number, callback?: () => void) => {
+    const startTime = performance.now();
+    const duration = 300;
+    const startOffset = swipeOffset;
+
+    const animate = (time: number) => {
+      const elapsed = time - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easing = 1 - Math.pow(1 - progress, 3); // Кубическое замедление
+
+      setSwipeOffset(startOffset + (targetOffset - startOffset) * easing);
+
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate);
+      } else if (callback) {
+        callback();
+      }
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+  };
+
   const handleCardNavigation = useCallback((direction: 'left' | 'right') => {
-    if (direction === 'left') {
-      setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
-    } else {
-      setCurrentIndex((prev) => (prev + 1) % cards.length);
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
     }
-  }, [cards.length]);
+
+    const targetIndex = direction === 'left' 
+      ? (currentIndex - 1 + cards.length) % cards.length
+      : (currentIndex + 1) % cards.length;
+
+    // Анимация свайпа
+    const swipeDirection = direction === 'left' ? -1 : 1;
+    animateSwipe(swipeDirection * 200, () => {
+      setCurrentIndex(targetIndex);
+      setSwipeOffset(0);
+    });
+  }, [cards.length, currentIndex]);
 
   // Touch handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-    touchEndX.current = e.touches[0].clientX;
     isSwiping.current = true;
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+    }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isSwiping.current) return;
-    touchEndX.current = e.touches[0].clientX;
+    const deltaX = e.touches[0].clientX - touchStartX.current;
+    setSwipeOffset(deltaX);
     e.preventDefault();
   };
 
   const handleTouchEnd = () => {
     if (!isSwiping.current) return;
     isSwiping.current = false;
-    
-    const threshold = 50;
-    const deltaX = touchEndX.current - touchStartX.current;
 
-    if (deltaX < -threshold) handleCardNavigation('right');
-    else if (deltaX > threshold) handleCardNavigation('left');
+    const threshold = 50;
+    if (swipeOffset < -threshold) {
+      handleCardNavigation('right');
+    } else if (swipeOffset > threshold) {
+      handleCardNavigation('left');
+    } else {
+      animateSwipe(0); // Возвращаем на место если свайп недостаточный
+    }
   };
 
   useEffect(() => {
@@ -110,7 +146,7 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   return (
     <div 
       ref={carouselRef}
-      className="relative h-96 flex items-center justify-center w-full touch-none"
+      className="relative h-96 flex items-center justify-center w-full touch-none overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -118,18 +154,26 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
       {visibleCards.map(({ card, position }) => {
         const isCenter = position === 0;
         const scale = isCenter ? 1 : 0.85;
-        const translateX = position * 120;
+        const baseTranslateX = position * 120 + swipeOffset;
         const zIndex = isCenter ? 20 : 10 - Math.abs(position);
+        const opacity = isCenter ? 1 : 0.8;
+        const rotateY = position * 15 + (isCenter ? swipeOffset * 0.1 : 0);
 
         return (
           <div
             key={`${card.id}-${position}`}
-            className={`absolute transition-all duration-500 cursor-pointer ${
-              isCenter ? 'hover:scale-105' : 'filter blur-sm hover:blur-none'
+            className={`absolute transition-all duration-300 ease-out ${
+              isCenter ? 'cursor-pointer hover:scale-105' : 'filter blur-sm hover:blur-none'
             } touch-none`}
             style={{
-              transform: `translateX(${translateX}px) scale(${scale})`,
+              transform: `
+                translateX(${baseTranslateX}px)
+                scale(${scale})
+                rotateY(${rotateY}deg)
+                perspective(1000px)
+              `,
               zIndex,
+              opacity,
             }}
             onClick={() => isCenter ? onCardClick(card) : setCurrentIndex(
               (currentIndex + position + cards.length) % cards.length
