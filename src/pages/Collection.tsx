@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { Search, ArrowLeft, User, MapPin, Car, Calendar, Trophy } from 'lucide-react';
+import { ArrowLeft, User, MapPin, Car, Calendar, Trophy } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import Navigation from '../components/Navigation';
 import CardModal from '../components/CardModal';
@@ -16,10 +15,10 @@ interface Category {
 }
 
 const Collection = () => {
-  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showCardModal, setShowCardModal] = useState(false);
+  const [currentCardName, setCurrentCardName] = useState(''); // Добавляем состояние для имени текущей карты
   const { toast } = useToast();
 
   const [cards, setCards] = useState<Card[]>(cardsData);
@@ -59,11 +58,7 @@ const Collection = () => {
 
   const filteredCards = cards.filter(card => {
     if (selectedCategory && card.category !== selectedCategory) return false;
-    
-    const matchesSearch = card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (card.team && card.team.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                         (card.location && card.location.toLowerCase().includes(searchTerm.toLowerCase()));
-    return matchesSearch;
+    return true;
   });
 
   const handleCardClick = (card: Card) => {
@@ -89,7 +84,11 @@ const Collection = () => {
 
   const handleBackToCategories = () => {
     setSelectedCategory(null);
-    setSearchTerm('');
+  };
+
+  // Функция для обновления имени текущей карты
+  const updateCurrentCardName = (card: Card) => {
+    setCurrentCardName(card.name);
   };
 
   // Если выбрана категория, показываем карусель карт
@@ -113,25 +112,12 @@ const Collection = () => {
             </div>
           </div>
 
-          {/* Поиск */}
-          <div className="relative mb-6">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Поиск карт..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700/50 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-f1-red"
-            />
-          </div>
-
-          {/* Подсказка для управления */}
-          <div className="text-center mb-6">
-            <p className="text-gray-400 text-sm">Перемещайте мышь или свайпайте для просмотра</p>
-          </div>
-
-          {/* Карусель карт */}
-          <CardCarousel cards={filteredCards} onCardClick={handleCardClick} />
+          {/* Карусель карт с передачей функции обновления имени */}
+          <CardCarousel 
+            cards={filteredCards} 
+            onCardClick={handleCardClick} 
+            onCardChange={updateCurrentCardName} 
+          />
         </div>
 
         <CardModal
@@ -157,18 +143,6 @@ const Collection = () => {
       />
       
       <div className="p-4 space-y-6">
-        {/* Поиск по категориям */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-          <input
-            type="text"
-            placeholder="Поиск по категориям..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700/50 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-f1-red"
-          />
-        </div>
-
         {/* Статистика коллекции */}
         <div className="f1-card p-4">
           <h3 className="text-lg font-semibold mb-4">Статистика коллекции</h3>
@@ -188,34 +162,30 @@ const Collection = () => {
 
         {/* Список категорий */}
         <div className="space-y-3">
-          {categories
-            .filter(category => 
-              category.label.toLowerCase().includes(searchTerm.toLowerCase())
-            )
-            .map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className="w-full f1-card p-4 hover:bg-gray-800/80 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-lg bg-gray-800/50">
-                      {category.icon}
-                    </div>
-                    <div className="text-left">
-                      <h3 className="text-lg font-semibold text-white">{category.label}</h3>
-                      <p className="text-sm text-gray-400">{category.count} карт</p>
-                    </div>
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setSelectedCategory(category.id)}
+              className="w-full f1-card p-4 hover:bg-gray-800/80 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-lg bg-gray-800/50">
+                    {category.icon}
                   </div>
-                  <div className="text-gray-400">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+                  <div className="text-left">
+                    <h3 className="text-lg font-semibold text-white">{category.label}</h3>
+                    <p className="text-sm text-gray-400">{category.count} карт</p>
                   </div>
                 </div>
-              </button>
-            ))}
+                <div className="text-gray-400">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 
