@@ -14,8 +14,8 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-f1-gray border-t border-f1-gray-light/50 backdrop-blur-lg z-50">
-      <div className="flex justify-around items-center py-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50">
+      <div className="flex justify-around items-center py-4">
         {navItems.map(({ path, icon: Icon, label }) => {
           const isActive = location.pathname === path;
           return (
