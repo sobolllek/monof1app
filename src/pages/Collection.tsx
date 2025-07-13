@@ -96,7 +96,7 @@ const Collection = () => {
     const categoryData = categories.find(cat => cat.id === selectedCategory);
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black pb-20">
+      <div className="min-h-screen bg-black pb-20">
         <div className="p-10">
           {/* Header с кнопкой назад */}
           <div className="flex items-center gap-4 mb-6">
@@ -135,7 +135,7 @@ const Collection = () => {
 
   // Главный экран с выбором категорий
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black pb-20">
+    <div className="min-h-screen bg-black pb-20">
       <PageHeader 
         title="Коллекция карт" 
         infoTitle="О коллекции"
