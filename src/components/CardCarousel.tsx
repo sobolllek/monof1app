@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card } from '../data/cards';
 
 interface CardCarouselProps {
@@ -10,6 +9,9 @@ interface CardCarouselProps {
 const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [touchStartX, setTouchStartX] = useState(0);
+  const [touchEndX, setTouchEndX] = useState(0);
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {
@@ -30,7 +32,9 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
+    if (!carouselRef.current) return;
+    
+    const rect = carouselRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
@@ -70,6 +74,37 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
     }
   };
 
+  // Touch handlers for swipe
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEndX(e.touches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (touchStartX - touchEndX > 50) {
+      // Swipe left
+      handleCardNavigation('right');
+    } else if (touchEndX - touchStartX > 50) {
+      // Swipe right
+      handleCardNavigation('left');
+    }
+  };
+
+  // Mouse wheel navigation
+  const handleWheel = (e: React.WheelEvent) => {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+      e.preventDefault();
+      if (e.deltaX > 0) {
+        handleCardNavigation('right');
+      } else {
+        handleCardNavigation('left');
+      }
+    }
+  };
+
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') handleCardNavigation('left');
@@ -91,7 +126,14 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   }
 
   return (
-    <div className="relative h-96 flex items-center justify-center">
+    <div 
+      ref={carouselRef}
+      className="relative h-96 flex items-center justify-center w-full"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onWheel={handleWheel}
+    >
       {visibleCards.map(({ card, position, index }) => {
         const isCenter = position === 0;
         const scale = isCenter ? 1 : 0.8;
