@@ -8,7 +8,7 @@ import MyPacksSection from '../components/MyPacksSection';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-f1-gradient-dark pb-20">
+    <div className="min-h-screen bg-black pb-20">
       {/* Header */}
       <header className="flex items-center justify-between p-4 pt-12">
         <div>
