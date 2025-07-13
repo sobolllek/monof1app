@@ -8,9 +8,11 @@ interface CardCarouselProps {
 
 const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [swipeOffset, setSwipeOffset] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
   const isSwiping = useRef(false);
   const animationRef = useRef<number>();
 
@@ -96,6 +98,7 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   // Touch handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
     isSwiping.current = true;
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
@@ -104,23 +107,48 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isSwiping.current) return;
-    const deltaX = e.touches[0].clientX - touchStartX.current;
-    setSwipeOffset(deltaX);
+    
+    const xDiff = Math.abs(e.touches[0].clientX - touchStartX.current);
+    const yDiff = Math.abs(e.touches[0].clientY - touchStartY.current);
+    
+    if (yDiff > xDiff) {
+      isSwiping.current = false;
+      return;
+    }
+    
+    setSwipeOffset(e.touches[0].clientX - touchStartX.current);
     e.preventDefault();
   };
 
   const handleTouchEnd = () => {
     if (!isSwiping.current) return;
     isSwiping.current = false;
-
+    
     const threshold = 50;
     if (swipeOffset < -threshold) {
       handleCardNavigation('right');
     } else if (swipeOffset > threshold) {
       handleCardNavigation('left');
     } else {
-      animateSwipe(0); // Возвращаем на место если свайп недостаточный
+      animateSwipe(0);
     }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!carouselRef.current) return;
+    
+    const rect = carouselRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const deltaX = (e.clientX - centerX) / (rect.width / 2);
+    const deltaY = (e.clientY - centerY) / (rect.height / 2);
+    
+    setMousePosition({ x: deltaX * 20, y: deltaY * 20 });
+  };
+
+  const handleMouseLeave = () => {
+    setMousePosition({ x: 0, y: 0 });
   };
 
   useEffect(() => {
@@ -146,15 +174,17 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   return (
     <div 
       ref={carouselRef}
-      className="relative h-96 flex items-center justify-center w-full touch-none overflow-hidden"
+      className="relative h-96 flex items-center justify-center w-full touch-none"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       {visibleCards.map(({ card, position }) => {
         const isCenter = position === 0;
         const scale = isCenter ? 1 : 0.85;
-        const baseTranslateX = position * 120 + swipeOffset;
+        const baseTranslateX = position * 120 + (isCenter ? swipeOffset : swipeOffset * 0.5);
         const zIndex = isCenter ? 20 : 10 - Math.abs(position);
         const opacity = isCenter ? 1 : 0.8;
         const rotateY = position * 15 + (isCenter ? swipeOffset * 0.1 : 0);
@@ -168,6 +198,7 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
             style={{
               transform: `
                 translateX(${baseTranslateX}px)
+                translateY(${isCenter ? mousePosition.y : 0}px)
                 scale(${scale})
                 rotateY(${rotateY}deg)
                 perspective(1000px)
