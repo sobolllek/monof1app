@@ -15,7 +15,6 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   const touchEndX = useRef(0);
   const isSwiping = useRef(false);
 
-  // Блокировка прокрутки страницы
   useEffect(() => {
     const preventDefault = (e: TouchEvent) => {
       if (isSwiping.current) {
@@ -68,15 +67,15 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   const getVisibleCards = useCallback(() => {
     if (cards.length === 0) return [];
     
-    // Показываем только 3 карты: центральную и две боковые
+    // Всегда показываем ровно 3 карты
     const visible = [];
     const totalVisible = Math.min(3, cards.length);
     
     for (let i = 0; i < totalVisible; i++) {
-      const index = (currentIndex + i - Math.floor(totalVisible / 2) + cards.length) % cards.length;
+      const index = (currentIndex + i - 1 + cards.length) % cards.length;
       visible.push({
         card: cards[index],
-        position: i - Math.floor(totalVisible / 2),
+        position: i - 1, // -1, 0, 1 для позиций
         index
       });
     }
@@ -92,7 +91,6 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
     }
   }, [cards.length]);
 
-  // Touch handlers for swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
@@ -104,17 +102,14 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
     if (!isSwiping.current) return;
     touchEndX.current = e.touches[0].clientX;
     
-    // Определяем, это горизонтальный свайп или вертикальный
     const xDiff = Math.abs(e.touches[0].clientX - touchStartX.current);
     const yDiff = Math.abs(e.touches[0].clientY - touchStartY.current);
     
-    // Если движение больше по вертикали - отменяем свайп
     if (yDiff > xDiff) {
       isSwiping.current = false;
       return;
     }
     
-    // Предотвращаем прокрутку страницы
     e.preventDefault();
   };
 
@@ -126,15 +121,12 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
     const deltaX = touchEndX.current - touchStartX.current;
 
     if (deltaX < -threshold) {
-      // Swipe left - next card
       handleCardNavigation('right');
     } else if (deltaX > threshold) {
-      // Swipe right - previous card
       handleCardNavigation('left');
     }
   };
 
-  // Mouse wheel navigation
   const handleWheel = (e: React.WheelEvent) => {
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
       e.preventDefault();
@@ -215,7 +207,6 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
                         shadow-2xl ${isCenter ? 'shadow-xl' : 'shadow-lg'} 
                         overflow-hidden relative touch-none`}
             >
-              {/* Card Image */}
               {card.image ? (
                 <div className="w-full h-48 bg-gray-800 flex items-center justify-center overflow-hidden touch-none">
                   <img 
@@ -239,7 +230,6 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
                 </div>
               )}
               
-              {/* Card Content */}
               <div className="p-4 bg-gray-900/90 h-32 touch-none">
                 <h3 className="text-white font-bold text-lg mb-1 truncate">{card.name}</h3>
                 {card.team && (
@@ -263,26 +253,9 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
         );
       })}
       
-      {/* Navigation Buttons */}
-      <button
-        onClick={() => handleCardNavigation('left')}
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-30 
-                   bg-gray-800/80 hover:bg-gray-700/80 text-white p-3 rounded-full 
-                   transition-colors backdrop-blur-sm border border-gray-600 touch-none"
-      >
-        ←
-      </button>
+      {/* Убран блок с навигационными стрелками */}
       
-      <button
-        onClick={() => handleCardNavigation('right')}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-30 
-                   bg-gray-800/80 hover:bg-gray-700/80 text-white p-3 rounded-full 
-                   transition-colors backdrop-blur-sm border border-gray-600 touch-none"
-      >
-        →
-      </button>
-      
-      {/* Card Counter */}
+      {/* Счетчик карт */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-30 
                       bg-gray-800/80 px-4 py-2 rounded-full backdrop-blur-sm border border-gray-600 touch-none">
         <span className="text-white text-sm">
