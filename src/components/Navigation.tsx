@@ -15,7 +15,7 @@ const Navigation = () => {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
-      <div className="flex justify-around items-center py-4">
+      <div className="flex justify-around items-center py-6">
         {navItems.map(({ path, icon: Icon, label }) => {
           const isActive = location.pathname === path;
           return (
