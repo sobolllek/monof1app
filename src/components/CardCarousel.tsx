@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card } from '../data/cards';
 
 interface CardCarouselProps {
@@ -10,8 +10,9 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const carouselRef = useRef<HTMLDivElement>(null);
-  const [touchStartX, setTouchStartX] = useState(0);
-  const [touchEndX, setTouchEndX] = useState(0);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+  const isSwiping = useRef(false);
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {
@@ -48,7 +49,7 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
     setMousePosition({ x: 0, y: 0 });
   };
 
-  const getVisibleCards = () => {
+  const getVisibleCards = useCallback(() => {
     if (cards.length === 0) return [];
     
     const visible = [];
@@ -64,31 +65,40 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
     }
     
     return visible;
-  };
+  }, [cards, currentIndex]);
 
-  const handleCardNavigation = (direction: 'left' | 'right') => {
+  const handleCardNavigation = useCallback((direction: 'left' | 'right') => {
     if (direction === 'left') {
       setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
     } else {
       setCurrentIndex((prev) => (prev + 1) % cards.length);
     }
-  };
+  }, [cards.length]);
 
   // Touch handlers for swipe
   const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStartX(e.touches[0].clientX);
+    touchStartX.current = e.touches[0].clientX;
+    touchEndX.current = e.touches[0].clientX;
+    isSwiping.current = true;
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEndX(e.touches[0].clientX);
+    if (!isSwiping.current) return;
+    touchEndX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = () => {
-    if (touchStartX - touchEndX > 50) {
-      // Swipe left
+    if (!isSwiping.current) return;
+    isSwiping.current = false;
+    
+    const threshold = 50;
+    const deltaX = touchEndX.current - touchStartX.current;
+
+    if (deltaX < -threshold) {
+      // Swipe left - next card
       handleCardNavigation('right');
-    } else if (touchEndX - touchStartX > 50) {
-      // Swipe right
+    } else if (deltaX > threshold) {
+      // Swipe right - previous card
       handleCardNavigation('left');
     }
   };
@@ -113,7 +123,7 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
+  }, [handleCardNavigation]);
 
   const visibleCards = getVisibleCards();
 
@@ -128,7 +138,7 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   return (
     <div 
       ref={carouselRef}
-      className="relative h-96 flex items-center justify-center w-full"
+      className="relative h-96 flex items-center justify-center w-full touch-none"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -147,7 +157,7 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
             key={`${card.id}-${index}`}
             className={`absolute transition-all duration-500 cursor-pointer ${
               isCenter ? 'hover:scale-105' : 'hover:scale-90'
-            }`}
+            } touch-none`}
             style={{
               transform: `
                 translateX(${translateX + (isCenter ? mousePosition.x : 0)}px) 
@@ -173,15 +183,15 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
               className={`w-64 h-80 rounded-2xl border-4 ${getRarityBorder(card.rarity)} 
                         bg-gradient-to-br ${getRarityColor(card.rarity)} 
                         shadow-2xl ${isCenter ? 'shadow-xl' : 'shadow-lg'} 
-                        overflow-hidden relative`}
+                        overflow-hidden relative touch-none`}
             >
               {/* Card Image */}
               {card.image ? (
-                <div className="w-full h-48 bg-gray-800 flex items-center justify-center overflow-hidden">
+                <div className="w-full h-48 bg-gray-800 flex items-center justify-center overflow-hidden touch-none">
                   <img 
                     src={card.image} 
                     alt={card.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover touch-none"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
                       target.style.display = 'none';
@@ -189,18 +199,18 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
                       if (fallback) fallback.style.display = 'flex';
                     }}
                   />
-                  <div className="w-full h-full bg-gray-800 items-center justify-center text-4xl hidden">
+                  <div className="w-full h-full bg-gray-800 items-center justify-center text-4xl hidden touch-none">
                     {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
                   </div>
                 </div>
               ) : (
-                <div className="w-full h-48 bg-gray-800 flex items-center justify-center text-4xl">
+                <div className="w-full h-48 bg-gray-800 flex items-center justify-center text-4xl touch-none">
                   {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
                 </div>
               )}
               
               {/* Card Content */}
-              <div className="p-4 bg-gray-900/90 h-32">
+              <div className="p-4 bg-gray-900/90 h-32 touch-none">
                 <h3 className="text-white font-bold text-lg mb-1 truncate">{card.name}</h3>
                 {card.team && (
                   <p className="text-gray-300 text-sm mb-1 truncate">{card.team}</p>
@@ -208,7 +218,7 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
                 {card.location && (
                   <p className="text-gray-300 text-sm mb-1 truncate">{card.location}</p>
                 )}
-                <div className="flex justify-between items-center mt-2">
+                <div className="flex justify-between items-center mt-2 touch-none">
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold uppercase
                     ${card.rarity === 'legendary' ? 'bg-yellow-500/20 text-yellow-300' :
                       card.rarity === 'epic' ? 'bg-purple-500/20 text-purple-300' :
@@ -228,7 +238,7 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
         onClick={() => handleCardNavigation('left')}
         className="absolute left-4 top-1/2 transform -translate-y-1/2 z-30 
                    bg-gray-800/80 hover:bg-gray-700/80 text-white p-3 rounded-full 
-                   transition-colors backdrop-blur-sm border border-gray-600"
+                   transition-colors backdrop-blur-sm border border-gray-600 touch-none"
       >
         ←
       </button>
@@ -237,14 +247,14 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
         onClick={() => handleCardNavigation('right')}
         className="absolute right-4 top-1/2 transform -translate-y-1/2 z-30 
                    bg-gray-800/80 hover:bg-gray-700/80 text-white p-3 rounded-full 
-                   transition-colors backdrop-blur-sm border border-gray-600"
+                   transition-colors backdrop-blur-sm border border-gray-600 touch-none"
       >
         →
       </button>
       
       {/* Card Counter */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-30 
-                      bg-gray-800/80 px-4 py-2 rounded-full backdrop-blur-sm border border-gray-600">
+                      bg-gray-800/80 px-4 py-2 rounded-full backdrop-blur-sm border border-gray-600 touch-none">
         <span className="text-white text-sm">
           {currentIndex + 1} / {cards.length}
         </span>
