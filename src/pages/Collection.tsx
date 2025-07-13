@@ -97,7 +97,7 @@ const Collection = () => {
     
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black pb-20">
-        <div className="p-4">
+        <div className="p-10">
           {/* Header с кнопкой назад */}
           <div className="flex items-center gap-4 mb-6">
             <button
