@@ -1,57 +1,69 @@
 
 import { useState } from 'react';
-import { Search, Filter } from 'lucide-react';
+import { Search, ArrowLeft, User, MapPin, Car, Calendar, Trophy } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import Navigation from '../components/Navigation';
 import CardModal from '../components/CardModal';
+import CardCarousel from '../components/CardCarousel';
 import { useToast } from '@/hooks/use-toast';
+import { cardsData, Card } from '../data/cards';
 
-interface Card {
-  id: number;
-  name: string;
-  team?: string;
-  location?: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  category: string;
-  type: 'driver' | 'car' | 'track';
+interface Category {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  count: number;
 }
 
 const Collection = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showCardModal, setShowCardModal] = useState(false);
   const { toast } = useToast();
 
-  const categories = [
-    { id: 'all', label: 'Все карты' },
-    { id: 'drivers', label: 'Пилоты' },
-    { id: 'teams', label: 'Команды' },
-    { id: 'cars', label: 'Болиды' },
-    { id: 'circuits', label: 'Трассы' },
+  const [cards, setCards] = useState<Card[]>(cardsData);
+
+  const categories: Category[] = [
+    { 
+      id: 'drivers', 
+      label: 'Пилоты', 
+      icon: <User size={24} className="text-blue-400" />, 
+      count: cards.filter(card => card.category === 'drivers').length 
+    },
+    { 
+      id: 'circuits', 
+      label: 'Трассы', 
+      icon: <MapPin size={24} className="text-green-400" />, 
+      count: cards.filter(card => card.category === 'circuits').length 
+    },
+    { 
+      id: 'cars', 
+      label: 'Болиды', 
+      icon: <Car size={24} className="text-red-400" />, 
+      count: cards.filter(card => card.category === 'cars').length 
+    },
+    { 
+      id: 'history', 
+      label: 'История', 
+      icon: <Calendar size={24} className="text-purple-400" />, 
+      count: cards.filter(card => card.category === 'history').length 
+    },
+    { 
+      id: 'special', 
+      label: 'Особые', 
+      icon: <Trophy size={24} className="text-yellow-400" />, 
+      count: cards.filter(card => card.category === 'special').length 
+    },
   ];
 
-  // Пример карт
-  const [cards, setCards] = useState<Card[]>([
-    { id: 1, name: 'Max Verstappen', team: 'Red Bull Racing', rarity: 'legendary', category: 'drivers', type: 'driver' },
-    { id: 2, name: 'Lewis Hamilton', team: 'Mercedes', rarity: 'epic', category: 'drivers', type: 'driver' },
-    { id: 3, name: 'Ferrari SF-24', team: 'Ferrari', rarity: 'rare', category: 'cars', type: 'car' },
-    { id: 4, name: 'Monaco GP', location: 'Monte Carlo', rarity: 'epic', category: 'circuits', type: 'track' },
-  ]);
-
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case 'legendary': return 'border-yellow-400 bg-yellow-400/10';
-      case 'epic': return 'border-purple-400 bg-purple-400/10';
-      case 'rare': return 'border-blue-400 bg-blue-400/10';
-      default: return 'border-gray-400 bg-gray-400/10';
-    }
-  };
-
   const filteredCards = cards.filter(card => {
-    const matchesSearch = card.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || card.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+    if (selectedCategory && card.category !== selectedCategory) return false;
+    
+    const matchesSearch = card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         (card.team && card.team.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                         (card.location && card.location.toLowerCase().includes(searchTerm.toLowerCase()));
+    return matchesSearch;
   });
 
   const handleCardClick = (card: Card) => {
@@ -75,18 +87,34 @@ const Collection = () => {
     });
   };
 
-  return (
-    <div className="min-h-screen pb-20">
-      <PageHeader 
-        title="Коллекция карт" 
-        infoTitle="О коллекции"
-        infoDescription="Здесь хранятся все ваши карты F1. Собирайте карты пилотов, команд, болидов и трасс. Каждая карта имеет свою редкость и уникальные характеристики."
-      />
-      
-      <div className="p-4 space-y-6">
-        {/* Поиск и фильтры */}
-        <div className="space-y-4">
-          <div className="relative">
+  const handleBackToCategories = () => {
+    setSelectedCategory(null);
+    setSearchTerm('');
+  };
+
+  // Если выбрана категория, показываем карусель карт
+  if (selectedCategory) {
+    const categoryData = categories.find(cat => cat.id === selectedCategory);
+    
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black pb-20">
+        <div className="p-4">
+          {/* Header с кнопкой назад */}
+          <div className="flex items-center gap-4 mb-6">
+            <button
+              onClick={handleBackToCategories}
+              className="p-2 rounded-lg bg-gray-800 border border-gray-700 hover:bg-gray-700 transition-colors"
+            >
+              <ArrowLeft size={20} className="text-white" />
+            </button>
+            <div className="flex items-center gap-3">
+              {categoryData?.icon}
+              <h1 className="text-2xl font-bold text-white">{categoryData?.label}</h1>
+            </div>
+          </div>
+
+          {/* Поиск */}
+          <div className="relative mb-6">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
@@ -97,21 +125,48 @@ const Collection = () => {
             />
           </div>
 
-          <div className="flex gap-2 overflow-x-auto">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                  selectedCategory === category.id
-                    ? 'bg-f1-red text-white'
-                    : 'bg-gray-800 text-gray-400 hover:text-white'
-                }`}
-              >
-                {category.label}
-              </button>
-            ))}
+          {/* Подсказка для управления */}
+          <div className="text-center mb-6">
+            <p className="text-gray-400 text-sm">Перемещайте мышь или свайпайте для просмотра</p>
           </div>
+
+          {/* Карусель карт */}
+          <CardCarousel cards={filteredCards} onCardClick={handleCardClick} />
+        </div>
+
+        <CardModal
+          card={selectedCard}
+          isOpen={showCardModal}
+          onClose={() => setShowCardModal(false)}
+          onSell={handleSellCard}
+          onGift={handleGiftCard}
+        />
+
+        <Navigation />
+      </div>
+    );
+  }
+
+  // Главный экран с выбором категорий
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black pb-20">
+      <PageHeader 
+        title="Коллекция карт" 
+        infoTitle="О коллекции"
+        infoDescription="Здесь хранятся все ваши карты F1. Собирайте карты пилотов, команд, болидов и трасс. Каждая карта имеет свою редкость и уникальные характеристики."
+      />
+      
+      <div className="p-4 space-y-6">
+        {/* Поиск по категориям */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          <input
+            type="text"
+            placeholder="Поиск по категориям..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full bg-gray-800 border border-gray-700/50 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-f1-red"
+          />
         </div>
 
         {/* Статистика коллекции */}
@@ -123,52 +178,46 @@ const Collection = () => {
               <div className="text-sm text-gray-400">Всего карт</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-f1-red">55%</div>
-              <div className="text-sm text-gray-400">Завершено</div>
+              <div className="text-2xl font-bold text-f1-red">
+                {Math.round((cards.filter(card => card.rarity !== 'common').length / cards.length) * 100)}%
+              </div>
+              <div className="text-sm text-gray-400">Редких карт</div>
             </div>
           </div>
         </div>
 
-        {/* Карты */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Ваши карты ({filteredCards.length})</h3>
-          <div className="grid grid-cols-2 gap-4">
-            {filteredCards.map((card) => (
-              <div 
-                key={card.id} 
-                onClick={() => handleCardClick(card)}
-                className={`p-4 rounded-xl border-2 ${getRarityColor(card.rarity)} hover:scale-105 transition-transform cursor-pointer`}
+        {/* Список категорий */}
+        <div className="space-y-3">
+          {categories
+            .filter(category => 
+              category.label.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+            .map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+                className="w-full f1-card p-4 hover:bg-gray-800/80 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
-                <div className="aspect-[3/4] bg-gray-800 rounded-lg mb-3 flex items-center justify-center">
-                  <span className="text-gray-500 text-xs">IMG</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 rounded-lg bg-gray-800/50">
+                      {category.icon}
+                    </div>
+                    <div className="text-left">
+                      <h3 className="text-lg font-semibold text-white">{category.label}</h3>
+                      <p className="text-sm text-gray-400">{category.count} карт</p>
+                    </div>
+                  </div>
+                  <div className="text-gray-400">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </div>
-                <h4 className="font-semibold text-white text-sm mb-1">{card.name}</h4>
-                <p className="text-gray-400 text-xs">
-                  {card.team || card.location || ''}
-                </p>
-                <div className="mt-2">
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    card.rarity === 'legendary' ? 'bg-yellow-400/20 text-yellow-400' :
-                    card.rarity === 'epic' ? 'bg-purple-400/20 text-purple-400' :
-                    card.rarity === 'rare' ? 'bg-blue-400/20 text-blue-400' :
-                    'bg-gray-400/20 text-gray-400'
-                  }`}>
-                    {card.rarity}
-                  </span>
-                </div>
-              </div>
+              </button>
             ))}
-          </div>
         </div>
       </div>
-
-      <CardModal
-        card={selectedCard}
-        isOpen={showCardModal}
-        onClose={() => setShowCardModal(false)}
-        onSell={handleSellCard}
-        onGift={handleGiftCard}
-      />
 
       <Navigation />
     </div>
