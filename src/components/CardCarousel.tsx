@@ -11,8 +11,24 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const carouselRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
   const touchEndX = useRef(0);
   const isSwiping = useRef(false);
+
+  // Блокировка прокрутки страницы
+  useEffect(() => {
+    const preventDefault = (e: TouchEvent) => {
+      if (isSwiping.current) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('touchmove', preventDefault, { passive: false });
+    
+    return () => {
+      document.removeEventListener('touchmove', preventDefault);
+    };
+  }, []);
 
   const getRarityColor = (rarity: string) => {
     switch (rarity) {
@@ -78,6 +94,7 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   // Touch handlers for swipe
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
     touchEndX.current = e.touches[0].clientX;
     isSwiping.current = true;
   };
@@ -85,6 +102,19 @@ const CardCarousel = ({ cards, onCardClick }: CardCarouselProps) => {
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isSwiping.current) return;
     touchEndX.current = e.touches[0].clientX;
+    
+    // Определяем, это горизонтальный свайп или вертикальный
+    const xDiff = Math.abs(e.touches[0].clientX - touchStartX.current);
+    const yDiff = Math.abs(e.touches[0].clientY - touchStartY.current);
+    
+    // Если движение больше по вертикали - отменяем свайп
+    if (yDiff > xDiff) {
+      isSwiping.current = false;
+      return;
+    }
+    
+    // Предотвращаем прокрутку страницы
+    e.preventDefault();
   };
 
   const handleTouchEnd = () => {
