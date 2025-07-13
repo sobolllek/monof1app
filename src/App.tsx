@@ -1,17 +1,11 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  useLocation
-} from "react-router-dom";
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoadingScreen from "./components/LoadingScreen";
-import Navigation from "./components/Navigation";
 import Index from "./pages/Index";
 import Profile from "./pages/Profile";
 import Notifications from "./pages/Notifications";
@@ -20,36 +14,13 @@ import Collection from "./pages/Collection";
 import Market from "./pages/Market";
 import Games from "./pages/Games";
 import DailyRoulette from "./pages/DailyRoulette";
+import Trades from "./pages/Trades";
+import Rating from "./pages/Rating";
+import LegendGarage from "./pages/LegendGarage";
+import RacerMap from "./pages/RacerMap";
+import TeamManager from "./pages/TeamManager";
 
 const queryClient = new QueryClient();
-
-const AppRoutes = () => {
-  const location = useLocation();
-  const noTabbarRoutes = ["/profile", "/notifications"];
-  const showNavigation = !noTabbarRoutes.some(route => location.pathname.startsWith(route));
-
-  console.log("Current pathname:", location.pathname);
-
-  return (
-    <div className="relative min-h-screen pb-24">
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/collection" element={<Collection />} />
-        <Route path="/market" element={<Market />} />
-        <Route path="/games" element={<Games />} />
-        <Route path="/daily-roulette" element={<DailyRoulette />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/notifications" element={<Notifications />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-
-      {/* Нижний градиент поверх контента, но под Navigation */}
-      <div className="pointer-events-none fixed bottom-0 left-0 w-full h-24 z-40 bg-gradient-to-t from-black via-black/40 to-black/0" />
-
-      {showNavigation && <Navigation />}
-    </div>
-  );
-};
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -68,7 +39,22 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AppRoutes />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/collection" element={<Collection />} />
+            <Route path="/market" element={<Market />} />
+            <Route path="/trades" element={<Trades />} />
+            <Route path="/games" element={<Games />} />
+            <Route path="/daily-roulette" element={<DailyRoulette />} />
+            <Route path="/rating" element={<Rating />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/legend-garage" element={<LegendGarage />} />
+            <Route path="/racer-map" element={<RacerMap />} />
+            <Route path="/team-manager" element={<TeamManager />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
