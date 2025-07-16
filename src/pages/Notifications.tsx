@@ -1,5 +1,6 @@
+
 import { useState } from 'react';
-import BackButton from '../components/BackButton';
+import PageHeader from '../components/PageHeader';
 import Navigation from '../components/Navigation';
 import NotificationCard from '../components/NotificationCard';
 
@@ -54,15 +55,11 @@ const Notifications = () => {
 
   return (
     <div className="min-h-screen bg-f1-gradient-dark pb-20">
-      {/* Шапка с кнопкой назад и заголовком */}
-      <header className="flex items-center p-4">
-        <BackButton />
-        <h1 className="ml-4 text-xl font-bold text-white">Уведомления</h1>
-      </header>
-
+      <PageHeader title="Notifications" showBack />
+      
       {hasNotifications ? (
         <div className="p-4">
-          {/* Вкладки */}
+          {/* Tabs */}
           <div className="flex gap-2 mb-6">
             <button
               onClick={() => setActiveTab('all')}
@@ -86,7 +83,7 @@ const Notifications = () => {
             </button>
           </div>
 
-          {/* Уведомления по дате */}
+          {/* Notifications by date */}
           {["Сегодня", "15 Мая"].map((date) => {
             const dateNotifications = notifications.filter(n => n.date === date);
             if (dateNotifications.length === 0) return null;
