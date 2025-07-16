@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LoadingScreen from "./components/LoadingScreen";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
@@ -23,40 +22,6 @@ import TeamManager from "./pages/TeamManager";
 
 const queryClient = new QueryClient();
 
-const TelegramInitializer = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    const tg = window.Telegram?.WebApp;
-    if (!tg) return;
-
-    tg.ready();
-    tg.expand();
-
-    tg.setHeaderColor('#000000'); // например, черный
-
-    if (location.pathname === '/') {
-      tg.BackButton.hide();
-      tg.BackButton.onClick(() => {}); // удаляем обработчик
-    } else {
-      tg.BackButton.show();
-      tg.BackButton.onClick(() => {}); // удаляем старый обработчик
-      tg.BackButton.onClick(() => {
-        navigate(-1);
-      });
-    }
-
-    return () => {
-      tg.BackButton.hide();
-      tg.BackButton.onClick(() => {}); // удаляем обработчик при размонтировании
-    };
-  }, [navigate, location.pathname]);
-
-  return null;
-};
-
-
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -74,7 +39,6 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <TelegramInitializer />
           <Layout>
             <Routes>
               <Route path="/" element={<Index />} />
