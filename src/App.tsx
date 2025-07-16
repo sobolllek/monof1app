@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
+
 import LoadingScreen from "./components/LoadingScreen";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
@@ -33,18 +34,21 @@ const TelegramInitializer = () => {
     tg.ready();
     tg.expand();
 
-    tg.BackButton.show();
+    // Настройка цвета шапки (замени 'bg_color' на нужный, если нужно)
+    tg.setHeaderColor('bg_color');
 
-    tg.BackButton.onClick(() => {
-      if (location.pathname === '/') {
-        tg.close();  // Если на главной — закрыть миниапп
-      } else {
-        navigate(-1); // Иначе — переход назад
-      }
-    });
+    if (location.pathname === '/') {
+      tg.BackButton.hide();
+    } else {
+      tg.BackButton.show();
+      tg.BackButton.onClick(() => {
+        navigate(-1);
+      });
+    }
 
     return () => {
       tg.BackButton.hide();
+      tg.BackButton.onClick(() => {}); // сброс обработчика
     };
   }, [navigate, location]);
 
