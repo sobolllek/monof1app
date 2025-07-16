@@ -34,13 +34,14 @@ const TelegramInitializer = () => {
     tg.ready();
     tg.expand();
 
-    // Настройка цвета шапки (замени 'bg_color' на нужный, если нужно)
-    tg.setHeaderColor('bg_color');
+    tg.setHeaderColor('#000000'); // например, черный
 
     if (location.pathname === '/') {
       tg.BackButton.hide();
+      tg.BackButton.onClick(() => {}); // удаляем обработчик
     } else {
       tg.BackButton.show();
+      tg.BackButton.onClick(() => {}); // удаляем старый обработчик
       tg.BackButton.onClick(() => {
         navigate(-1);
       });
@@ -48,12 +49,13 @@ const TelegramInitializer = () => {
 
     return () => {
       tg.BackButton.hide();
-      tg.BackButton.onClick(() => {}); // сброс обработчика
+      tg.BackButton.onClick(() => {}); // удаляем обработчик при размонтировании
     };
-  }, [navigate, location]);
+  }, [navigate, location.pathname]);
 
   return null;
 };
+
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
