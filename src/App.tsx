@@ -1,6 +1,5 @@
 
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,42 +23,8 @@ import TeamManager from "./pages/TeamManager";
 
 const queryClient = new QueryClient();
 
-const TelegramBackButtonHandler = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (!window.Telegram?.WebApp) return;
-
-    const tg = window.Telegram.WebApp;
-    const handleBack = () => {
-      if (window.history.length > 1) {
-        navigate(-1);
-      } else {
-        tg.close();
-      }
-    };
-
-    tg.BackButton.onClick(handleBack);
-    return () => tg.BackButton.offClick(handleBack);
-  }, [navigate]);
-
-  useEffect(() => {
-    if (!window.Telegram?.WebApp) return;
-    const tg = window.Telegram.WebApp;
-    tg.BackButton[window.history.length > 1 ? 'show' : 'hide']();
-  }, [navigate]);
-
-  return null;
-};
-
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.expand();
-    }
-  }, []);
 
   const handleLoadingComplete = () => {
     setIsLoading(false);
