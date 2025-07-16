@@ -61,7 +61,8 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground font-sans;
     background: linear-gradient(135deg, #0A0A0A 0%, #151515 100%);
-    min-height: 100vh;
+    height: 100%;
+    overflow: hidden;
   }
 }
 
