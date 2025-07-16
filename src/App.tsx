@@ -1,10 +1,9 @@
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import LoadingScreen from "./components/LoadingScreen";
 import Layout from "./components/Layout";
 import Index from "./pages/Index";
@@ -23,6 +22,31 @@ import TeamManager from "./pages/TeamManager";
 
 const queryClient = new QueryClient();
 
+const TelegramInitializer = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+    if (!tg) return;
+
+    tg.ready();
+    tg.expand();
+    tg.setHeaderColor('bg_color');
+
+    // Устанавливаем кнопку Назад
+    tg.BackButton.show();
+    tg.BackButton.onClick(() => {
+      navigate(-1); // Возврат назад
+    });
+
+    return () => {
+      tg.BackButton.hide();
+    };
+  }, [navigate]);
+
+  return null;
+};
+
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -40,6 +64,7 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <TelegramInitializer />
           <Layout>
             <Routes>
               <Route path="/" element={<Index />} />
