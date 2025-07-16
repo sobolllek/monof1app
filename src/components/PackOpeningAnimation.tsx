@@ -19,11 +19,9 @@ interface PackOpeningAnimationProps {
 }
 
 const PackOpeningAnimation = ({ isOpen, onClose, packType, onPackOpened }: PackOpeningAnimationProps) => {
-  const [stage, setStage] = useState<'initial' | 'hold' | 'opening' | 'revealing'>('initial');
+  const [stage, setStage] = useState<'initial' | 'opening' | 'revealing'>('initial');
   const [cards, setCards] = useState<Card[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [isHolding, setIsHolding] = useState(false);
-  const [holdProgress, setHoldProgress] = useState(0);
 
   // Carousel для карт
   const [cardEmblaRef, cardEmblaApi] = useEmblaCarousel({ 
@@ -86,42 +84,15 @@ const PackOpeningAnimation = ({ isOpen, onClose, packType, onPackOpened }: PackO
     onCardSelect();
   }, [cardEmblaApi, onCardSelect]);
 
-  const handleInitialOpen = () => {
-    setStage('hold');
+  const handleOpenPack = () => {
+    setStage('opening');
+    // Simulate pack opening
+    setTimeout(() => {
+      const randomCards = mockCards.sort(() => 0.5 - Math.random()).slice(0, 3);
+      setCards(randomCards);
+      setStage('revealing');
+    }, 1500);
   };
-
-  const startHolding = () => {
-    if (stage !== 'hold') return;
-    setIsHolding(true);
-  };
-
-  const stopHolding = () => {
-    setIsHolding(false);
-    setHoldProgress(0);
-  };
-
-  useEffect(() => {
-    if (!isHolding) return;
-
-    const interval = setInterval(() => {
-      setHoldProgress(prev => {
-        const newProgress = prev + 2;
-        if (newProgress >= 100) {
-          setStage('opening');
-          // Simulate pack opening
-          setTimeout(() => {
-            const randomCards = mockCards.sort(() => 0.5 - Math.random()).slice(0, 3);
-            setCards(randomCards);
-            setStage('revealing');
-          }, 1500);
-          return 100;
-        }
-        return newProgress;
-      });
-    }, 20);
-
-    return () => clearInterval(interval);
-  }, [isHolding]);
 
   const handleClose = () => {
     onPackOpened(cards);
@@ -129,7 +100,6 @@ const PackOpeningAnimation = ({ isOpen, onClose, packType, onPackOpened }: PackO
     setStage('initial');
     setCards([]);
     setCurrentCardIndex(0);
-    setHoldProgress(0);
   };
 
   useEffect(() => {
@@ -137,7 +107,6 @@ const PackOpeningAnimation = ({ isOpen, onClose, packType, onPackOpened }: PackO
       setStage('initial');
       setCards([]);
       setCurrentCardIndex(0);
-      setHoldProgress(0);
     }
   }, [isOpen]);
 
@@ -172,55 +141,11 @@ const PackOpeningAnimation = ({ isOpen, onClose, packType, onPackOpened }: PackO
               </div>
               
               <button
-                onClick={handleInitialOpen}
+                onClick={handleOpenPack}
                 className="bg-white text-black font-bold text-lg py-4 px-12 rounded-full hover:bg-gray-100 transition-colors"
               >
                 Открыть
               </button>
-            </div>
-          )}
-
-          {stage === 'hold' && (
-            <div className="flex flex-col items-center space-y-8">
-              <div className={`w-64 h-80 bg-gradient-to-br ${getPackGradient(packType)} rounded-2xl border-2 flex items-center justify-center relative overflow-hidden`}>
-                <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent" />
-                <div className="w-48 h-64 bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl shadow-lg flex items-center justify-center">
-                  <div className="text-6xl">📦</div>
-                </div>
-                {holdProgress > 0 && (
-                  <div className="absolute inset-0 bg-white/20 rounded-2xl" style={{ opacity: holdProgress / 100 }} />
-                )}
-              </div>
-              
-              <div className="text-center space-y-4">
-                <p className="text-white text-lg font-medium">Нажмите и удерживайте</p>
-                <p className="text-white text-lg font-medium">чтобы открыть</p>
-                
-                <button
-                  onMouseDown={startHolding}
-                  onMouseUp={stopHolding}
-                  onMouseLeave={stopHolding}
-                  onTouchStart={(e) => {
-                    e.preventDefault();
-                    startHolding();
-                  }}
-                  onTouchEnd={(e) => {
-                    e.preventDefault();
-                    stopHolding();
-                  }}
-                  onTouchCancel={(e) => {
-                    e.preventDefault();
-                    stopHolding();
-                  }}
-                  className="w-64 h-3 bg-gray-600 rounded-full overflow-hidden touch-none select-none"
-                  style={{ touchAction: 'none' }}
-                >
-                  <div 
-                    className="h-full bg-white transition-all duration-75 ease-out rounded-full"
-                    style={{ width: `${holdProgress}%` }}
-                  />
-                </button>
-              </div>
             </div>
           )}
 
