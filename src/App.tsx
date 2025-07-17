@@ -51,6 +51,9 @@ const App = () => {
     if (tgWebApp) {
       tgWebApp.expand();
       tgWebApp.enableClosingConfirmation();
+      
+      // Инициализация BackButton сразу
+      tgWebApp.BackButton.hide();
     }
 
     const timer = setTimeout(() => setIsLoading(false), 1000);
