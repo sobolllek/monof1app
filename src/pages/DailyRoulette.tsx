@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useBackButton } from '@/hooks/useBackButton';
 
 const DailyRoulette = () => {
-  useBackButton();
   const navigate = useNavigate();
   const [isSpinning, setIsSpinning] = useState(false);
   const [canSpin, setCanSpin] = useState(true);
