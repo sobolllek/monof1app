@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const DailyRoulette = () => {
   const navigate = useNavigate();
+  const isTgWebApp = window.Telegram?.WebApp;
   const [isSpinning, setIsSpinning] = useState(false);
   const [canSpin, setCanSpin] = useState(true);
   const [nextSpinTime, setNextSpinTime] = useState<Date | null>(null);
@@ -11,6 +12,24 @@ const DailyRoulette = () => {
   const [rotation, setRotation] = useState(0);
   const [showPrize, setShowPrize] = useState(false);
   const [wonPrize, setWonPrize] = useState<any>(null);
+
+  useEffect(() => {
+    if (!isTgWebApp) return;
+
+    // Показываем кнопку "Назад" при загрузке страницы
+    window.Telegram.WebApp.BackButton.show();
+    window.Telegram.WebApp.BackButton.onClick(() => {
+      if (showPrize) {
+        setShowPrize(false); // Закрываем модалку при нажатии "Назад"
+      } else {
+        navigate(-1); // Навигация назад
+      }
+    });
+
+    return () => {
+      window.Telegram.WebApp.BackButton.offClick(() => navigate(-1));
+    };
+  }, [navigate, showPrize, isTgWebApp]);
 
   const prizes = [
     { id: 1, name: '500 монет', icon: '🪙', color: '#FFD700' },
@@ -94,12 +113,14 @@ const DailyRoulette = () => {
 
       {/* Header */}
       <header className="flex items-center p-4 relative z-10">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-        >
-          <ArrowLeft size={24} />
-        </button>
+        {!isTgWebApp && (
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+          >
+            <ArrowLeft size={24} />
+          </button>
+        )}
         <h1 className="text-xl font-bold ml-4">Ежедневная рулетка</h1>
       </header>
 
