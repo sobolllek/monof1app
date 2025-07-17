@@ -11,11 +11,13 @@ const Layout: React.FC<LayoutProps> = ({ children, isTMA }) => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
 
+  // Обработка кнопки "Назад" для Telegram
   useEffect(() => {
     if (!isTMA) return;
     const tgWebApp = window.Telegram?.WebApp;
     if (!tgWebApp) return;
 
+    // Показываем/скрываем кнопку в зависимости от страницы
     if (isHomePage) {
       tgWebApp.BackButton.hide();
     } else {
@@ -36,13 +38,21 @@ const Layout: React.FC<LayoutProps> = ({ children, isTMA }) => {
     };
   }, [isHomePage, isTMA, navigate]);
 
-  const handleBack = () => navigate(-1);
+  // Обработка кнопки "Назад" для веб-версии
+  const handleWebBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/');
+    }
+  };
 
   return (
     <div className="relative min-h-screen w-full bg-black text-white overflow-x-hidden">
+      {/* Кнопка "Назад" для веб-версии (показываем везде кроме главной) */}
       {!isTMA && !isHomePage && (
         <button
-          onClick={handleBack}
+          onClick={handleWebBack}
           className="fixed top-4 left-4 z-50 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full p-2 border border-gray-700 transition-transform hover:scale-110"
           aria-label="Назад"
         >
@@ -52,10 +62,12 @@ const Layout: React.FC<LayoutProps> = ({ children, isTMA }) => {
         </button>
       )}
 
+      {/* Основной контент */}
       <div className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {children}
       </div>
 
+      {/* Градиент внизу экрана */}
       <div className="pointer-events-none fixed bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-40" />
     </div>
   );
