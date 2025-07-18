@@ -1,17 +1,27 @@
 import { useState } from 'react';
-import { Coins, TrendingUp, TrendingDown, Package, Gift, Star, Gavel, Clock, Users2, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  Coins, 
+  TrendingUp, 
+  TrendingDown, 
+  ChevronRight, 
+  Gavel, 
+  Clock, 
+  Users2, 
+  Gift,
+  Star
+} from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import Navigation from '../components/Navigation';
-import PackOpeningAnimation from '../components/PackOpeningAnimation';
 
 const Market = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'shop' | 'buy' | 'sell'>('shop');
-  const [showPackOpening, setShowPackOpening] = useState(false);
-  const [selectedPack, setSelectedPack] = useState('');
   const [coins, setCoins] = useState(10250);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [shopSection, setShopSection] = useState<'main' | 'packs' | 'coins' | 'cards'>('main');
 
+  // Данные для магазина
   const packs = [
     {
       id: 1,
@@ -64,18 +74,7 @@ const Market = () => {
       change: '-5%',
       image: '/image/cards/norris/png/norris-1.png',
       category: 'drivers'
-    },
-    { 
-      id: 3, 
-      name: 'Red Bull RB20', 
-      team: 'Red Bull Racing', 
-      price: 2200, 
-      rarity: 'legendary',
-      trend: 'up',
-      change: '+8%',
-      image: '/image/cards/cars/png/rb20-1.png',
-      category: 'cars'
-    },
+    }
   ];
 
   const auctionItems = [
@@ -88,17 +87,6 @@ const Market = () => {
       bidders: 12,
       rarity: 'legendary',
       image: '/image/cards/verstappen/png/verstappen-1.png',
-      category: 'drivers'
-    },
-    {
-      id: 2,
-      name: 'Lewis Hamilton',
-      team: 'Mercedes',
-      currentBid: 2800,
-      timeLeft: '45м',
-      bidders: 8,
-      rarity: 'epic',
-      image: '/image/cards/hamilton/png/hamilton-1.png',
       category: 'drivers'
     }
   ];
@@ -114,16 +102,10 @@ const Market = () => {
   const handleBuyPack = (pack: typeof packs[0]) => {
     if (pack.currency === 'coins' && coins >= pack.price) {
       setCoins(coins - pack.price);
-      setSelectedPack(pack.name);
-      setShowPackOpening(true);
+      navigate(`/pack-opening/${pack.name}`);
     } else if (pack.currency === 'stars') {
-      setSelectedPack(pack.name);
-      setShowPackOpening(true);
+      navigate(`/pack-opening/${pack.name}`);
     }
-  };
-
-  const handlePackOpened = (cards: any[]) => {
-    console.log('Получены карты:', cards);
   };
 
   const filteredItems = selectedCategory === 'all' 
@@ -135,164 +117,160 @@ const Market = () => {
     : auctionItems.filter(item => item.category === selectedCategory);
 
   const renderShopSection = () => {
-    if (shopSection === 'packs') {
-      return (
-        <div className="space-y-4">
-          <button 
-            onClick={() => setShopSection('main')}
-            className="text-f1-orange text-sm hover:underline"
-          >
-            ← Назад к магазину
-          </button>
-          
-          <h3 className="text-lg font-semibold text-white">Паки карт</h3>
-          
+    switch (shopSection) {
+      case 'packs':
+        return (
           <div className="space-y-4">
-            {packs.map((pack) => (
-              <div key={pack.id} className="f1-card p-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-20 bg-f1-gray-light rounded-lg flex items-center justify-center text-3xl">
-                    {pack.image}
-                  </div>
-                  
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-white">{pack.name}</h4>
-                    <p className="text-gray-400 text-sm">{pack.description}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      {pack.currency === 'coins' ? (
-                        <><Coins size={16} className="text-yellow-400" /><span className="text-white">{pack.price}</span></>
-                      ) : (
-                        <><Star size={16} className="text-purple-400" /><span className="text-white">{pack.price}</span></>
-                      )}
+            <button 
+              onClick={() => setShopSection('main')}
+              className="text-f1-orange text-sm hover:underline"
+            >
+              ← Назад к магазину
+            </button>
+            
+            <h3 className="text-lg font-semibold text-white">Паки карт</h3>
+            
+            <div className="space-y-4">
+              {packs.map((pack) => (
+                <div key={pack.id} className="f1-card p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-20 bg-f1-gray-light rounded-lg flex items-center justify-center text-3xl">
+                      {pack.image}
                     </div>
+                    
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-white">{pack.name}</h4>
+                      <p className="text-gray-400 text-sm">{pack.description}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        {pack.currency === 'coins' ? (
+                          <><Coins size={16} className="text-yellow-400" /><span className="text-white">{pack.price}</span></>
+                        ) : (
+                          <><Star size={16} className="text-purple-400" /><span className="text-white">{pack.price}</span></>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <button 
+                      onClick={() => handleBuyPack(pack)}
+                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      Купить
+                    </button>
                   </div>
-                  
-                  <button 
-                    onClick={() => handleBuyPack(pack)}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                  >
-                    Купить
-                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      
+      case 'coins':
+        return (
+          <div className="space-y-4">
+            <button 
+              onClick={() => setShopSection('main')}
+              className="text-f1-orange text-sm hover:underline"
+            >
+              ← Назад к магазину
+            </button>
+            
+            <h3 className="text-lg font-semibold text-white">Монеты</h3>
+            
+            <div className="f1-card p-6 text-center">
+              <div className="text-6xl mb-4">🪙</div>
+              <h4 className="text-white font-semibold mb-2">Скоро!</h4>
+              <p className="text-gray-400 text-sm">Покупка монет будет доступна в следующем обновлении</p>
+            </div>
+          </div>
+        );
+      
+      case 'cards':
+        return (
+          <div className="space-y-4">
+            <button 
+              onClick={() => setShopSection('main')}
+              className="text-f1-orange text-sm hover:underline"
+            >
+              ← Назад к магазину
+            </button>
+            
+            <h3 className="text-lg font-semibold text-white">Эксклюзивные карты</h3>
+            
+            <div className="f1-card p-6 text-center">
+              <div className="text-6xl mb-4">🎴</div>
+              <h4 className="text-white font-semibold mb-2">Скоро!</h4>
+              <p className="text-gray-400 text-sm">Эксклюзивные карты будут доступны в следующем обновлении</p>
+            </div>
+          </div>
+        );
+      
+      default:
+        return (
+          <div className="space-y-4">
+            <button
+              onClick={() => setShopSection('packs')}
+              className="w-full relative bg-gradient-to-r from-cyan-500/20 to-blue-600/20 rounded-2xl p-6 border border-cyan-500/30 overflow-hidden hover:from-cyan-500/30 hover:to-blue-600/30 transition-all"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-600/10"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-left">
+                    <h3 className="text-2xl font-bold text-white mb-2">PACKS</h3>
+                    <p className="text-cyan-200 text-sm">Эксклюзивный набор для тебя</p>
+                  </div>
+                  <ChevronRight className="text-white" size={24} />
+                </div>
+                <div className="flex justify-center">
+                  <div className="w-32 h-20 bg-gradient-to-r from-gray-300 to-gray-100 rounded-lg flex items-center justify-center">
+                    <span className="text-4xl">📦</span>
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-    
-    if (shopSection === 'coins') {
-      return (
-        <div className="space-y-4">
-          <button 
-            onClick={() => setShopSection('main')}
-            className="text-f1-orange text-sm hover:underline"
-          >
-            ← Назад к магазину
-          </button>
-          
-          <h3 className="text-lg font-semibold text-white">Монеты</h3>
-          
-          <div className="f1-card p-6 text-center">
-            <div className="text-6xl mb-4">🪙</div>
-            <h4 className="text-white font-semibold mb-2">Скоро!</h4>
-            <p className="text-gray-400 text-sm">Покупка монет будет доступна в следующем обновлении</p>
-          </div>
-        </div>
-      );
-    }
-    
-    if (shopSection === 'cards') {
-      return (
-        <div className="space-y-4">
-          <button 
-            onClick={() => setShopSection('main')}
-            className="text-f1-orange text-sm hover:underline"
-          >
-            ← Назад к магазину
-          </button>
-          
-          <h3 className="text-lg font-semibold text-white">Эксклюзивные карты</h3>
-          
-          <div className="f1-card p-6 text-center">
-            <div className="text-6xl mb-4">🎴</div>
-            <h4 className="text-white font-semibold mb-2">Скоро!</h4>
-            <p className="text-gray-400 text-sm">Эксклюзивные карты будут доступны в следующем обновлении</p>
-          </div>
-        </div>
-      );
-    }
-    
-    // Main shop sections
-    return (
-      <div className="space-y-4">
-        {/* PACKS Section */}
-        <button
-          onClick={() => setShopSection('packs')}
-          className="w-full relative bg-gradient-to-r from-cyan-500/20 to-blue-600/20 rounded-2xl p-6 border border-cyan-500/30 overflow-hidden hover:from-cyan-500/30 hover:to-blue-600/30 transition-all"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-600/10"></div>
-          <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-left">
-                <h3 className="text-2xl font-bold text-white mb-2">PACKS</h3>
-                <p className="text-cyan-200 text-sm">Эксклюзивный набор для тебя</p>
-              </div>
-              <ChevronRight className="text-white" size={24} />
-            </div>
-            <div className="flex justify-center">
-              <div className="w-32 h-20 bg-gradient-to-r from-gray-300 to-gray-100 rounded-lg flex items-center justify-center">
-                <span className="text-4xl">📦</span>
-              </div>
-            </div>
-          </div>
-        </button>
+            </button>
 
-        {/* COINS Section */}
-        <button
-          onClick={() => setShopSection('coins')}
-          className="w-full relative bg-gradient-to-r from-yellow-600/20 to-orange-600/20 rounded-2xl p-6 border border-yellow-600/30 overflow-hidden hover:from-yellow-600/30 hover:to-orange-600/30 transition-all"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/10 to-orange-600/10"></div>
-          <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-left">
-                <h3 className="text-2xl font-bold text-white mb-2">COINS</h3>
-                <p className="text-yellow-200 text-sm">Монет много не бывает!</p>
+            <button
+              onClick={() => setShopSection('coins')}
+              className="w-full relative bg-gradient-to-r from-yellow-600/20 to-orange-600/20 rounded-2xl p-6 border border-yellow-600/30 overflow-hidden hover:from-yellow-600/30 hover:to-orange-600/30 transition-all"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/10 to-orange-600/10"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-left">
+                    <h3 className="text-2xl font-bold text-white mb-2">COINS</h3>
+                    <p className="text-yellow-200 text-sm">Монет много не бывает!</p>
+                  </div>
+                  <ChevronRight className="text-white" size={24} />
+                </div>
+                <div className="flex justify-center">
+                  <div className="w-32 h-20 flex items-center justify-center">
+                    <span className="text-4xl">🪙</span>
+                  </div>
+                </div>
               </div>
-              <ChevronRight className="text-white" size={24} />
-            </div>
-            <div className="flex justify-center">
-              <div className="w-32 h-20 flex items-center justify-center">
-                <span className="text-4xl">🪙</span>
-              </div>
-            </div>
-          </div>
-        </button>
+            </button>
 
-        {/* CARDS Section */}
-        <button
-          onClick={() => setShopSection('cards')}
-          className="w-full relative bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl p-6 border border-purple-600/30 overflow-hidden hover:from-purple-600/30 hover:to-pink-600/30 transition-all"
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10"></div>
-          <div className="relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-left">
-                <h3 className="text-2xl font-bold text-white mb-2">CARDS</h3>
-                <p className="text-purple-200 text-sm">Получи доступ к редким картам!</p>
+            <button
+              onClick={() => setShopSection('cards')}
+              className="w-full relative bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl p-6 border border-purple-600/30 overflow-hidden hover:from-purple-600/30 hover:to-pink-600/30 transition-all"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10"></div>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-left">
+                    <h3 className="text-2xl font-bold text-white mb-2">CARDS</h3>
+                    <p className="text-purple-200 text-sm">Получи доступ к редким картам!</p>
+                  </div>
+                  <ChevronRight className="text-white" size={24} />
+                </div>
+                <div className="flex justify-center">
+                  <div className="w-32 h-20 flex items-center justify-center">
+                    <span className="text-4xl">🎴</span>
+                  </div>
+                </div>
               </div>
-              <ChevronRight className="text-white" size={24} />
-            </div>
-            <div className="flex justify-center">
-              <div className="w-32 h-20 flex items-center justify-center">
-                <span className="text-4xl">🎴</span>
-              </div>
-            </div>
+            </button>
           </div>
-        </button>
-      </div>
-    );
+        );
+    }
   };
 
   return (
@@ -304,7 +282,6 @@ const Market = () => {
       />
       
       <div className="p-4 space-y-6">
-        {/* Stats Header */}
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <div className="text-2xl font-bold text-white">102</div>
@@ -320,7 +297,6 @@ const Market = () => {
           </div>
         </div>
 
-        {/* Табы */}
         <div className="flex gap-1 bg-gray-900 rounded-full p-1">
           <button
             onClick={() => {
@@ -357,7 +333,6 @@ const Market = () => {
           </button>
         </div>
 
-        {/* Категории (только для покупки и продажи) */}
         {(activeTab === 'buy' || activeTab === 'sell') && (
           <div className="flex gap-2 overflow-x-auto pb-2">
             {categories.map((category) => (
@@ -377,7 +352,6 @@ const Market = () => {
           </div>
         )}
 
-        {/* Контент вкладок */}
         {activeTab === 'shop' && renderShopSection()}
 
         {activeTab === 'buy' && (
@@ -444,7 +418,6 @@ const Market = () => {
 
         {activeTab === 'sell' && (
           <div className="space-y-6">
-            {/* Аукцион */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white flex items-center gap-2">
                 <Gavel className="text-f1-orange" size={20} />
@@ -498,7 +471,6 @@ const Market = () => {
               </div>
             </div>
 
-            {/* Мои лоты */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-white">Мои лоты</h3>
               
@@ -517,13 +489,6 @@ const Market = () => {
           </div>
         )}
       </div>
-
-      <PackOpeningAnimation
-        isOpen={showPackOpening}
-        onClose={() => setShowPackOpening(false)}
-        packType={selectedPack}
-        onPackOpened={handlePackOpened}
-      />
 
       <Navigation />
     </div>
