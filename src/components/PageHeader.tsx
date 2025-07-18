@@ -1,6 +1,7 @@
 import { ArrowLeft, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import InfoButton from './InfoButton';
+import useTelegramWebApp from '../hooks/useTelegramWebApp';
 
 interface PageHeaderProps {
   title: string;
@@ -18,6 +19,10 @@ const PageHeader = ({
   infoDescription
 }: PageHeaderProps) => {
   const navigate = useNavigate();
+  const { isTelegramWebApp } = useTelegramWebApp();
+
+  // В Telegram WebApp скрываем кнопку назад, так как есть системная
+  const shouldShowBack = showBack && !isTelegramWebApp;
 
   return (
     <header className="fixed top-0 left-0 w-full z-50">
@@ -27,7 +32,7 @@ const PageHeader = ({
       {/* Контент шапки */}
       <div className="relative flex items-center justify-between p-4">
         <div className="flex items-center gap-3">
-          {showBack && (
+          {shouldShowBack && (
             <button
               onClick={() => navigate(-1)}
               className="p-2 rounded-lg hover:bg-white/10 transition-colors"
