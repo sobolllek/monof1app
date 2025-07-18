@@ -62,14 +62,8 @@ const Profile = () => {
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 bg-f1-gray/95 backdrop-blur-lg border-b border-f1-gray-light/50 z-40">
         <div className="p-4 pt-12">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="p-2 rounded-lg bg-gray-800/50 transition-colors">
-              <ChevronLeft className="text-white" size={24} />
-            </Link>
-            <h1 className="text-xl font-bold text-white">Профиль</h1>
-            <Link to="/settings" className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800/70 transition-colors">
-              <Settings className="text-white" size={24} />
-            </Link>
+          <div className="flex items-center justify-center"> {/* Изменили justify-between на justify-center */}
+           <h1 className="text-xl font-bold text-white">Профиль</h1>
           </div>
         </div>
       </div>
