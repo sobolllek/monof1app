@@ -93,14 +93,12 @@ const DailyRoulette = () => {
       </div>
 
       {/* Header */}
-      <header className="flex items-center p-4 relative z-10">
-        <button
-          onClick={() => navigate(-1)}
-          className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-        >
-          <ArrowLeft size={24} />
-        </button>
-        <h1 className="text-xl font-bold ml-4">Ежедневная рулетка</h1>
+      <header className="fixed top-0 left-0 right-0 bg-gradient-to-b from-black via-black/80 to-transparent z-40">
+        <div className="p-4 pt-[3.75rem]">
+          <div className="flex items-center justify-center">
+           <h1 className="text-xl font-bold text-white">Ежедневная рулетка</h1>
+          </div>
+       </div>
       </header>
 
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-4 relative z-10">
