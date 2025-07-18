@@ -1,7 +1,5 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Sparkles, X } from 'lucide-react';
-import { Carousel, CarouselContent, CarouselItem } from '@/components/ui/carousel';
-import useEmblaCarousel from 'embla-carousel-react';
+import { useState, useEffect } from 'react';
+import { Sparkles } from 'lucide-react';
 
 interface Card {
   id: number;
@@ -22,13 +20,8 @@ const PackOpeningAnimation = ({ isOpen, onClose, packType, onPackOpened }: PackO
   const [stage, setStage] = useState<'initial' | 'opening' | 'revealing'>('initial');
   const [cards, setCards] = useState<Card[]>([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-
-  // Carousel для карт
-  const [cardEmblaRef, cardEmblaApi] = useEmblaCarousel({ 
-    align: 'center',
-    containScroll: 'trimSnaps',
-    dragFree: false
-  });
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
 
   const mockCards: Card[] = [
     { id: 1, name: 'CHARLES', rarity: 'epic', type: 'driver', team: 'Ferrari' },
@@ -59,7 +52,6 @@ const PackOpeningAnimation = ({ isOpen, onClose, packType, onPackOpened }: PackO
     if (lowerType.includes('gold')) {
       return 'from-yellow-400/30 to-orange-500/30 border-yellow-400/50';
     }
-    // base
     return 'from-blue-400/30 to-cyan-500/30 border-blue-400/50';
   };
 
@@ -72,21 +64,8 @@ const PackOpeningAnimation = ({ isOpen, onClose, packType, onPackOpened }: PackO
     return 'BASE';
   };
 
-  const onCardSelect = useCallback(() => {
-    if (cardEmblaApi) {
-      setCurrentCardIndex(cardEmblaApi.selectedScrollSnap());
-    }
-  }, [cardEmblaApi]);
-
-  useEffect(() => {
-    if (!cardEmblaApi) return;
-    cardEmblaApi.on('select', onCardSelect);
-    onCardSelect();
-  }, [cardEmblaApi, onCardSelect]);
-
   const handleOpenPack = () => {
     setStage('opening');
-    // Simulate pack opening
     setTimeout(() => {
       const randomCards = mockCards.sort(() => 0.5 - Math.random()).slice(0, 3);
       setCards(randomCards);
@@ -102,6 +81,36 @@ const PackOpeningAnimation = ({ isOpen, onClose, packType, onPackOpened }: PackO
     setCurrentCardIndex(0);
   };
 
+  const handleNextCard = () => {
+    if (currentCardIndex < cards.length - 1) {
+      setCurrentCardIndex(currentCardIndex + 1);
+    } else {
+      handleClose();
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    setIsSwiping(true);
+    setSwipeOffset(0);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent | React.MouseEvent) => {
+    if (!isSwiping) return;
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    setSwipeOffset(clientX - (e.currentTarget as HTMLElement).getBoundingClientRect().left - 150);
+  };
+
+  const handleTouchEnd = () => {
+    if (!isSwiping) return;
+    setIsSwiping(false);
+
+    if (Math.abs(swipeOffset) > 50) {
+      handleNextCard();
+    }
+    setSwipeOffset(0);
+  };
+
   useEffect(() => {
     if (isOpen) {
       setStage('initial');
@@ -115,14 +124,7 @@ const PackOpeningAnimation = ({ isOpen, onClose, packType, onPackOpened }: PackO
   return (
     <div className="fixed inset-0 z-50 bg-black flex items-center justify-center p-4">
       <div className="relative w-full max-w-md h-full flex flex-col">
-        <button
-          onClick={handleClose}
-          className="absolute top-8 right-4 text-white/70 hover:text-white z-10"
-        >
-          <X size={24} />
-        </button>
-
-        {/* Pack Type Header */}
+        {/* Заголовок пака */}
         <div className="text-center pt-16 pb-8">
           <h1 className="text-4xl font-black text-white tracking-wider">
             {getPackTitle(packType)}
@@ -158,86 +160,77 @@ const PackOpeningAnimation = ({ isOpen, onClose, packType, onPackOpened }: PackO
             </div>
           )}
 
-          {stage === 'revealing' && (
-            <div className="w-full space-y-6">
-              <div className="w-full">
-                <div className="overflow-hidden" ref={cardEmblaRef}>
-                  <div className="flex">
-                    {cards.map((card, index) => (
-                      <div key={card.id} className="flex-[0_0_100%] min-w-0 px-4">
-                        <div className="relative w-full max-w-sm mx-auto">
-                          {/* Card with Ferrari-style design */}
-                          <div 
-                            className={`relative h-96 bg-gradient-to-br ${getRarityColors(card.rarity)} rounded-2xl border-4 overflow-hidden shadow-2xl`}
-                          >
-                            {/* Card Header */}
-                            <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
-                              <div className="text-xs text-white/80 font-mono">SECTOR 2</div>
-                              <div className="text-xs text-white/80 font-mono">+24</div>
+          {stage === 'revealing' && cards.length > 0 && (
+            <div className="w-full h-full relative">
+              {/* Карты в стопке */}
+              <div className="mt-20">
+              {cards.map((card, index) => {
+                if (index < currentCardIndex) return null;
+
+                const isActive = index === currentCardIndex;
+                const zIndex = cards.length - index;
+                const scale = 1 - (index - currentCardIndex) * 0.05;
+                const opacity = 1 - (index - currentCardIndex) * 0.2;
+                const top = (index - currentCardIndex) * 20;
+                const left = isActive ? swipeOffset : 0;
+
+                return (
+                  <div
+                    key={card.id}
+                    className={`absolute w-full transition-all duration-300 ${isActive ? 'cursor-grab active:cursor-grabbing' : ''}`}
+                    style={{
+                      zIndex,
+                      transform: `translateX(${left}px) scale(${scale})`,
+                      opacity,
+                      top: `${top}px`,
+                    }}
+                    onTouchStart={isActive ? handleTouchStart : undefined}
+                    onTouchMove={isActive ? handleTouchMove : undefined}
+                    onTouchEnd={isActive ? handleTouchEnd : undefined}
+                    onMouseDown={isActive ? handleTouchStart : undefined}
+                    onMouseMove={isActive ? handleTouchMove : undefined}
+                    onMouseUp={isActive ? handleTouchEnd : undefined}
+                    onMouseLeave={isActive ? handleTouchEnd : undefined}
+                  >
+                    <div className="relative w-full max-w-sm mx-auto">
+                      {/* Название карты под карточкой */}
+                      <div className="text-center mb-10">
+                        <h2 className="text-2xl font-black text-white tracking-wider">{card.name}</h2>
+                      </div>
+                      
+                      <div 
+                        className={`relative h-96 bg-gradient-to-br ${getRarityColors(card.rarity)} rounded-2xl border-4 overflow-hidden shadow-2xl`}
+                      >
+                        <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
+                          <div className="text-xs text-white/80 font-mono">SECTOR 2</div>
+                          <div className="text-xs text-white/80 font-mono">+24</div>
+                        </div>
+                        
+                        <div className="absolute top-8 right-4 w-8 h-8 bg-red-600 rounded flex items-center justify-center">
+                          <span className="text-white text-xs font-bold">F</span>
+                        </div>
+                        
+                        <div className="absolute inset-x-4 top-16 bottom-20 bg-black/20 rounded-xl flex items-center justify-center">
+                          <span className="text-white text-4xl">🏎️</span>
+                        </div>
+                        
+                        <div className="absolute left-4 top-1/2 flex flex-col space-y-1">
+                          {[1,2,3,4,5].map(star => (
+                            <div key={star} className="w-6 h-6 bg-yellow-400 rounded-sm flex items-center justify-center">
+                              <span className="text-black text-xs">★</span>
                             </div>
-                            
-                            {/* Team Logo Area */}
-                            <div className="absolute top-8 right-4 w-8 h-8 bg-red-600 rounded flex items-center justify-center">
-                              <span className="text-white text-xs font-bold">F</span>
-                            </div>
-                            
-                            {/* Driver Image Placeholder */}
-                            <div className="absolute inset-x-4 top-16 bottom-20 bg-black/20 rounded-xl flex items-center justify-center">
-                              <span className="text-white text-4xl">🏎️</span>
-                            </div>
-                            
-                            {/* Rating Stars */}
-                            <div className="absolute left-4 top-1/2 flex flex-col space-y-1">
-                              {[1,2,3,4,5].map(star => (
-                                <div key={star} className="w-6 h-6 bg-yellow-400 rounded-sm flex items-center justify-center">
-                                  <span className="text-black text-xs">★</span>
-                                </div>
-                              ))}
-                            </div>
-                            
-                            {/* Card Footer */}
-                            <div className="absolute bottom-4 left-4 right-4">
-                              <div className="text-xs text-white/60 mb-1">{card.team}</div>
-                              <div className="text-xs text-white/80 font-mono">SECTOR 1</div>
-                            </div>
-                          </div>
-                          
-                          {/* Card Name */}
-                          <div className="text-center mt-6">
-                            <h2 className="text-4xl font-black text-white tracking-wider">{card.name}</h2>
-                            <h3 className="text-2xl font-bold text-red-500 mt-1">LECLERC</h3>
-                          </div>
+                          ))}
+                        </div>
+                        
+                        <div className="absolute bottom-4 left-4 right-4">
+                          <div className="text-xs text-white/60 mb-1">{card.team}</div>
+                          <div className="text-xs text-white/80 font-mono">SECTOR 1</div>
                         </div>
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </div>
-              </div>
-
-              <div className="flex justify-center space-x-2">
-                {cards.map((_, index) => (
-                  <div
-                    key={index}
-                    className={`w-2 h-2 rounded-full transition-colors ${
-                      index === currentCardIndex ? 'bg-white' : 'bg-white/30'
-                    }`}
-                  />
-                ))}
-              </div>
-
-              <div className="flex space-x-2 px-4">
-                <button className="flex-1 bg-gray-600 text-white py-3 rounded-lg font-medium">
-                  ← 
-                </button>
-                <button 
-                  onClick={handleClose}
-                  className="flex-1 bg-white text-black py-3 rounded-lg font-bold"
-                >
-                  Добавить в коллекцию
-                </button>
-                <button className="flex-1 bg-gray-600 text-white py-3 rounded-lg font-medium">
-                  →
-                </button>
+                );
+              })}
               </div>
             </div>
           )}
