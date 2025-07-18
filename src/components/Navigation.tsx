@@ -1,4 +1,3 @@
-
 import { Home, Package, ShoppingCart, Gamepad2, ArrowRightLeft } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -6,17 +5,27 @@ const Navigation = () => {
   const location = useLocation();
   
   const navItems = [
-    { path: '/', icon: Home, label: 'Главное' },
-    { path: '/collection', icon: Package, label: 'Коллекция' },
-    { path: '/market', icon: ShoppingCart, label: 'Маркет' },
-    { path: '/trades', icon: ArrowRightLeft, label: 'Обмены' },
-    { path: '/games', icon: Gamepad2, label: 'Игры' },
+    { path: '/', icon: Home },
+    { path: '/collection', icon: Package },
+    { path: '/market', icon: ShoppingCart },
+    { path: '/trades', icon: ArrowRightLeft },
+    { path: '/games', icon: Gamepad2 },
   ];
+
+  // Проверяем, есть ли текущий путь в navItems
+  const shouldShowTabbar = navItems.some(item => 
+    item.path === location.pathname
+  );
+
+  // Если текущий путь не в navItems, не рендерим таббар
+  if (!shouldShowTabbar) {
+    return null;
+  }
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
       <div className="flex justify-around items-center py-6">
-        {navItems.map(({ path, icon: Icon, label }) => {
+        {navItems.map(({ path, icon: Icon }) => {
           const isActive = location.pathname === path;
           return (
             <Link
@@ -29,7 +38,6 @@ const Navigation = () => {
               }`}
             >
               <Icon size={20} />
-              <span className="text-xs mt-1">{label}</span>
             </Link>
           );
         })}
