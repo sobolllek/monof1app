@@ -4,10 +4,12 @@ import { ArrowLeft, Map, Flag, Star, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import useTelegramWebApp from '../hooks/useTelegramWebApp';
 
 const RacerMap = () => {
   const navigate = useNavigate();
   const [selectedRegion, setSelectedRegion] = useState('europe');
+  const { isTelegramWebApp } = useTelegramWebApp();
 
   const regions = [
     { id: 'europe', name: 'Европа', progress: 85 },
@@ -77,12 +79,14 @@ const RacerMap = () => {
       {/* Header */}
       <header className="flex items-center justify-between p-4 pt-12 bg-f1-gray/95 backdrop-blur-lg border-b border-f1-gray-light/50">
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate(-1)}
-            className="p-2 rounded-lg bg-gray-800/50 transition-colors"
-          >
-            <ArrowLeft className="text-white" size={20} />
-          </button>
+          {!isTelegramWebApp && (
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 rounded-lg bg-gray-800/50 transition-colors"
+            >
+              <ArrowLeft className="text-white" size={20} />
+            </button>
+          )}
           <h1 className="text-xl font-bold text-white">Карта Гонщика</h1>
         </div>
         <div className="flex items-center gap-2">
