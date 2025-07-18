@@ -20,6 +20,7 @@ import Rating from "./pages/Rating";
 import LegendGarage from "./pages/LegendGarage";
 import RacerMap from "./pages/RacerMap";
 import TeamManager from "./pages/TeamManager";
+import CategoryCards from './pages/CategoryCards';
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => {
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/collection" element={<Collection />} />
+                <Route path="/collection/:categoryId" element={<CategoryCards />} />
                 <Route path="/market" element={<Market />} />
                 <Route path="/trades" element={<Trades />} />
                 <Route path="/games" element={<Games />} />
