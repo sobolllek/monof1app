@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,6 +11,8 @@ const DailyRoulette = () => {
   const [rotation, setRotation] = useState(0);
   const [showPrize, setShowPrize] = useState(false);
   const [wonPrize, setWonPrize] = useState<any>(null);
+  const wheelRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number>();
 
   const prizes = [
     { id: 1, name: '500 монет', icon: '🪙', color: '#FFD700' },
@@ -33,29 +35,46 @@ const DailyRoulette = () => {
     const prizeIndex = Math.floor(Math.random() * 8);
     const prize = prizes[prizeIndex];
     
-    // Вычисляем угол для остановки на выбранном призе
-    const segmentAngle = 360 / 8; // 45 градусов на сегмент
+    // Вычисляем угол для остановки
+    const segmentAngle = 360 / 8;
     const targetAngle = prizeIndex * segmentAngle + segmentAngle / 2;
     
-    // Добавляем несколько полных оборотов для эффекта
-    const spins = 5 + Math.random() * 3; // 5-8 оборотов
-    const newRotation = spins * 360 + (360 - targetAngle);
+    // Добавляем несколько полных оборотов
+    const spins = 5 + Math.random() * 3;
+    const totalRotation = spins * 360 + (360 - targetAngle);
     
-    setRotation(prev => prev + newRotation);
-    setWonPrize(prize);
-
-    // Показываем приз через 4 секунды (время анимации)
-    setTimeout(() => {
-      setIsSpinning(false);
-      setShowPrize(true);
-    }, 4000);
+    // Запускаем анимацию
+    const startTime = performance.now();
+    const duration = 4000; // 4 секунды
+    
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 3); // easeOut cubic
+      
+      const currentRotation = rotation + totalRotation * easedProgress;
+      
+      if (wheelRef.current) {
+        wheelRef.current.style.transform = `rotate(${currentRotation}deg)`;
+      }
+      
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate);
+      } else {
+        setIsSpinning(false);
+        setShowPrize(true);
+        setRotation(currentRotation % 360);
+        setWonPrize(prize);
+      }
+    };
+    
+    animationRef.current = requestAnimationFrame(animate);
   };
 
   const claimPrize = () => {
     setShowPrize(false);
     setCanSpin(false);
     
-    // Устанавливаем время следующего спина (24 часа)
     const nextSpin = new Date();
     nextSpin.setHours(nextSpin.getHours() + 24);
     setNextSpinTime(nextSpin);
@@ -82,6 +101,14 @@ const DailyRoulette = () => {
       return () => clearInterval(timer);
     }
   }, [nextSpinTime]);
+
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white relative overflow-hidden">
@@ -123,9 +150,8 @@ const DailyRoulette = () => {
 
           {/* Wheel */}
           <div 
-            className={`relative w-80 h-80 rounded-full shadow-2xl ${
-              isSpinning ? 'transition-transform duration-[4000ms] ease-out' : 'transition-none'
-            }`}
+            ref={wheelRef}
+            className="relative w-80 h-80 rounded-full shadow-2xl"
             style={{
               transform: `rotate(${rotation}deg)`,
               background: 'conic-gradient(from 0deg, #FF6B6B 0deg 45deg, #4ECDC4 45deg 90deg, #45B7D1 90deg 135deg, #96CEB4 135deg 180deg, #FFEAA7 180deg 225deg, #DDA0DD 225deg 270deg, #98D8C8 270deg 315deg, #FFD700 315deg 360deg)',
