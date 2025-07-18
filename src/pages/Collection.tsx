@@ -5,6 +5,7 @@ import Navigation from '../components/Navigation';
 import CardModal from '../components/CardModal';
 import CardCarousel from '../components/CardCarousel';
 import { useToast } from '@/hooks/use-toast';
+import useTelegramWebApp from '../hooks/useTelegramWebApp';
 import { cardsData, Card } from '../data/cards';
 
 interface Category {
@@ -18,7 +19,7 @@ const Collection = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showCardModal, setShowCardModal] = useState(false);
-  const [currentCardName, setCurrentCardName] = useState(''); // Добавляем состояние для имени текущей карты
+  const [currentCardName, setCurrentCardName] = useState('');
   const { toast } = useToast();
 
   const [cards, setCards] = useState<Card[]>(cardsData);
@@ -91,6 +92,8 @@ const Collection = () => {
     setCurrentCardName(card.name);
   };
 
+  const { isTelegramWebApp } = useTelegramWebApp();
+
   // Если выбрана категория, показываем карусель карт
   if (selectedCategory) {
     const categoryData = categories.find(cat => cat.id === selectedCategory);
@@ -100,12 +103,14 @@ const Collection = () => {
         <div className="p-10">
           {/* Header с кнопкой назад */}
           <div className="flex items-center gap-4 mb-6">
-            <button
-              onClick={handleBackToCategories}
-              className="p-2 rounded-lg bg-gray-800 border border-gray-700 hover:bg-gray-700 transition-colors"
-            >
-              <ArrowLeft size={20} className="text-white" />
-            </button>
+            {!isTelegramWebApp && (
+              <button
+                onClick={handleBackToCategories}
+                className="p-2 rounded-lg bg-gray-800 border border-gray-700 hover:bg-gray-700 transition-colors"
+              >
+                <ArrowLeft size={20} className="text-white" />
+              </button>
+            )}
             <div className="flex items-center gap-3">
               {categoryData?.icon}
               <h1 className="text-2xl font-bold text-white">{categoryData?.label}</h1>
