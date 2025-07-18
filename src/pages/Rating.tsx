@@ -24,18 +24,14 @@ const Rating = () => {
   return (
     <div className="min-h-screen bg-f1-gradient-dark pb-20">
       {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 bg-f1-gray/95 backdrop-blur-lg border-b border-f1-gray-light/50 z-40">
-        <div className="p-4 pt-12">
-          <div className="flex items-center justify-between">
-            <Link to="/" className="p-2 rounded-lg bg-gray-800/50 transition-colors">
-              <ChevronLeft className="text-white" size={24} />
-            </Link>
+      <div className="fixed top-0 left-0 right-0 bg-gradient-to-b from-black via-black/80 to-transparent z-40">
+        <div className="p-4 pt-[3.75rem]">
+          <div className="flex items-center justify-center">
             <h1 className="text-xl font-bold text-white">Рейтинг</h1>
-            <div className="w-10 h-10" /> {/* Spacer */}
           </div>
         </div>
       </div>
-
+      
       <div className="pt-32 p-4 space-y-6">
         {/* User's Rating */}
         <div className="f1-card p-4 flex items-center justify-between">
