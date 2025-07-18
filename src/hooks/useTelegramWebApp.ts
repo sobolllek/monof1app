@@ -14,10 +14,7 @@ const defaultConfig: TelegramWebAppConfig = {
     '/collection', 
     '/market',
     '/trades',
-    '/games',
-    '/rating',
-    '/profile',
-    '/notifications'
+    '/games'
   ],
   enableClosingConfirmation: false,
   autoExpand: true
