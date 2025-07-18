@@ -57,7 +57,7 @@ const Notifications = () => {
     <div className="min-h-screen bg-f1-gradient-dark pb-20">
       {/* Шапка*/}
       <div className="fixed top-0 left-0 right-0 bg-gradient-to-b from-black via-black/80 to-transparent z-40">
-        <div className="p-4 pt-14">
+        <div className="p-4 pt-15">
           <div className="flex items-center justify-center">
             <h1 className="text-xl font-bold text-white">Уведомления</h1>
           </div>
