@@ -1,12 +1,8 @@
-import { useState } from 'react';
-import { ArrowLeft, User, MapPin, Car, Calendar, Trophy } from 'lucide-react';
+import { User, MapPin, Car, Calendar, Trophy } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import Navigation from '../components/Navigation';
-import CardModal from '../components/CardModal';
-import CardCarousel from '../components/CardCarousel';
-import { useToast } from '@/hooks/use-toast';
-import useTelegramWebApp from '../hooks/useTelegramWebApp';
-import { cardsData, Card } from '../data/cards';
+import { cardsData } from '../data/cards';
+import { Link } from 'react-router-dom';
 
 interface Category {
   id: string;
@@ -16,13 +12,7 @@ interface Category {
 }
 
 const Collection = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
-  const [showCardModal, setShowCardModal] = useState(false);
-  const [currentCardName, setCurrentCardName] = useState('');
-  const { toast } = useToast();
-
-  const [cards, setCards] = useState<Card[]>(cardsData);
+  const cards = cardsData;
 
   const categories: Category[] = [
     { 
@@ -57,88 +47,6 @@ const Collection = () => {
     },
   ];
 
-  const filteredCards = cards.filter(card => {
-    if (selectedCategory && card.category !== selectedCategory) return false;
-    return true;
-  });
-
-  const handleCardClick = (card: Card) => {
-    setSelectedCard(card);
-    setShowCardModal(true);
-  };
-
-  const handleSellCard = (cardId: number, price: number) => {
-    setCards(cards.filter(card => card.id !== cardId));
-    toast({
-      title: "Карта продана!",
-      description: `Вы получили ${price} монет за продажу карты.`,
-    });
-  };
-
-  const handleGiftCard = (cardId: number, playerName: string) => {
-    setCards(cards.filter(card => card.id !== cardId));
-    toast({
-      title: "Карта подарена!",
-      description: `Карта успешно отправлена игроку ${playerName}.`,
-    });
-  };
-
-  const handleBackToCategories = () => {
-    setSelectedCategory(null);
-  };
-
-  // Функция для обновления имени текущей карты
-  const updateCurrentCardName = (card: Card) => {
-    setCurrentCardName(card.name);
-  };
-
-  const { isTelegramWebApp } = useTelegramWebApp();
-
-  // Если выбрана категория, показываем карусель карт
-  if (selectedCategory) {
-    const categoryData = categories.find(cat => cat.id === selectedCategory);
-    
-    return (
-      <div className="min-h-screen bg-black pb-20">
-        <div className="p-10">
-          {/* Header с кнопкой назад */}
-          <div className="flex items-center gap-4 mb-6">
-            {!isTelegramWebApp && (
-              <button
-                onClick={handleBackToCategories}
-                className="p-2 rounded-lg bg-gray-800 border border-gray-700 hover:bg-gray-700 transition-colors"
-              >
-                <ArrowLeft size={20} className="text-white" />
-              </button>
-            )}
-            <div className="flex items-center gap-3">
-              {categoryData?.icon}
-              <h1 className="text-2xl font-bold text-white">{categoryData?.label}</h1>
-            </div>
-          </div>
-
-          {/* Карусель карт с передачей функции обновления имени */}
-          <CardCarousel 
-            cards={filteredCards} 
-            onCardClick={handleCardClick} 
-            onCardChange={updateCurrentCardName} 
-          />
-        </div>
-
-        <CardModal
-          card={selectedCard}
-          isOpen={showCardModal}
-          onClose={() => setShowCardModal(false)}
-          onSell={handleSellCard}
-          onGift={handleGiftCard}
-        />
-
-        <Navigation />
-      </div>
-    );
-  }
-
-  // Главный экран с выбором категорий
   return (
     <div className="min-h-screen bg-black pb-20">
       <PageHeader 
@@ -168,10 +76,10 @@ const Collection = () => {
         {/* Список категорий */}
         <div className="space-y-3">
           {categories.map((category) => (
-            <button
+            <Link
               key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className="w-full f1-card p-4 hover:bg-gray-800/80 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              to={`/collection/${category.id}`}
+              className="w-full f1-card p-4 hover:bg-gray-800/80 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] block"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
@@ -189,7 +97,7 @@ const Collection = () => {
                   </svg>
                 </div>
               </div>
-            </button>
+            </Link>
           ))}
         </div>
       </div>
