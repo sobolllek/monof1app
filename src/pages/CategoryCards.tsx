@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cardsData } from '../data/cards';
 import CardCarousel from '../components/CardCarousel';
@@ -15,6 +14,14 @@ const CategoryCards = () => {
   const [currentCardName, setCurrentCardName] = useState('');
   const [cards, setCards] = useState<Card[]>(cardsData.filter(card => card.category === categoryId));
   const { toast } = useToast();
+
+  const categoryNames = {
+    drivers: 'Пилоты',
+    circuits: 'Трассы',
+    cars: 'Болиды',
+    history: 'История',
+    special: 'Особые'
+  };
 
   const handleCardClick = (card: Card) => {
     setSelectedCard(card);
@@ -41,31 +48,20 @@ const CategoryCards = () => {
     setCurrentCardName(card.name);
   };
 
-  // Получаем название категории для заголовка
-  const getCategoryName = () => {
-    switch (categoryId) {
-      case 'drivers': return 'Пилоты';
-      case 'circuits': return 'Трассы';
-      case 'cars': return 'Болиды';
-      case 'history': return 'История';
-      case 'special': return 'Особые';
-      default: return 'Категория';
-    }
-  };
-
   return (
     <div className="min-h-screen bg-black pb-20">
-      <div className="p-10">
-        <div className="flex items-center gap-4 mb-6">
-          <a
-            href="/collection"
-            className="p-2 rounded-lg bg-gray-800 border border-gray-700 hover:bg-gray-700 transition-colors"
-          >
-            <ArrowLeft size={20} className="text-white" />
-          </a>
-          <h1 className="text-2xl font-bold text-white">{getCategoryName()}</h1>
+      <header className="fixed top-0 left-0 right-0 bg-gradient-to-b from-black via-black/80 to-transparent z-40">
+        <div className="p-4 pt-[3.75rem]">
+          <div className="flex items-center justify-center">
+            <h1 className="text-xl font-bold text-white">
+              {categoryNames[categoryId as keyof typeof categoryNames] || 'Коллекция'}
+            </h1>
+          </div>
         </div>
+      </header>
 
+      {/* Основной контент с отступом сверху */}
+      <div className="pt-32 px-4">
         <CardCarousel 
           cards={cards} 
           onCardClick={handleCardClick} 
