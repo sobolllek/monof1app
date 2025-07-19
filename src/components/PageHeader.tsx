@@ -25,7 +25,7 @@ const PageHeader = ({
   const shouldShowBack = showBack && !isTelegramWebApp;
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50">
+    <header className="fixed top-[var(--tg-viewport-stable-inset-top,0)] left-0 w-full z-50 bg-background/80 backdrop-blur-sm">
       {/* Градиент сверху (аналогичный Layout) */}
       <div className="absolute top-0 left-0 w-full h-36 bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none" />
       
