@@ -29,7 +29,7 @@ const PageHeader = ({
       const systemHeaderHeight = webApp.platform === 'ios' ? 44 : 48;
       
       // Дополнительный отступ (например, 16px)
-      const customPadding = 24;
+      const customPadding = 32;
       
       // Итоговый отступ = высота системного заголовка + дополнительный padding
       const totalOffset = systemHeaderHeight + customPadding;
