@@ -28,24 +28,33 @@ const PageHeader = ({
       const systemHeaderHeight = webApp.platform === 'ios' ? 44 : 48;
       const customPadding = 36;
       const totalOffset = systemHeaderHeight + customPadding;
-      
       setHeaderOffset(`${totalOffset}px`);
     }
   }, [isTelegramWebApp, webApp]);
+
   const shouldShowBack = showBack && !isTelegramWebApp;
 
   return (
     <header 
-      className="fixed left-0 w-full z-50 bg-transparent"
+      className="fixed left-0 w-full z-50"
       style={{ 
-        top: headerOffset, // Фиксированный отступ от верха (системные кнопки + padding)
+        top: headerOffset,
       }}
     >
-      {/* Градиент сверху (аналогичный Layout) */}
-      <div className="absolute top-0 left-0 w-full h-36 bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none -z-10" />
+      {/* Чёрная подложка под системными кнопками */}
+      <div 
+        className="absolute left-0 w-full bg-black"
+        style={{
+          top: `calc(-1 * ${headerOffset})`,
+          height: headerOffset,
+        }}
+      />
       
-      {/* Контент шапки */}
-      <div className="relative flex items-center justify-between px-4 py-3">
+      {/* Градиентный переход (опционально) */}
+      <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-black to-transparent pointer-events-none -z-10" />
+      
+      {/* Контент заголовка */}
+      <div className="relative flex items-center justify-between px-4 py-3 bg-black">
         <div className="flex items-center gap-3">
           {shouldShowBack && (
             <button
