@@ -25,20 +25,13 @@ const PageHeader = ({
 
   useEffect(() => {
     if (isTelegramWebApp && webApp) {
-      // Высота системного заголовка Telegram (iOS: ~44px, Android: ~48px)
       const systemHeaderHeight = webApp.platform === 'ios' ? 44 : 48;
-      
-      // Дополнительный отступ (например, 16px)
-      const customPadding = 32;
-      
-      // Итоговый отступ = высота системного заголовка + дополнительный padding
+      const customPadding = 36;
       const totalOffset = systemHeaderHeight + customPadding;
       
       setHeaderOffset(`${totalOffset}px`);
     }
   }, [isTelegramWebApp, webApp]);
-
-  // В Telegram WebApp скрываем кнопку назад, так как есть системная
   const shouldShowBack = showBack && !isTelegramWebApp;
 
   return (
