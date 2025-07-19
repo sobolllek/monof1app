@@ -51,10 +51,10 @@ const PageHeader = ({
       />
       
       {/* Градиентный переход (опционально) */}
-      <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-black to-transparent pointer-events-none -z-10" />
+      <div className="absolute top-0 left-0 w-full h-36 bg-gradient-to-b from-black to-transparent pointer-events-none -z-10" />
       
       {/* Контент заголовка */}
-      <div className="relative flex items-center justify-between px-4 py-3 bg-black">
+      <div className="relative flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
           {shouldShowBack && (
             <button
