@@ -14,9 +14,9 @@ const InfoButton = ({ title, description }: InfoButtonProps) => {
     <div className="relative">
       <button
         onClick={() => setShowInfo(!showInfo)}
-        className="p-2 rounded-lg hover:bg-gray-800/50 transition-colors"
+        className="p-2 rounded-lg transition-colors focus:outline-none hover:bg-transparent active:bg-transparent"
       >
-        <Info size={20} className="text-gray-400 hover:text-white transition-colors" />
+        <Info size={20} className="text-gray-400" />
       </button>
       
       {showInfo && (
