@@ -1,78 +1,69 @@
 import { Info } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface InfoButtonProps {
   title: string;
   description: string;
-  autoCloseDelay?: number; 
-  fadeDuration?: number;    
+  autoCloseDelay?: number;
 }
 
 const InfoButton = ({ 
   title, 
   description, 
-  autoCloseDelay = 2000,
-  fadeDuration = 5000 
+  autoCloseDelay = 5000 
 }: InfoButtonProps) => {
-  const [showInfo, setShowInfo] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const showPanel = () => {
+    // Сбрасываем предыдущий таймер
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    
+    // Показываем панель
+    setIsVisible(true);
+    
+    // Устанавливаем таймер на автоматическое закрытие
+    timeoutRef.current = setTimeout(() => {
+      setIsVisible(false);
+    }, autoCloseDelay);
+  };
+
+  const hidePanel = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setIsVisible(false);
+  };
 
   useEffect(() => {
-    let autoCloseTimer: NodeJS.Timeout;
-    let fadeOutTimer: NodeJS.Timeout;
-
-    if (showInfo && !isClosing) {
-      autoCloseTimer = setTimeout(() => {
-        setIsClosing(true);
-        fadeOutTimer = setTimeout(() => setShowInfo(false), fadeDuration);
-      }, autoCloseDelay);
-    }
-
+    // Очистка таймера при размонтировании
     return () => {
-      clearTimeout(autoCloseTimer);
-      clearTimeout(fadeOutTimer);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, [showInfo, isClosing, autoCloseDelay, fadeDuration]);
-
-  const handleToggle = () => {
-    if (showInfo) {
-      setIsClosing(true);
-      setTimeout(() => setShowInfo(false), fadeDuration);
-    } else {
-      setShowInfo(true);
-      setIsClosing(false);
-    }
-  };
-
-  const handleOverlayClick = () => {
-    setIsClosing(true);
-    setTimeout(() => setShowInfo(false), fadeDuration);
-  };
+  }, []);
 
   return (
     <div className="relative">
       <button
-        onClick={handleToggle}
-        className="p-2 rounded-lg transition-colors focus:outline-none hover:bg-transparent active:bg-transparent"
+        onClick={showPanel}
+        className="p-2 rounded-lg focus:outline-none hover:bg-transparent active:bg-transparent"
       >
         <Info size={20} className="text-gray-400" />
       </button>
       
-      {(showInfo || isClosing) && (
+      {isVisible && (
         <>
-          {/* Оверлей (фон) */}
           <div 
-            className={`fixed inset-0 z-40 transition-opacity duration-[${fadeDuration}ms] ${
-              isClosing ? 'opacity-0' : 'opacity-100'
-            }`}
-            onClick={handleOverlayClick}
+            className="fixed inset-0 z-40 bg-black/20"
+            onClick={hidePanel}
           />
           
-          {/* Информационная панель */}
           <div 
-            className={`absolute right-0 top-12 w-72 bg-gray-900/95 border border-gray-700/50 rounded-xl p-4 z-50 backdrop-blur-lg shadow-2xl transition-opacity duration-[${fadeDuration}ms] ${
-              isClosing ? 'opacity-0' : 'opacity-100'
-            }`}
+            className="absolute right-0 top-12 w-72 bg-gray-900/95 border border-gray-700/50 rounded-xl p-4 z-50 backdrop-blur-lg shadow-2xl animate-fadeIn"
           >
             <h3 className="text-white font-semibold mb-2">{title}</h3>
             <p className="text-gray-300 text-sm">{description}</p>
