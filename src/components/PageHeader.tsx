@@ -2,6 +2,7 @@ import { ArrowLeft, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import InfoButton from './InfoButton';
 import useTelegramWebApp from '../hooks/useTelegramWebApp';
+import { useEffect, useState } from 'react';
 
 interface PageHeaderProps {
   title: string;
@@ -19,18 +20,33 @@ const PageHeader = ({
   infoDescription
 }: PageHeaderProps) => {
   const navigate = useNavigate();
-  const { isTelegramWebApp } = useTelegramWebApp();
+  const { isTelegramWebApp, webApp } = useTelegramWebApp();
+  const [headerHeight, setHeaderHeight] = useState('0px');
+
+  useEffect(() => {
+    if (isTelegramWebApp && webApp) {
+      // Получаем высоту системного заголовка Telegram
+      const tgHeaderHeight = webApp.platform === 'ios' ? 44 : 48;
+      setHeaderHeight(`${tgHeaderHeight}px`);
+    }
+  }, [isTelegramWebApp, webApp]);
 
   // В Telegram WebApp скрываем кнопку назад, так как есть системная
   const shouldShowBack = showBack && !isTelegramWebApp;
 
   return (
-    <header className="fixed top-[var(--tg-viewport-stable-inset-top,0)] left-0 w-full z-50 bg-background/80 backdrop-blur-sm">
+    <header 
+      className="fixed left-0 w-full z-50"
+      style={{ 
+        top: headerHeight,
+        paddingTop: '16px' // Фиксированный отступ от системных кнопок
+      }}
+    >
       {/* Градиент сверху (аналогичный Layout) */}
       <div className="absolute top-0 left-0 w-full h-36 bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none" />
       
       {/* Контент шапки */}
-      <div className="relative flex items-center justify-between p-4">
+      <div className="relative flex items-center justify-between px-4 pb-4">
         <div className="flex items-center gap-3">
           {shouldShowBack && (
             <button
