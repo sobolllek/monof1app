@@ -37,7 +37,7 @@ const Navigation = ({
   }
 
   return (
-    <nav className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 w-max mx-auto">
+    <nav className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-max mx-auto">
       {/* Черное стекло с полным закруглением */}
       <div className={`
         bg-black/80 backdrop-blur-sm border border-gray-700/30
