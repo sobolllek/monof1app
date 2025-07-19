@@ -1,7 +1,21 @@
 import { Home, Package, ShoppingCart, Gamepad2, ArrowRightLeft } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 
-const Navigation = () => {
+type TabbarProps = {
+  height?: string;
+  width?: string;
+  iconSize?: number;
+  iconPadding?: string;
+  spacing?: string;
+};
+
+const Navigation = ({
+  height = 'py-3',
+  width = 'px-4', 
+  iconSize = 24,
+  iconPadding = 'p-3',
+  spacing = 'mx-1'
+}: TabbarProps) => {
   const location = useLocation();
   
   const navItems = [
@@ -24,10 +38,12 @@ const Navigation = () => {
 
   return (
     <nav className="fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 w-max mx-auto">
-      {/* Градиентная обводка */}
-      <div className="p-[1.5px] rounded-full bg-gradient-to-t from-[#3D3D3D] to-black">
-        {/* Основной фон таббара (черное стекло) */}
-        <div className="flex justify-around items-center py-3 px-8 bg-black/80 backdrop-blur-sm rounded-full shadow-lg">
+      {/* Черное стекло с полным закруглением */}
+      <div className={`
+        bg-black/80 backdrop-blur-sm border border-gray-700/30
+        rounded-full shadow-lg ${height} ${width}
+      `}>
+        <div className="flex justify-around items-center h-full">
           {navItems.map(({ path, icon: Icon, exact }) => {
             const isActive = exact
               ? location.pathname === path
@@ -37,13 +53,13 @@ const Navigation = () => {
               <Link
                 key={path}
                 to={path}
-                className="flex flex-col items-center p-3 mx-1"
-                style={{ transition: 'none' }}
+                className={`flex flex-col items-center ${iconPadding} ${spacing}`}
               >
-                {/* Иконки с абсолютной непрозрачностью */}
-                <div className={isActive ? "text-white" : "text-[#3D3D3D]"}>
-                  <Icon size={24} className="opacity-100" /> 
-                </div>
+                <Icon 
+                  size={iconSize} 
+                  className={isActive ? 'text-white' : 'text-[#3D3D3D]'} 
+                  strokeWidth={isActive ? 2 : 1.5}
+                />
               </Link>
             );
           })}
