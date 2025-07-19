@@ -26,7 +26,7 @@ const PageHeader = ({
   useEffect(() => {
     if (isTelegramWebApp && webApp) {
       const systemHeaderHeight = webApp.platform === 'ios' ? 44 : 48;
-      const customPadding = 36;
+      const customPadding = 40;
       const totalOffset = systemHeaderHeight + customPadding;
       setHeaderOffset(`${totalOffset}px`);
     }
@@ -41,21 +41,31 @@ const PageHeader = ({
         top: headerOffset,
       }}
     >
-      {/* Чёрная подложка под системными кнопками */}
+      {/* Плавная подложка с градиентом от середины системных кнопок */}
       <div 
-        className="absolute left-0 w-full bg-black"
+        className="absolute left-0 w-full pointer-events-none"
         style={{
-          top: `calc(-1 * ${headerOffset} + 0px)`, 
-          height: `calc(${headerOffset} + 40px)`, // Увеличиваем высоту
-          maskImage: "linear-gradient(to bottom, black 80%, transparent 100%)",
-          WebkitMaskImage: "linear-gradient(to bottom, black 80%, transparent 100%)",
+          top: `calc(-1 * ${headerOffset})`,
+          height: `calc(${headerOffset} * 2)`,
+          background: `
+            linear-gradient(
+              to bottom,
+              rgba(0, 0, 0, 1) 0%,
+              rgba(0, 0, 0, 0.98) 15%,
+              rgba(0, 0, 0, 0.95) 30%,
+              rgba(0, 0, 0, 0.9) 45%,
+              rgba(0, 0, 0, 0.8) 60%,
+              rgba(0, 0, 0, 0.6) 75%,
+              rgba(0, 0, 0, 0.4) 85%,
+              rgba(0, 0, 0, 0.2) 92%,
+              rgba(0, 0, 0, 0.1) 96%,
+              rgba(0, 0, 0, 0) 100%
+            )
+          `,
         }}
       />
       
-      {/* Градиентный переход (опционально) */}
-      <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-black to-transparent pointer-events-none -z-10" />
-      
-      {/* Контент заголовка */}
+      {/* Основной контент заголовка */}
       <div className="relative flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
           {shouldShowBack && (
