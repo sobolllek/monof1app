@@ -45,8 +45,10 @@ const PageHeader = ({
       <div 
         className="absolute left-0 w-full bg-black"
         style={{
-          top: `calc(-1 * ${headerOffset})`,
-          height: headerOffset,
+          top: `calc(-1 * ${headerOffset} + 10px)`, // Начинаем на 10px раньше
+          height: `calc(${headerOffset} + 20px)`, // Увеличиваем высоту
+          maskImage: "linear-gradient(to bottom, black 80%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to bottom, black 80%, transparent 100%)",
         }}
       />
       
