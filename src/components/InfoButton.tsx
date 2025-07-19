@@ -11,7 +11,7 @@ interface InfoButtonProps {
 const InfoButton = ({ 
   title, 
   description, 
-  autoCloseDelay = 5000,
+  autoCloseDelay = 2000,
   fadeDuration = 700
 }: InfoButtonProps) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -47,7 +47,7 @@ const InfoButton = ({
       
       {(isVisible || isClosing) && (
         <div 
-          className={`absolute right-0 top-12 w-72 bg-gray-900/95 border border-gray-700/50 rounded-xl p-4 z-50 shadow-lg transition-opacity duration-${fadeDuration} ${
+          className={`absolute right-0 top-12 w-72 bg-black/80 backdrop-blur-sm border border-gray-700/30 rounded-xl p-4 z-50 shadow-lg transition-opacity duration-${fadeDuration} ${
             isClosing ? 'opacity-0' : 'opacity-100'
           }`}
         >
