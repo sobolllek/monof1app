@@ -25,9 +25,9 @@ const Navigation = () => {
   return (
     <nav className="fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 w-max mx-auto">
       {/* Градиентная обводка */}
-      <div className="p-[1.5px] rounded-full bg-gradient-to-t from-[#3D3D3D] to-black/80">
+      <div className="p-[1.5px] rounded-full bg-gradient-to-t from-[#3D3D3D] to-black">
         {/* Основной фон таббара (черное стекло) */}
-        <div className="flex justify-around items-center py-2.5 px-6 bg-black/80 backdrop-blur-sm rounded-full shadow-lg">
+        <div className="flex justify-around items-center py-3 px-8 bg-black/80 backdrop-blur-sm rounded-full shadow-lg">
           {navItems.map(({ path, icon: Icon, exact }) => {
             const isActive = exact
               ? location.pathname === path
@@ -37,12 +37,12 @@ const Navigation = () => {
               <Link
                 key={path}
                 to={path}
-                className="flex flex-col items-center p-2.5 mx-0.5"
+                className="flex flex-col items-center p-3 mx-1"
                 style={{ transition: 'none' }}
               >
                 {/* Иконки с абсолютной непрозрачностью */}
                 <div className={isActive ? "text-white" : "text-[#3D3D3D]"}>
-                  <Icon size={22} className="opacity-100" /> 
+                  <Icon size={24} className="opacity-100" /> 
                 </div>
               </Link>
             );
