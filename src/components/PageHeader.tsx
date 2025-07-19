@@ -21,13 +21,20 @@ const PageHeader = ({
 }: PageHeaderProps) => {
   const navigate = useNavigate();
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
-  const [headerHeight, setHeaderHeight] = useState('0px');
+  const [headerOffset, setHeaderOffset] = useState('0px');
 
   useEffect(() => {
     if (isTelegramWebApp && webApp) {
-      // Получаем высоту системного заголовка Telegram
-      const tgHeaderHeight = webApp.platform === 'ios' ? 44 : 48;
-      setHeaderHeight(`${tgHeaderHeight}px`);
+      // Высота системного заголовка Telegram (iOS: ~44px, Android: ~48px)
+      const systemHeaderHeight = webApp.platform === 'ios' ? 44 : 48;
+      
+      // Дополнительный отступ (например, 16px)
+      const customPadding = 16;
+      
+      // Итоговый отступ = высота системного заголовка + дополнительный padding
+      const totalOffset = systemHeaderHeight + customPadding;
+      
+      setHeaderOffset(`${totalOffset}px`);
     }
   }, [isTelegramWebApp, webApp]);
 
@@ -36,17 +43,16 @@ const PageHeader = ({
 
   return (
     <header 
-      className="fixed left-0 w-full z-50"
+      className="fixed left-0 w-full z-50 bg-transparent"
       style={{ 
-        top: headerHeight,
-        paddingTop: '16px' // Фиксированный отступ от системных кнопок
+        top: headerOffset, // Фиксированный отступ от верха (системные кнопки + padding)
       }}
     >
       {/* Градиент сверху (аналогичный Layout) */}
-      <div className="absolute top-0 left-0 w-full h-36 bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-36 bg-gradient-to-b from-black via-black/80 to-transparent pointer-events-none -z-10" />
       
       {/* Контент шапки */}
-      <div className="relative flex items-center justify-between px-4 pb-4">
+      <div className="relative flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
           {shouldShowBack && (
             <button
