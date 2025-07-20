@@ -169,7 +169,7 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
       {/* Название текущей карты (единственное место) */}
       <div className="text-center mb-4 h-6">
         <p className="text-white text-lg font-medium">
