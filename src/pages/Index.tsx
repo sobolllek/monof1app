@@ -1,36 +1,19 @@
-
-import { Bell, User, Settings } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import StatsCard from '../components/StatsCard';
 import DailyPacksSection from '../components/DailyPacksSection';
 import MyPacksSection from '../components/MyPacksSection';
+import PageHeader from '../components/PageHeader';
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-black pb-20">
+    <div className="min-h-screen bg-f1-gradient-dark pb-20">
       {/* Header */}
-      <header className="flex items-center justify-between p-4 pt-12">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Formula 1 Cards</h1>
-          <p className="text-gray-400">Собирайте и торгуйте картами</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link 
-            to="/notifications" 
-            className="p-2 rounded-lg bg-f1-gray hover:bg-f1-gray-light/50 transition-colors"
-          >
-            <Bell className="text-white" size={20} />
-          </Link>
-          <Link 
-            to="/profile" 
-            className="p-2 rounded-lg bg-f1-gray hover:bg-f1-gray-light/50 transition-colors"
-          >
-            <User className="text-white" size={20} />
-          </Link>
-        </div>
-      </header>
-
+      <PageHeader 
+        title="Formula 1 Cards" 
+        showNotifications
+        showProfile
+      />
       <div className="px-4 space-y-6">
         {/* Weekly Rating */}
         <Link 
