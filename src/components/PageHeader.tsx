@@ -1,5 +1,5 @@
-import { ArrowLeft, Settings, Bell, User } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import InfoButton from './InfoButton';
 import useTelegramWebApp from '../hooks/useTelegramWebApp';
 import { useEffect, useState } from 'react';
@@ -8,8 +8,6 @@ interface PageHeaderProps {
   title: string;
   showBack?: boolean;
   showSettings?: boolean;
-  showNotifications?: boolean;
-  showProfile?: boolean;
   infoTitle?: string;
   infoDescription?: string;
 }
@@ -18,8 +16,6 @@ const PageHeader = ({
   title, 
   showBack = false, 
   showSettings = false,
-  showNotifications = false,
-  showProfile = false,
   infoTitle,
   infoDescription
 }: PageHeaderProps) => {
@@ -45,7 +41,7 @@ const PageHeader = ({
         top: headerOffset,
       }}
     >
-      {/* Плавная подложка с градиентом */}
+      {/* Плавная подложка с градиентом от середины системных кнопок */}
       <div 
         className="absolute left-0 w-full pointer-events-none"
         style={{
@@ -87,25 +83,6 @@ const PageHeader = ({
           {infoTitle && infoDescription && (
             <InfoButton title={infoTitle} description={infoDescription} />
           )}
-          
-          {showNotifications && (
-            <Link 
-              to="/notifications" 
-              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-            >
-              <Bell size={20} />
-            </Link>
-          )}
-          
-          {showProfile && (
-            <Link 
-              to="/profile" 
-              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-            >
-              <User size={20} />
-            </Link>
-          )}
-          
           {showSettings && (
             <button className="p-2 rounded-lg hover:bg-white/10 transition-colors">
               <Settings size={20} />
