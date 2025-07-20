@@ -12,7 +12,7 @@ type TabbarProps = {
 const Navigation = ({
   height = 'py-3',
   width = 'px-4', 
-  iconSize = 26,
+  iconSize = 28,
   iconPadding = 'p-3',
   spacing = 'mx-1'
 }: TabbarProps) => {
@@ -20,10 +20,10 @@ const Navigation = ({
   
   const navItems = [
     { path: '/', icon: Home, exact: true },
-    { path: '/collection', icon: Package },
-    { path: '/market', icon: ShoppingCart },
-    { path: '/trades', icon: ArrowRightLeft },
-    { path: '/games', icon: Gamepad2 },
+    { path: '/collection', icon: Package, exact: true }, 
+    { path: '/market', icon: ShoppingCart, exact: true },
+    { path: '/trades', icon: ArrowRightLeft, exact: true },
+    { path: '/games', icon: Gamepad2, exact: true },
   ];
 
   const shouldShowTabbar = navItems.some(item => 
@@ -38,7 +38,6 @@ const Navigation = ({
 
   return (
     <nav className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-max mx-auto">
-      {/* Черное стекло с полным закруглением */}
       <div className={`
         bg-black/80 backdrop-blur-sm border border-gray-700/30
         rounded-full shadow-lg ${height} ${width}
