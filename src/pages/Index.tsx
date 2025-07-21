@@ -14,7 +14,7 @@ const Index = () => {
         showNotifications
         showProfile
       />
-      <div className="px-4 space-y-6">
+      <div className="px-4 space-y-6 pt-32">
         {/* Weekly Rating */}
         <Link 
           to="/rating"

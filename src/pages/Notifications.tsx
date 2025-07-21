@@ -65,7 +65,7 @@ const Notifications = () => {
       </div>
       
       {hasNotifications ? (
-        <div className="p-4">
+        <div className="p-4 pt-20">
           {/* Tabs */}
           <div className="flex gap-2 mb-6">
             <button

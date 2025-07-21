@@ -55,7 +55,7 @@ const Collection = () => {
         infoDescription="Здесь хранятся все ваши карты F1. Собирайте карты пилотов, команд, болидов и трасс. Каждая карта имеет свою редкость и уникальные характеристики."
       />
       
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 pt-32">
         {/* Статистика коллекции */}
         <div className="f1-card p-4">
           <h3 className="text-lg font-semibold mb-4">Статистика коллекции</h3>

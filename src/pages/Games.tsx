@@ -57,14 +57,14 @@ const Games = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black pb-20">
+    <div className="min-h-screen bg-f1-gradient-dark pb-20">
       <PageHeader 
         title="Игры" 
         infoTitle="Игры и развлечения"
         infoDescription="Здесь собраны все игровые активности, включая мета-функции и мини-игры для заработка монет."
       />
 
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 pt-32">
         {/* Meta Features */}
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-white">Флагманские функции</h2>

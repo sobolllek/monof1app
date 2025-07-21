@@ -210,7 +210,7 @@ const Trades = () => {
         infoDescription="Здесь вы можете обмениваться картами с другими игроками. Создавайте предложения, ищите нужные карты и заключайте выгодные сделки. Все обмены безопасны и мгновенны."
       />
       
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 pt-32">
         {/* Поиск и фильтры */}
         <div className="space-y-4">
           <div className="relative">

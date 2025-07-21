@@ -281,7 +281,7 @@ const Market = () => {
         infoDescription="Покупайте паки и лимитированные карты за Telegram Stars, торгуйте картами с другими игроками за монеты, участвуйте в аукционах для получения редких карт."
       />
       
-      <div className="p-4 space-y-6">
+      <div className="p-4 space-y-6 pt-32">
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <div className="text-2xl font-bold text-white">102</div>

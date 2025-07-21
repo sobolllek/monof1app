@@ -128,7 +128,7 @@ const DailyRoulette = () => {
        </div>
       </header>
 
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-4 relative z-10">
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-4 relative z-10 pt-32">
         {/* Title */}
         <h2 className="text-2xl font-bold mb-2 text-center">
           Испытай удачу прямо сейчас!
