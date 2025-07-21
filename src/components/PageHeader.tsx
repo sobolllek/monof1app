@@ -12,6 +12,7 @@ interface PageHeaderProps {
   showProfile?: boolean;
   infoTitle?: string;
   infoDescription?: string;
+  disableGradient?: boolean; // Новый пропс для отключения градиента
 }
 
 const PageHeader = ({ 
@@ -21,7 +22,8 @@ const PageHeader = ({
   showNotifications = false,
   showProfile = false,
   infoTitle,
-  infoDescription
+  infoDescription,
+  disableGradient = false // По умолчанию градиент включен
 }: PageHeaderProps) => {
   const navigate = useNavigate();
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
@@ -45,29 +47,31 @@ const PageHeader = ({
         top: headerOffset,
       }}
     >
-      {/* Плавная подложка с градиентом */}
-      <div 
-        className="absolute left-0 w-full pointer-events-none"
-        style={{
-          top: `calc(-1 * ${headerOffset})`,
-          height: `calc(${headerOffset} * 2)`,
-          background: `
-            linear-gradient(
-              to bottom,
-              rgba(0, 0, 0, 1) 0%,
-              rgba(0, 0, 0, 0.98) 15%,
-              rgba(0, 0, 0, 0.95) 30%,
-              rgba(0, 0, 0, 0.9) 45%,
-              rgba(0, 0, 0, 0.8) 60%,
-              rgba(0, 0, 0, 0.6) 75%,
-              rgba(0, 0, 0, 0.4) 85%,
-              rgba(0, 0, 0, 0.2) 92%,
-              rgba(0, 0, 0, 0.1) 96%,
-              rgba(0, 0, 0, 0) 100%
-            )
-          `,
-        }}
-      />
+      {/* Плавная подложка с градиентом (только если не отключена) */}
+      {!disableGradient && (
+        <div 
+          className="absolute left-0 w-full pointer-events-none"
+          style={{
+            top: `calc(-1 * ${headerOffset})`,
+            height: `calc(${headerOffset} * 2)`,
+            background: `
+              linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 1) 0%,
+                rgba(0, 0, 0, 0.98) 15%,
+                rgba(0, 0, 0, 0.95) 30%,
+                rgba(0, 0, 0, 0.9) 45%,
+                rgba(0, 0, 0, 0.8) 60%,
+                rgba(0, 0, 0, 0.6) 75%,
+                rgba(0, 0, 0, 0.4) 85%,
+                rgba(0, 0, 0, 0.2) 92%,
+                rgba(0, 0, 0, 0.1) 96%,
+                rgba(0, 0, 0, 0) 100%
+              )
+            `,
+          }}
+        />
+      )}
       
       {/* Основной контент заголовка */}
       <div className="relative flex items-center justify-between px-4 py-3">
