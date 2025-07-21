@@ -61,7 +61,7 @@ const Collection = () => {
       {/* Фиксированный заголовок */}
       <div className="fixed top-0 left-0 right-0 z-40">
         <PageHeader 
-          title="Коллекция карт" 
+          title="Collection" 
           infoTitle="О коллекции"
           infoDescription="Здесь хранятся все ваши карты F1. Собирайте карты пилотов, команд, болидов и трасс. Каждая карта имеет свою редкость и уникальные характеристики."
           showBack={true}
