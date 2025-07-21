@@ -4,25 +4,18 @@ import TelegramNavigationHandler from "./TelegramNavigationHandler";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
-
   const isCollectionPage = location.pathname.startsWith("/collection/");
 
   return (
     <div
       className={`relative w-full text-white overflow-x-hidden ${
-        isCollectionPage ? "h-screen overflow-hidden bg-black" : "min-h-screen bg-black"
+        isCollectionPage ? "h-screen overflow-y-auto bg-black" : "min-h-screen bg-black"
       }`}
     >
       <TelegramNavigationHandler />
 
       {/* Контент */}
-      <div
-        className={`${
-          isCollectionPage
-            ? "w-full h-full" // Полноэкранный без отступов
-            : "w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6"
-        }`}
-      >
+      <div className={isCollectionPage ? "w-full h-full" : "w-full"}>
         {children}
       </div>
 
