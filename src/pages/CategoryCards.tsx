@@ -49,8 +49,29 @@ const CategoryCards = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black pb-20">
-      <header className="fixed top-0 left-0 right-0 bg-gradient-to-b from-black via-black/80 to-transparent z-40">
+    <div className="min-h-screen bg-black pb-20 relative overflow-hidden">
+      {/* Нижний SVG фон */}
+      {cards.length > 0 && (
+        <div className="absolute bottom-0 left-0 w-full h-[400px] z-0 pointer-events-none">
+          <img 
+            src="/svg/collectionsvg2.svg" 
+            alt=""
+            className="w-full h-full object-cover object-bottom"
+          />
+        </div>
+      )}
+  
+      {/* Верхний SVG фон */}
+      <div className="absolute top-0 left-0 w-full h-[400px] z-0 pointer-events-none">
+        <img 
+          src="/svg/collectionsvg1.svg" 
+          alt=""
+          className="w-full h-full object-cover object-top"
+        />
+      </div>
+  
+      {/* Заголовок */}
+      <header className="fixed top-0 left-0 right-0 z-40">
         <div className="p-4 pt-[3.75rem]">
           <div className="flex items-center justify-center">
             <h1 className="text-xl font-bold text-white">
@@ -59,16 +80,17 @@ const CategoryCards = () => {
           </div>
         </div>
       </header>
-
-      {/* Основной контент с отступом сверху */}
-      <div className="pt-32 px-4">
+  
+      {/* Карусель карточек */}
+      <div className="absolute inset-0 flex items-center justify-center px-4 z-10">
         <CardCarousel 
           cards={cards} 
           onCardClick={handleCardClick} 
           onCardChange={updateCurrentCardName} 
         />
       </div>
-
+  
+      {/* Модалка */}
       <CardModal
         card={selectedCard}
         isOpen={showCardModal}
@@ -76,10 +98,11 @@ const CategoryCards = () => {
         onSell={handleSellCard}
         onGift={handleGiftCard}
       />
-
+  
+      {/* Нижняя навигация */}
       <Navigation />
     </div>
-  );
+  );  
 };
 
 export default CategoryCards;
