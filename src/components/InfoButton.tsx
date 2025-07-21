@@ -47,7 +47,7 @@ const InfoButton = ({
       
       {(isVisible || isClosing) && (
         <div 
-          className={`absolute right-0 top-12 w-72 bg-black/80 backdrop-blur-sm border border-gray-700/30 rounded-xl p-4 z-50 shadow-lg transition-opacity duration-${fadeDuration} ${
+          className={`absolute right-0 top-12 w-72 bg-black/80 backdrop-blur-sm border border-black/30 rounded-xl p-4 z-50 shadow-lg transition-opacity duration-${fadeDuration} ${
             isClosing ? 'opacity-0' : 'opacity-100'
           }`}
         >
