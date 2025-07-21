@@ -20,7 +20,7 @@ const Navigation = ({
   
   const navItems = [
     { path: '/', icon: Home, exact: true },
-    { path: '/collection', icon: Package, exact: true },
+    { path: '/collection', icon: Package, exact: true }, 
     { path: '/market', icon: ShoppingCart, exact: true },
     { path: '/trades', icon: ArrowRightLeft, exact: true },
     { path: '/games', icon: Gamepad2, exact: true },
@@ -38,40 +38,30 @@ const Navigation = ({
 
   return (
     <nav className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-max mx-auto">
-      <div className="relative" style={{ width: '353px', height: '82px' }}>
-        {/* SVG фон с оригинальными размерами 353×82 */}
-        <img 
-          src="/svg/tabbar.svg" 
-          alt="Tabbar background" 
-          className="absolute inset-0 w-full h-full"
-        />
-        
-        {/* Контейнер с иконками и всеми настройками */}
-        <div className={`
-          absolute inset-0 bg-transparent
-          rounded-full ${height} ${width}
-        `}>
-          <div className="flex justify-around items-center h-full">
-            {navItems.map(({ path, icon: Icon, exact }) => {
-              const isActive = exact
-                ? location.pathname === path
-                : location.pathname.startsWith(path);
-              
-              return (
-                <Link
-                  key={path}
-                  to={path}
-                  className={`flex flex-col items-center ${iconPadding} ${spacing}`}
-                >
-                  <Icon 
-                    size={iconSize} 
-                    className={isActive ? 'text-white' : 'text-[#3D3D3D]'} 
-                    strokeWidth={isActive ? 2 : 1.5}
-                  />
-                </Link>
-              );
-            })}
-          </div>
+      <div className={`
+        bg-black/80 backdrop-blur-sm border border-gray-700/30
+        rounded-full shadow-lg ${height} ${width}
+      `}>
+        <div className="flex justify-around items-center h-full">
+          {navItems.map(({ path, icon: Icon, exact }) => {
+            const isActive = exact
+              ? location.pathname === path
+              : location.pathname.startsWith(path);
+            
+            return (
+              <Link
+                key={path}
+                to={path}
+                className={`flex flex-col items-center ${iconPadding} ${spacing}`}
+              >
+                <Icon 
+                  size={iconSize} 
+                  className={isActive ? 'text-white' : 'text-[#3D3D3D]'} 
+                  strokeWidth={isActive ? 2 : 1.5}
+                />
+              </Link>
+            );
+          })}
         </div>
       </div>
     </nav>
