@@ -274,30 +274,49 @@ const Market = () => {
   };
 
   return (
-    <div className="min-h-screen bg-f1-gradient-dark pb-20">
-      <PageHeader 
-        title="Market" 
-        infoTitle="О маркете"
-        infoDescription="Покупайте паки и лимитированные карты за Telegram Stars, торгуйте картами с другими игроками за монеты, участвуйте в аукционах для получения редких карт."
-      />
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Верхний SVG фон */}
+      <div className="absolute top-0 left-0 w-full h-[400px] z-0 pointer-events-none">
+        <img 
+          src="/svg/collectionsvg1.svg" 
+          alt=""
+          className="w-full h-full object-cover object-top opacity-60"
+        />
+      </div>
       
-      <div className="p-4 space-y-6 pt-32">
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div>
-            <div className="text-2xl font-bold text-white">102</div>
-            <div className="text-sm text-gray-400">Карты</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-white">45</div>
-            <div className="text-sm text-gray-400">Обмены</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-white">10K</div>
-            <div className="text-sm text-gray-400">Монеты</div>
+      {/* Фиксированный заголовок */}
+      <div className="fixed top-0 left-0 right-0 z-40">
+        <PageHeader 
+          title="Market" 
+          infoTitle="О маркете"
+          infoDescription="Покупайте паки и лимитированные карты за Telegram Stars, торгуйте картами с другими игроками за монеты, участвуйте в аукционах для получения редких карт."
+          showBack={true}
+          disableGradient={true}
+        />
+      </div>
+      
+      {/* Основной контент */}
+      <div className="pt-36 pb-20 h-screen flex flex-col ">
+        {/* Статистика (фиксированная высота) */}
+        <div className="f1-card p-4 mx-4 mb-4">
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div className="text-2xl font-bold text-white">102</div>
+              <div className="text-sm text-gray-400">Карты</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-white">45</div>
+              <div className="text-sm text-gray-400">Обмены</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-white">10K</div>
+              <div className="text-sm text-gray-400">Монеты</div>
+            </div>
           </div>
         </div>
 
-        <div className="flex gap-1 bg-gray-900 rounded-full p-1">
+        {/* Табы (фиксированная высота) */}
+        <div className="flex gap-1 bg-gray-900 rounded-full p-1 mx-4 mb-4 z-10">
           <button
             onClick={() => {
               setActiveTab('shop');
@@ -333,8 +352,9 @@ const Market = () => {
           </button>
         </div>
 
+        {/* Фильтры (фиксированная высота) */}
         {(activeTab === 'buy' || activeTab === 'sell') && (
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-2 overflow-x-auto pb-2 mx-4 mb-4 z-10">
             {categories.map((category) => (
               <button
                 key={category.id}
@@ -352,83 +372,19 @@ const Market = () => {
           </div>
         )}
 
-        {activeTab === 'shop' && renderShopSection()}
+        {/* Основной контент с скроллом */}
+        <div className="flex-1 overflow-y-auto px-4">
+          {activeTab === 'shop' && renderShopSection()}
 
-        {activeTab === 'buy' && (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-white">Популярные предложения</h3>
-            
-            <div className="grid grid-cols-2 gap-4">
-              {filteredItems.map((item) => (
-                <div key={item.id} className="relative">
-                  <div className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-4 border border-gray-700 shadow-2xl">
-                    <div className="aspect-[3/4] mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative">
-                      {item.image ? (
-                        <img 
-                          src={item.image} 
-                          alt={item.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            const fallback = target.nextElementSibling as HTMLElement;
-                            if (fallback) fallback.style.display = 'flex';
-                          }}
-                        />
-                      ) : null}
-                      <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 items-center justify-center text-6xl hidden">
-                        🏎️
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <h4 className="font-bold text-white text-sm truncate">{item.name}</h4>
-                      <p className="text-gray-400 text-xs truncate">{item.team}</p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1">
-                          <Coins size={12} className="text-yellow-400" />
-                          <span className="font-bold text-white text-sm">{item.price.toLocaleString()}</span>
-                        </div>
-                        <div className={`flex items-center gap-1 text-xs ${
-                          item.trend === 'up' ? 'text-green-400' : 'text-red-400'
-                        }`}>
-                          {item.trend === 'up' ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                          {item.change}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <button 
-                    disabled={coins < item.price}
-                    className={`w-full mt-3 py-2 rounded-lg font-medium text-sm transition-colors ${
-                      coins >= item.price
-                        ? 'bg-green-600 hover:bg-green-700 text-white'
-                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                    }`}
-                  >
-                    {coins >= item.price ? 'Купить' : 'Недостаточно монет'}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'sell' && (
-          <div className="space-y-6">
+          {activeTab === 'buy' && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Gavel className="text-f1-orange" size={20} />
-                Аукцион
-              </h3>
+              <h3 className="text-lg font-semibold text-white">Популярные предложения</h3>
               
-              <div className="space-y-3">
-                {filteredAuctions.map((item) => (
-                  <div key={item.id} className="f1-card p-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 relative">
+              <div className="grid grid-cols-2 gap-4">
+                {filteredItems.map((item) => (
+                  <div key={item.id} className="relative">
+                    <div className="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-4 border border-gray-700 shadow-2xl">
+                      <div className="aspect-[3/4] mb-4 rounded-xl overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center relative">
                         {item.image ? (
                           <img 
                             src={item.image} 
@@ -436,60 +392,123 @@ const Market = () => {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-2xl">🏎️</div>
+                          <div className="w-full h-full flex items-center justify-center text-6xl">
+                            🏎️
+                          </div>
                         )}
                       </div>
                       
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-white">{item.name}</h4>
-                        <p className="text-gray-400 text-sm">{item.team}</p>
+                      <div className="space-y-2">
+                        <h4 className="font-bold text-white text-sm truncate">{item.name}</h4>
+                        <p className="text-gray-400 text-xs truncate">{item.team}</p>
                         
-                        <div className="flex items-center gap-4 mt-2">
+                        <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1">
-                            <Coins size={16} className="text-yellow-400" />
-                            <span className="font-bold text-white">{item.currentBid.toLocaleString()}</span>
+                            <Coins size={12} className="text-yellow-400" />
+                            <span className="font-bold text-white text-sm">{item.price.toLocaleString()}</span>
                           </div>
-                          
-                          <div className="flex items-center gap-1 text-orange-400">
-                            <Clock size={14} />
-                            <span className="text-sm">{item.timeLeft}</span>
-                          </div>
-                          
-                          <div className="flex items-center gap-1 text-blue-400">
-                            <Users2 size={14} />
-                            <span className="text-sm">{item.bidders}</span>
+                          <div className={`flex items-center gap-1 text-xs ${
+                            item.trend === 'up' ? 'text-green-400' : 'text-red-400'
+                          }`}>
+                            {item.trend === 'up' ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                            {item.change}
                           </div>
                         </div>
                       </div>
-                      
-                      <button className="bg-f1-red hover:bg-f1-red/80 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                        Сделать ставку
-                      </button>
                     </div>
+                    
+                    <button 
+                      disabled={coins < item.price}
+                      className={`w-full mt-3 py-2 rounded-lg font-medium text-sm transition-colors ${
+                        coins >= item.price
+                          ? 'bg-green-600 hover:bg-green-700 text-white'
+                          : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      {coins >= item.price ? 'Купить' : 'Недостаточно монет'}
+                    </button>
                   </div>
                 ))}
               </div>
             </div>
+          )}
 
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">Мои лоты</h3>
-              
-              <div className="f1-card p-6 text-center">
-                <Gift className="text-gray-400 mx-auto mb-4" size={48} />
-                <h4 className="text-white font-semibold mb-2">Нет активных лотов</h4>
-                <p className="text-gray-400 text-sm mb-4">Выставьте свои карты на продажу или аукцион</p>
-                <div className="flex gap-2">
-                  <button className="flex-1 f1-button">Продать карту</button>
-                  <button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
-                    На аукцион
-                  </button>
+          {activeTab === 'sell' && (
+            <div className="space-y-6 pb-4">
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <Gavel className="text-f1-orange" size={20} />
+                  Аукцион
+                </h3>
+                
+                <div className="space-y-3">
+                  {filteredAuctions.map((item) => (
+                    <div key={item.id} className="f1-card p-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-16 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 relative">
+                          {item.image ? (
+                            <img 
+                              src={item.image} 
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-2xl">🏎️</div>
+                          )}
+                        </div>
+                        
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-white">{item.name}</h4>
+                          <p className="text-gray-400 text-sm">{item.team}</p>
+                          
+                          <div className="flex items-center gap-4 mt-2">
+                            <div className="flex items-center gap-1">
+                              <Coins size={16} className="text-yellow-400" />
+                              <span className="font-bold text-white">{item.currentBid.toLocaleString()}</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-1 text-orange-400">
+                              <Clock size={14} />
+                              <span className="text-sm">{item.timeLeft}</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-1 text-blue-400">
+                              <Users2 size={14} />
+                              <span className="text-sm">{item.bidders}</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <button className="bg-f1-red hover:bg-f1-red/80 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                          Сделать ставку
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-white">Мои лоты</h3>
+                
+                <div className="f1-card p-6 text-center">
+                  <Gift className="text-gray-400 mx-auto mb-4" size={48} />
+                  <h4 className="text-white font-semibold mb-2">Нет активных лотов</h4>
+                  <p className="text-gray-400 text-sm mb-4">Выставьте свои карты на продажу или аукцион</p>
+                  <div className="flex gap-2">
+                    <button className="flex-1 f1-button">Продать карту</button>
+                    <button className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                      На аукцион
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
+      {/* Фиксированная навигация */}
       <Navigation />
     </div>
   );
