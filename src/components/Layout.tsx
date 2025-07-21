@@ -15,7 +15,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       <TelegramNavigationHandler />
 
       {/* Контент */}
-      <div className={isCollectionPage ? "w-full h-full" : "w-full"}>
+      <div className={isCollectionPage ? "w-full h-full" : "w-full h-full"}>
         {children}
       </div>
 
