@@ -40,21 +40,12 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
     };
   }, []);
 
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case 'legendary': return 'from-yellow-500 via-yellow-400 to-yellow-600';
-      case 'epic': return 'from-purple-500 via-purple-400 to-purple-600';
-      case 'rare': return 'from-blue-500 via-blue-400 to-blue-600';
-      default: return 'from-gray-500 via-gray-400 to-gray-600';
-    }
-  };
-
   const getRarityBorder = (rarity: string) => {
     switch (rarity) {
-      case 'legendary': return 'border-yellow-400 shadow-yellow-400/30';
-      case 'epic': return 'border-purple-400 shadow-purple-400/30';
-      case 'rare': return 'border-blue-400 shadow-blue-400/30';
-      default: return 'border-gray-400 shadow-gray-400/30';
+      case 'legendary': return 'border-yellow-400';
+      case 'epic': return 'border-purple-400';
+      case 'rare': return 'border-blue-400';
+      default: return 'border-gray-400';
     }
   };
 
@@ -170,7 +161,7 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
 
   return (
     <div className="w-full">
-      {/* Название текущей карты (единственное место) */}
+      {/* Название текущей карты */}
       <div className="text-center mb-4 h-6">
         <p className="text-white text-lg font-medium">
           {getCenterCard()?.name || ''}
@@ -218,53 +209,24 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
               onMouseMove={isCenter ? handleMouseMove : undefined}
               onMouseLeave={isCenter ? handleMouseLeave : undefined}
             >
-              <div
-                className={`w-64 h-80 rounded-2xl border-4 ${getRarityBorder(card.rarity)} 
-                          bg-gradient-to-br ${getRarityColor(card.rarity)} 
-                          shadow-2xl ${isCenter ? 'shadow-xl' : 'shadow-lg'} 
-                          overflow-hidden relative touch-none`}
-              >
+              <div className={`w-64 h-80 rounded-2xl border-4 ${getRarityBorder(card.rarity)} bg-black overflow-hidden relative touch-none`}>
                 {card.image ? (
-                  <div className="w-full h-48 bg-gray-800 flex items-center justify-center overflow-hidden touch-none">
-                    <img 
-                      src={card.image} 
-                      alt={card.name}
-                      className="w-full h-full object-cover touch-none"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                        const fallback = target.nextElementSibling as HTMLElement;
-                        if (fallback) fallback.style.display = 'flex';
-                      }}
-                    />
-                    <div className="w-full h-full bg-gray-800 items-center justify-center text-4xl hidden touch-none">
-                      {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
-                    </div>
-                  </div>
+                  <img 
+                    src={card.image} 
+                    alt={card.name}
+                    className="w-full h-full object-cover touch-none"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const fallback = target.parentElement?.querySelector('.fallback-icon');
+                      if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                    }}
+                  />
                 ) : (
-                  <div className="w-full h-48 bg-gray-800 flex items-center justify-center text-4xl touch-none">
+                  <div className="w-full h-full flex items-center justify-center text-4xl fallback-icon bg-black">
                     {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
                   </div>
                 )}
-                
-                <div className="p-4 bg-gray-900/90 h-32 touch-none">
-                  <h3 className="text-white font-bold text-lg mb-1 truncate">{card.name}</h3>
-                  {card.team && (
-                    <p className="text-gray-300 text-sm mb-1 truncate">{card.team}</p>
-                  )}
-                  {card.location && (
-                    <p className="text-gray-300 text-sm mb-1 truncate">{card.location}</p>
-                  )}
-                  <div className="flex justify-between items-center mt-2 touch-none">
-                    <span className={`px-2 py-1 rounded-full text-xs font-semibold uppercase
-                      ${card.rarity === 'legendary' ? 'bg-yellow-500/20 text-yellow-300' :
-                        card.rarity === 'epic' ? 'bg-purple-500/20 text-purple-300' :
-                        card.rarity === 'rare' ? 'bg-blue-500/20 text-blue-300' :
-                        'bg-gray-500/20 text-gray-300'}`}>
-                      {card.rarity}
-                    </span>
-                  </div>
-                </div>
               </div>
             </div>
           );
