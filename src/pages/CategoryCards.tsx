@@ -56,7 +56,7 @@ const CategoryCards = () => {
           <img 
             src="/svg/collectionsvg2.svg" 
             alt=""
-            className="w-full h-full object-cover object-bottom"
+            className="w-full h-full object-cover object-bottom opacity-60"
           />
         </div>
       )}
@@ -66,7 +66,7 @@ const CategoryCards = () => {
         <img 
           src="/svg/collectionsvg1.svg" 
           alt=""
-          className="w-full h-full object-cover object-top"
+          className="w-full h-full object-cover object-top opacity-60"
         />
       </div>
   
