@@ -19,10 +19,6 @@ export default {
 			}
 		},
 		extend: {
-			fontFamily: {
-				formula1: ["'Formula1-Display'", "sans-serif"], 
-				'sf-pro': ["'SF Pro Display'", "sans-serif"]   
-			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
