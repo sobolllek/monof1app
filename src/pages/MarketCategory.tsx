@@ -69,7 +69,7 @@ const MarketCategory = () => {
       <header className="fixed top-0 left-0 right-0 z-40">
         <div className="p-4 pt-[3.75rem]">
           <div className="flex flex-col items-center justify-center">
-            <h1 className="text-[90px] text-white font-formula1 tracking-tight">
+            <h1 className="text-[90px] text-white font-formula1 font-black tracking-tight">
               {currentPackType}
             </h1>
             <p className="text-[75px] text-white font-sf-pro-thin-italic mt-[-55px] relative z-0">(pack)</p>
