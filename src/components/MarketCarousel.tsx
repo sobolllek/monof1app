@@ -17,30 +17,6 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
   const touchEndX = useRef(0);
   const isSwiping = useRef(false);
 
-  const getCenterItem = useCallback(() => {
-    return items[currentIndex];
-  }, [items, currentIndex]);
-
-  useEffect(() => {
-    if (onItemChange && items.length > 0) {
-      onItemChange(getCenterItem());
-    }
-  }, [currentIndex, items, onItemChange, getCenterItem]);
-
-  useEffect(() => {
-    const preventDefault = (e: TouchEvent) => {
-      if (isSwiping.current) {
-        e.preventDefault();
-      }
-    };
-
-    document.addEventListener('touchmove', preventDefault, { passive: false });
-    
-    return () => {
-      document.removeEventListener('touchmove', preventDefault);
-    };
-  }, []);
-
   const getRarityBorder = (rarity: string) => {
     switch (rarity) {
       case 'legendary': return 'border-yellow-400';
@@ -52,8 +28,8 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
 
   const getCurrencyIcon = (currency: string) => {
     return currency === 'coins' ? 
-      <Coins className="text-yellow-400" size={16} /> : 
-      <Star className="text-purple-400" size={16} />;
+      <Coins className="text-yellow-400" size={18} /> : 
+      <Star className="text-purple-400" size={18} />;
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -156,6 +132,12 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [handleItemNavigation]);
 
+  useEffect(() => {
+    if (onItemChange && items.length > 0) {
+      onItemChange(items[currentIndex]);
+    }
+  }, [currentIndex, items, onItemChange]);
+
   const visibleItems = getVisibleItems();
 
   if (items.length === 0) {
@@ -168,24 +150,9 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
 
   return (
     <div className="w-full">
-      {/* Название и цена текущего товара */}
-      <div className="text-center mb-4 h-16">
-        <p className="text-white text-lg font-medium">
-          {getCenterItem()?.name || ''}
-        </p>
-        {getCenterItem()?.price && (
-          <div className="flex items-center justify-center gap-2 mt-1">
-            {getCenterItem()?.currency && getCurrencyIcon(getCenterItem().currency)}
-            <span className="text-white font-medium">
-              {getCenterItem()?.price} {getCenterItem()?.currency}
-            </span>
-          </div>
-        )}
-      </div>
-      
       <div 
         ref={carouselRef}
-        className="relative h-96 flex items-center justify-center touch-none"
+        className="relative h-[500px] flex items-center justify-center touch-none"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -224,16 +191,16 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
               onMouseMove={isCenter ? handleMouseMove : undefined}
               onMouseLeave={isCenter ? handleMouseLeave : undefined}
             >
-              <div className={`w-64 h-80 rounded-2xl border-4 ${getRarityBorder(item.rarity)} bg-black overflow-hidden relative touch-none`}>
-                <div className="w-full h-full flex flex-col">
-                  <div className="flex-1 flex items-center justify-center text-8xl">
-                    {item.image}
-                  </div>
-                  {item.description && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
-                      <p className="text-white text-sm line-clamp-2">{item.description}</p>
-                    </div>
-                  )}
+              <div className={`w-72 h-96 rounded-2xl border-4 ${getRarityBorder(item.rarity)} bg-black overflow-hidden relative touch-none flex flex-col`}>
+                <div className="flex-1 flex items-center justify-center text-8xl p-6">
+                  {item.image}
+                </div>
+                
+                <div className="p-4 border-t border-gray-700 flex items-center justify-center gap-2">
+                  {getCurrencyIcon(item.currency)}
+                  <span className="text-white text-[18px]">
+                    {item.price} {item.currency}
+                  </span>
                 </div>
               </div>
             </div>
