@@ -3,7 +3,6 @@ import { useToast } from '@/hooks/use-toast';
 import { cardsData } from '../data/cards';
 import CardCarousel from '../components/CardCarousel';
 import CardModal from '../components/CardModal';
-import Navigation from '../components/Navigation';
 import { useState } from 'react';
 import { Card } from '../data/cards';
 
@@ -56,7 +55,7 @@ const CategoryCards = () => {
           <img 
             src="/svg/collectionsvg2.svg" 
             alt=""
-            className="w-full h-full object-cover object-bottom opacity-50"
+            className="w-full h-full object-cover object-bottom opacity-60"
           />
         </div>
       )}
@@ -66,7 +65,7 @@ const CategoryCards = () => {
         <img 
           src="/svg/collectionsvg1.svg" 
           alt=""
-          className="w-full h-full object-cover object-top opacity-50"
+          className="w-full h-full object-cover object-top opacity-60"
         />
       </div>
   
@@ -98,9 +97,6 @@ const CategoryCards = () => {
         onSell={handleSellCard}
         onGift={handleGiftCard}
       />
-  
-      {/* Нижняя навигация */}
-      <Navigation />
     </div>
   );  
 };

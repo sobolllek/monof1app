@@ -19,7 +19,6 @@ const Market = () => {
   const [activeTab, setActiveTab] = useState<'shop' | 'buy' | 'sell'>('shop');
   const [coins, setCoins] = useState(10250);
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [shopSection, setShopSection] = useState<'main' | 'packs' | 'coins' | 'cards'>('main');
 
   // Данные для магазина
   const packs = [
@@ -117,160 +116,72 @@ const Market = () => {
     : auctionItems.filter(item => item.category === selectedCategory);
 
   const renderShopSection = () => {
-    switch (shopSection) {
-      case 'packs':
-        return (
-          <div className="space-y-4">
-            <button 
-              onClick={() => setShopSection('main')}
-              className="text-f1-orange text-sm hover:underline"
-            >
-              ← Назад к магазину
-            </button>
-            
-            <h3 className="text-lg font-semibold text-white">Паки карт</h3>
-            
-            <div className="space-y-4">
-              {packs.map((pack) => (
-                <div key={pack.id} className="f1-card p-4">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-20 bg-f1-gray-light rounded-lg flex items-center justify-center text-3xl">
-                      {pack.image}
-                    </div>
-                    
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-white">{pack.name}</h4>
-                      <p className="text-gray-400 text-sm">{pack.description}</p>
-                      <div className="flex items-center gap-2 mt-2">
-                        {pack.currency === 'coins' ? (
-                          <><Coins size={16} className="text-yellow-400" /><span className="text-white">{pack.price}</span></>
-                        ) : (
-                          <><Star size={16} className="text-purple-400" /><span className="text-white">{pack.price}</span></>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <button 
-                      onClick={() => handleBuyPack(pack)}
-                      className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
-                    >
-                      Купить
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      
-      case 'coins':
-        return (
-          <div className="space-y-4">
-            <button 
-              onClick={() => setShopSection('main')}
-              className="text-f1-orange text-sm hover:underline"
-            >
-              ← Назад к магазину
-            </button>
-            
-            <h3 className="text-lg font-semibold text-white">Монеты</h3>
-            
-            <div className="f1-card p-6 text-center">
-              <div className="text-6xl mb-4">🪙</div>
-              <h4 className="text-white font-semibold mb-2">Скоро!</h4>
-              <p className="text-gray-400 text-sm">Покупка монет будет доступна в следующем обновлении</p>
-            </div>
-          </div>
-        );
-      
-      case 'cards':
-        return (
-          <div className="space-y-4">
-            <button 
-              onClick={() => setShopSection('main')}
-              className="text-f1-orange text-sm hover:underline"
-            >
-              ← Назад к магазину
-            </button>
-            
-            <h3 className="text-lg font-semibold text-white">Эксклюзивные карты</h3>
-            
-            <div className="f1-card p-6 text-center">
-              <div className="text-6xl mb-4">🎴</div>
-              <h4 className="text-white font-semibold mb-2">Скоро!</h4>
-              <p className="text-gray-400 text-sm">Эксклюзивные карты будут доступны в следующем обновлении</p>
-            </div>
-          </div>
-        );
-      
-      default:
-        return (
-          <div className="space-y-4">
-            <button
-              onClick={() => setShopSection('packs')}
-              className="w-full relative bg-gradient-to-r from-cyan-500/20 to-blue-600/20 rounded-2xl p-6 border border-cyan-500/30 overflow-hidden hover:from-cyan-500/30 hover:to-blue-600/30 transition-all"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-600/10"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-left">
-                    <h3 className="text-2xl font-bold text-white mb-2">PACKS</h3>
-                    <p className="text-cyan-200 text-sm">Эксклюзивный набор для тебя</p>
-                  </div>
-                  <ChevronRight className="text-white" size={24} />
-                </div>
-                <div className="flex justify-center">
-                  <div className="w-32 h-20 bg-gradient-to-r from-gray-300 to-gray-100 rounded-lg flex items-center justify-center">
-                    <span className="text-4xl">📦</span>
-                  </div>
-                </div>
+    return (
+      <div className="space-y-4">
+        <button
+          onClick={() => navigate('/market/buyPacks')}
+          className="w-full relative bg-gradient-to-r from-cyan-500/20 to-blue-600/20 rounded-2xl p-6 border border-cyan-500/30 overflow-hidden hover:from-cyan-500/30 hover:to-blue-600/30 transition-all"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-blue-600/10"></div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-left">
+                <h3 className="text-2xl font-bold text-white mb-2">PACKS</h3>
+                <p className="text-cyan-200 text-sm">Эксклюзивный набор для тебя</p>
               </div>
-            </button>
+              <ChevronRight className="text-white" size={24} />
+            </div>
+            <div className="flex justify-center">
+              <div className="w-32 h-20 bg-gradient-to-r from-gray-300 to-gray-100 rounded-lg flex items-center justify-center">
+                <span className="text-4xl">📦</span>
+              </div>
+            </div>
+          </div>
+        </button>
 
-            <button
-              onClick={() => setShopSection('coins')}
-              className="w-full relative bg-gradient-to-r from-yellow-600/20 to-orange-600/20 rounded-2xl p-6 border border-yellow-600/30 overflow-hidden hover:from-yellow-600/30 hover:to-orange-600/30 transition-all"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/10 to-orange-600/10"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-left">
-                    <h3 className="text-2xl font-bold text-white mb-2">COINS</h3>
-                    <p className="text-yellow-200 text-sm">Монет много не бывает!</p>
-                  </div>
-                  <ChevronRight className="text-white" size={24} />
-                </div>
-                <div className="flex justify-center">
-                  <div className="w-32 h-20 flex items-center justify-center">
-                    <span className="text-4xl">🪙</span>
-                  </div>
-                </div>
+        <button
+          onClick={() => navigate('/market/buyCoins')}
+          className="w-full relative bg-gradient-to-r from-yellow-600/20 to-orange-600/20 rounded-2xl p-6 border border-yellow-600/30 overflow-hidden hover:from-yellow-600/30 hover:to-orange-600/30 transition-all"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/10 to-orange-600/10"></div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-left">
+                <h3 className="text-2xl font-bold text-white mb-2">COINS</h3>
+                <p className="text-yellow-200 text-sm">Монет много не бывает!</p>
               </div>
-            </button>
-
-            <button
-              onClick={() => setShopSection('cards')}
-              className="w-full relative bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl p-6 border border-purple-600/30 overflow-hidden hover:from-purple-600/30 hover:to-pink-600/30 transition-all"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="text-left">
-                    <h3 className="text-2xl font-bold text-white mb-2">CARDS</h3>
-                    <p className="text-purple-200 text-sm">Получи доступ к редким картам!</p>
-                  </div>
-                  <ChevronRight className="text-white" size={24} />
-                </div>
-                <div className="flex justify-center">
-                  <div className="w-32 h-20 flex items-center justify-center">
-                    <span className="text-4xl">🎴</span>
-                  </div>
-                </div>
+              <ChevronRight className="text-white" size={24} />
+            </div>
+            <div className="flex justify-center">
+              <div className="w-32 h-20 flex items-center justify-center">
+                <span className="text-4xl">🪙</span>
               </div>
-            </button>
+            </div>
           </div>
-        );
-    }
+        </button>
+
+        <button
+          onClick={() => navigate('/market/buyCards')}
+          className="w-full relative bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl p-6 border border-purple-600/30 overflow-hidden hover:from-purple-600/30 hover:to-pink-600/30 transition-all"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10"></div>
+          <div className="relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-left">
+                <h3 className="text-2xl font-bold text-white mb-2">CARDS</h3>
+                <p className="text-purple-200 text-sm">Получи доступ к редким картам!</p>
+              </div>
+              <ChevronRight className="text-white" size={24} />
+            </div>
+            <div className="flex justify-center">
+              <div className="w-32 h-20 flex items-center justify-center">
+                <span className="text-4xl">🎴</span>
+              </div>
+            </div>
+          </div>
+        </button>
+      </div>
+    );
   };
 
   return (
@@ -318,10 +229,7 @@ const Market = () => {
         {/* Табы (фиксированная высота) */}
         <div className="flex gap-1 bg-gray-900 rounded-full p-1 mx-4 mb-4 z-10">
           <button
-            onClick={() => {
-              setActiveTab('shop');
-              setShopSection('main');
-            }}
+            onClick={() => setActiveTab('shop')}
             className={`flex-1 py-3 px-6 rounded-full font-medium transition-all ${
               activeTab === 'shop' 
                 ? 'bg-white text-black' 
@@ -354,7 +262,7 @@ const Market = () => {
 
         {/* Фильтры (фиксированная высота) */}
         {(activeTab === 'buy' || activeTab === 'sell') && (
-          <div className="flex gap-2 overflow-x-auto pb-2 mx-4 mb-4 z-10">
+          <div className="flex gap-2 overflow-x-auto pb-2 mx-4 mb-4 ">
             {categories.map((category) => (
               <button
                 key={category.id}

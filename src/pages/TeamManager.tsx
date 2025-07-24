@@ -4,13 +4,11 @@ import { ArrowLeft, Users, Trophy, Play, Settings, Crown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import useTelegramWebApp from '../hooks/useTelegramWebApp';
 
 const TeamManager = () => {
   const navigate = useNavigate();
   const [activeTeam, setActiveTeam] = useState(0);
   const [isSimulating, setIsSimulating] = useState(false);
-  const { isTelegramWebApp } = useTelegramWebApp();
 
   const teams = [
     {
@@ -70,14 +68,12 @@ const TeamManager = () => {
       {/* Header */}
       <header className="flex items-center justify-between p-4 pt-12 bg-f1-gray/95 backdrop-blur-lg border-b border-f1-gray-light/50">
         <div className="flex items-center gap-3">
-          {!isTelegramWebApp && (
-            <button
-              onClick={() => navigate(-1)}
-              className="p-2 rounded-lg bg-gray-800/50 transition-colors"
-            >
-              <ArrowLeft className="text-white" size={20} />
-            </button>
-          )}
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 rounded-lg bg-gray-800/50 transition-colors"
+          >
+            <ArrowLeft className="text-white" size={20} />
+          </button>
           <h1 className="text-xl font-bold text-white">Менеджер Команды</h1>
         </div>
         <div className="flex items-center gap-2">

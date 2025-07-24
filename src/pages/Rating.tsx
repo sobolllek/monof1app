@@ -31,7 +31,7 @@ const Rating = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="pt-32 p-4 space-y-6">
         {/* User's Rating */}
         <div className="f1-card p-4 flex items-center justify-between">
