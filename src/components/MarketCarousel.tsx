@@ -196,7 +196,7 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
                   {item.image}
                 </div>
                 
-                <div className="p-4 border-t border-gray-700 flex items-center justify-center gap-2">
+                <div className="p-4 bg-black border-t border-gray-700 flex items-center justify-center gap-2">
                   {getCurrencyIcon(item.currency)}
                   <span className="text-white text-[18px]">
                     {item.price} {item.currency}
