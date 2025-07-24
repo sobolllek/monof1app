@@ -70,14 +70,14 @@ const MarketCategory = () => {
   )}
 
   {/* Pack SVG (под каруселью, но над фоном) */}
-  <div className="absolute bottom-[69%] left-0 right-0 z-10 flex justify-center">
+  <div className="absolute bottom-[65%] left-0 right-0 z-10 flex justify-center">
     <div className="h-[65px]">
       <img src="/svg/pack.svg" alt="Pack" className="h-full object-contain" />
     </div>
   </div>
 
   {/* Header с основным SVG пака */}
-  <header className="fixed top-0 left-0 right-0 z-40 mt-12">
+  <header className="fixed top-0 left-0 right-0 z-40 mt-16">
     <div className="p-4 pt-[3.75rem]">
       <div className="flex flex-col items-center justify-center">
         <div className="h-[70px] flex items-center justify-center">
