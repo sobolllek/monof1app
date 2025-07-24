@@ -8,6 +8,15 @@ interface MarketCarouselProps {
   onItemChange?: (item: MarketItem) => void;
 }
 
+const PACK_SVG_MAP: Record<string, string> = {
+  base: '/svg/packimage.svg',
+  gold: '/svg/packimage.svg',
+  gem: '/svg/packimage.svg',
+  limit: '/svg/packimage.svg',
+  prize: '/svg/packimage.svg',
+  default: '/svg/packimage.svg'
+};
+
 const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -17,19 +26,10 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
   const touchEndX = useRef(0);
   const isSwiping = useRef(false);
 
-  const getRarityBorder = (rarity: string) => {
-    switch (rarity) {
-      case 'legendary': return 'border-yellow-400';
-      case 'epic': return 'border-purple-400';
-      case 'rare': return 'border-blue-400';
-      default: return 'border-gray-400';
-    }
-  };
-
   const getCurrencyIcon = (currency: string) => {
-    return currency === 'coins' ? 
-      <Coins className="text-yellow-400" size={18} /> : 
-      <Star className="text-purple-400" size={18} />;
+    return currency === 'coins' 
+      ? <Coins className="text-yellow-400" size={18} /> 
+      : <Star className="text-purple-400" size={18} />;
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -69,16 +69,15 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
 
   const handleItemNavigation = useCallback((direction: 'left' | 'right') => {
     if (direction === 'left') {
-      setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+      setCurrentIndex(prev => (prev - 1 + items.length) % items.length);
     } else {
-      setCurrentIndex((prev) => (prev + 1) % items.length);
+      setCurrentIndex(prev => (prev + 1) % items.length);
     }
   }, [items.length]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
-    touchEndX.current = e.touches[0].clientX;
     isSwiping.current = true;
   };
 
@@ -114,11 +113,7 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
   const handleWheel = (e: React.WheelEvent) => {
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
       e.preventDefault();
-      if (e.deltaX > 0) {
-        handleItemNavigation('right');
-      } else {
-        handleItemNavigation('left');
-      }
+      handleItemNavigation(e.deltaX > 0 ? 'right' : 'left');
     }
   };
 
@@ -164,6 +159,8 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
           const translateX = position * 180;
           const rotateY = position * 15;
           const zIndex = isCenter ? 20 : 10 - Math.abs(position);
+          const packType = item.packType || 'default';
+          const packSvg = PACK_SVG_MAP[packType] || PACK_SVG_MAP.default;
 
           return (
             <div
@@ -181,24 +178,21 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
                 `,
                 zIndex,
               }}
-              onClick={() => {
-                if (isCenter) {
-                  onItemClick(item);
-                } else {
-                  setCurrentIndex(index);
-                }
-              }}
+              onClick={() => isCenter ? onItemClick(item) : setCurrentIndex(index)}
               onMouseMove={isCenter ? handleMouseMove : undefined}
               onMouseLeave={isCenter ? handleMouseLeave : undefined}
             >
-              <div className={`w-72 h-96 rounded-2xl border-4 ${getRarityBorder(item.rarity)} bg-black overflow-hidden relative touch-none flex flex-col`}>
-                <div className="flex-1 flex items-center justify-center text-8xl p-6">
-                  {item.image}
-                </div>
+              <div className="relative w-72 h-96">
+                <img 
+                  src={packSvg}
+                  alt={item.name}
+                  className="w-full h-full object-contain"
+                />
                 
-                <div className="p-4 bg-black border-t border-gray-700 flex items-center justify-center gap-2">
+                {/* Отображение цены поверх SVG */}
+                <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-2">
                   {getCurrencyIcon(item.currency)}
-                  <span className="text-white text-[18px]">
+                  <span className="text-white text-lg font-bold drop-shadow-lg">
                     {item.price} {item.currency}
                   </span>
                 </div>
