@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Card } from '../data/cards';
+import { Coins, Star } from 'lucide-react';
+import { MarketItem } from '../data/packs';
 
-interface CardCarouselProps {
-  cards: Card[];
-  onCardClick: (card: Card) => void;
-  onCardChange?: (card: Card) => void;
+interface MarketCarouselProps {
+  items: MarketItem[];
+  onItemClick: (item: MarketItem) => void;
+  onItemChange?: (item: MarketItem) => void;
 }
 
-const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) => {
+const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -16,15 +17,15 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
   const touchEndX = useRef(0);
   const isSwiping = useRef(false);
 
-  const getCenterCard = useCallback(() => {
-    return cards[currentIndex];
-  }, [cards, currentIndex]);
+  const getCenterItem = useCallback(() => {
+    return items[currentIndex];
+  }, [items, currentIndex]);
 
   useEffect(() => {
-    if (onCardChange && cards.length > 0) {
-      onCardChange(getCenterCard());
+    if (onItemChange && items.length > 0) {
+      onItemChange(getCenterItem());
     }
-  }, [currentIndex, cards, onCardChange, getCenterCard]);
+  }, [currentIndex, items, onItemChange, getCenterItem]);
 
   useEffect(() => {
     const preventDefault = (e: TouchEvent) => {
@@ -49,6 +50,12 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
     }
   };
 
+  const getCurrencyIcon = (currency: string) => {
+    return currency === 'coins' ? 
+      <Coins className="text-yellow-400" size={16} /> : 
+      <Star className="text-purple-400" size={16} />;
+  };
+
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!carouselRef.current) return;
     
@@ -66,31 +73,31 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
     setMousePosition({ x: 0, y: 0 });
   };
 
-  const getVisibleCards = useCallback(() => {
-    if (cards.length === 0) return [];
+  const getVisibleItems = useCallback(() => {
+    if (items.length === 0) return [];
     
     const visible = [];
-    const totalVisible = Math.min(3, cards.length);
+    const totalVisible = Math.min(3, items.length);
     
     for (let i = 0; i < totalVisible; i++) {
-      const index = (currentIndex + i - 1 + cards.length) % cards.length;
+      const index = (currentIndex + i - 1 + items.length) % items.length;
       visible.push({
-        card: cards[index],
+        item: items[index],
         position: i - 1,
         index
       });
     }
     
     return visible;
-  }, [cards, currentIndex]);
+  }, [items, currentIndex]);
 
-  const handleCardNavigation = useCallback((direction: 'left' | 'right') => {
+  const handleItemNavigation = useCallback((direction: 'left' | 'right') => {
     if (direction === 'left') {
-      setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
+      setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
     } else {
-      setCurrentIndex((prev) => (prev + 1) % cards.length);
+      setCurrentIndex((prev) => (prev + 1) % items.length);
     }
-  }, [cards.length]);
+  }, [items.length]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -122,9 +129,9 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
     const deltaX = touchEndX.current - touchStartX.current;
 
     if (deltaX < -threshold) {
-      handleCardNavigation('right');
+      handleItemNavigation('right');
     } else if (deltaX > threshold) {
-      handleCardNavigation('left');
+      handleItemNavigation('left');
     }
   };
 
@@ -132,40 +139,48 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
       e.preventDefault();
       if (e.deltaX > 0) {
-        handleCardNavigation('right');
+        handleItemNavigation('right');
       } else {
-        handleCardNavigation('left');
+        handleItemNavigation('left');
       }
     }
   };
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') handleCardNavigation('left');
-      if (e.key === 'ArrowRight') handleCardNavigation('right');
+      if (e.key === 'ArrowLeft') handleItemNavigation('left');
+      if (e.key === 'ArrowRight') handleItemNavigation('right');
     };
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [handleCardNavigation]);
+  }, [handleItemNavigation]);
 
-  const visibleCards = getVisibleCards();
+  const visibleItems = getVisibleItems();
 
-  if (cards.length === 0) {
+  if (items.length === 0) {
     return (
       <div className="flex items-center justify-center h-96">
-        <p className="text-gray-400 text-lg">Карты не найдены</p>
+        <p className="text-gray-400 text-lg">Товары не найдены</p>
       </div>
     );
   }
 
   return (
     <div className="w-full">
-      {/* Название текущей карты */}
-      <div className="text-center mb-4 h-6">
+      {/* Название и цена текущего товара */}
+      <div className="text-center mb-4 h-16">
         <p className="text-white text-lg font-medium">
-          {getCenterCard()?.name || ''}
+          {getCenterItem()?.name || ''}
         </p>
+        {getCenterItem()?.price && (
+          <div className="flex items-center justify-center gap-2 mt-1">
+            {getCenterItem()?.currency && getCurrencyIcon(getCenterItem().currency)}
+            <span className="text-white font-medium">
+              {getCenterItem()?.price} {getCenterItem()?.currency}
+            </span>
+          </div>
+        )}
       </div>
       
       <div 
@@ -176,7 +191,7 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
         onTouchEnd={handleTouchEnd}
         onWheel={handleWheel}
       >
-        {visibleCards.map(({ card, position, index }) => {
+        {visibleItems.map(({ item, position, index }) => {
           const isCenter = position === 0;
           const scale = isCenter ? 1 : 0.85;
           const translateX = position * 180;
@@ -185,7 +200,7 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
 
           return (
             <div
-              key={`${card.id}-${index}`}
+              key={`${item.id}-${index}`}
               className={`absolute transition-all duration-500 cursor-pointer ${
                 isCenter ? 'hover:scale-105' : 'hover:scale-95'
               } touch-none`}
@@ -201,7 +216,7 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
               }}
               onClick={() => {
                 if (isCenter) {
-                  onCardClick(card);
+                  onItemClick(item);
                 } else {
                   setCurrentIndex(index);
                 }
@@ -209,24 +224,17 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
               onMouseMove={isCenter ? handleMouseMove : undefined}
               onMouseLeave={isCenter ? handleMouseLeave : undefined}
             >
-              <div className={`w-64 h-80 rounded-2xl border-4 ${getRarityBorder(card.rarity)} bg-black overflow-hidden relative touch-none`}>
-                {card.image ? (
-                  <img 
-                    src={card.image} 
-                    alt={card.name}
-                    className="w-full h-full object-cover touch-none"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const fallback = target.parentElement?.querySelector('.fallback-icon');
-                      if (fallback) (fallback as HTMLElement).style.display = 'flex';
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl fallback-icon bg-black">
-                    {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
+              <div className={`w-64 h-80 rounded-2xl border-4 ${getRarityBorder(item.rarity)} bg-black overflow-hidden relative touch-none`}>
+                <div className="w-full h-full flex flex-col">
+                  <div className="flex-1 flex items-center justify-center text-8xl">
+                    {item.image}
                   </div>
-                )}
+                  {item.description && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+                      <p className="text-white text-sm line-clamp-2">{item.description}</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           );
@@ -236,4 +244,4 @@ const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) =
   );
 };
 
-export default CardCarousel;
+export default MarketCarousel;

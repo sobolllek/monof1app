@@ -5,6 +5,7 @@ import TelegramNavigationHandler from "./TelegramNavigationHandler";
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const isCollectionPage = location.pathname.startsWith("/collection/");
+  const isMarketCategoryPage = location.pathname.startsWith("/market/");
 
   return (
     <div
@@ -19,8 +20,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         {children}
       </div>
 
-      {/* Нижний градиент — скрыт на страницах коллекции */}
-      {!isCollectionPage && (
+      {/* Нижний градиент — скрыт на страницах коллекции и маркет-категорий */}
+      {!isCollectionPage && !isMarketCategoryPage && (
         <div className="pointer-events-none fixed bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-40" />
       )}
     </div>
