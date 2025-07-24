@@ -77,7 +77,7 @@ const MarketCategory = () => {
   </div>
 
   {/* Header с основным SVG пака */}
-  <header className="fixed top-0 left-0 right-0 z-40 mt-8">
+  <header className="fixed top-0 left-0 right-0 z-40 mt-12">
     <div className="p-4 pt-[3.75rem]">
       <div className="flex flex-col items-center justify-center">
         <div className="h-[70px] flex items-center justify-center">
