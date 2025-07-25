@@ -169,10 +169,7 @@ const PackOpeningAnimation = ({ isOpen, onClose, packType, onPackOpened }: PackO
               </div>
               <button
                 onClick={handleOpenPack}
-                className="bg-white text-black font-bold text-lg py-4 px-12 rounded-full hover:bg-gray-100 transition-colors"
-              >
-                Открыть
-              </button>
+                className="bg-white text-black font-bold text-[21px] w-[179px] h-[52px] rounded-full hover:bg-gray-100 transition-colors flex items-center justify-center">Открыть</button>
             </div>
           )}
 
