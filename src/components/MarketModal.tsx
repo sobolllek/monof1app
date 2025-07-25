@@ -1,26 +1,18 @@
 import { useState } from 'react';
 import { X, Gift, Coins, Star, Package } from 'lucide-react';
-
-interface MarketItem {
-  id: number;
-  name: string;
-  price: number;
-  currency: 'coins' | 'stars';
-  description: string;
-  image: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
-}
+import { MarketItem } from '../data/packs';
 
 interface MarketModalProps {
   item: MarketItem | null;
   isOpen: boolean;
   onClose: () => void;
-  onBuy: (itemId: number, price: number) => void;
+  onBuy: (itemId: number, price: number, currency: 'coins' | 'stars') => void;
 }
 
 const MarketModal = ({ item, isOpen, onClose, onBuy }: MarketModalProps) => {
   const [action, setAction] = useState<'view' | 'buy' | 'gift'>('view');
   const [giftPlayerName, setGiftPlayerName] = useState('');
+  const [selectedCurrency, setSelectedCurrency] = useState<'coins' | 'stars'>('coins');
 
   if (!isOpen || !item) return null;
 
@@ -33,14 +25,18 @@ const MarketModal = ({ item, isOpen, onClose, onBuy }: MarketModalProps) => {
     }
   };
 
+  const getPrice = () => {
+    return selectedCurrency === 'coins' ? item.coinPrice : item.starPrice ?? 0;
+  };
+
   const handleBuy = () => {
-    onBuy(item.id, item.price);
+    onBuy(item.id, getPrice(), selectedCurrency);
     onClose();
   };
 
   const handleGift = () => {
     if (giftPlayerName.trim()) {
-      // Логика дарения
+      // TODO: Gift API
       onClose();
     }
   };
@@ -51,7 +47,7 @@ const MarketModal = ({ item, isOpen, onClose, onBuy }: MarketModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="relative w-full max-w-md bg-gray-900 rounded-xl border border-gray-700/50 overflow-hidden">
         <button
           onClick={() => {
@@ -70,15 +66,19 @@ const MarketModal = ({ item, isOpen, onClose, onBuy }: MarketModalProps) => {
               <div className="text-center">
                 <h3 className="font-bold text-white text-xl mb-2">{item.name}</h3>
                 <p className="text-white/80 text-sm mb-4">{item.description}</p>
-                <div className="flex items-center justify-center gap-2">
-                  {item.currency === 'coins' ? (
-                    <Coins className="text-yellow-400" />
-                  ) : (
-                    <Star className="text-purple-400" />
-                  )}
-                  <span className="text-white font-bold text-lg">
-                    {item.price} {item.currency}
-                  </span>
+                <div className="flex gap-2 justify-center">
+                  {item.availableCurrencies.map((cur) => (
+                    <button
+                      key={cur}
+                      onClick={() => setSelectedCurrency(cur)}
+                      className={`flex items-center gap-2 px-3 py-1 rounded-full border ${
+                        selectedCurrency === cur ? 'border-white bg-white/10' : 'border-gray-600'
+                      } text-white text-sm`}
+                    >
+                      {cur === 'coins' ? <Coins size={16} /> : <Star size={16} />}
+                      {cur === 'coins' ? item.coinPrice : item.starPrice}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
@@ -91,7 +91,7 @@ const MarketModal = ({ item, isOpen, onClose, onBuy }: MarketModalProps) => {
                 <Package size={20} />
                 Купить сейчас
               </button>
-              
+
               <button
                 onClick={() => setAction('gift')}
                 className="w-full flex items-center justify-center gap-3 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition-all duration-200 hover:scale-105"
@@ -113,17 +113,17 @@ const MarketModal = ({ item, isOpen, onClose, onBuy }: MarketModalProps) => {
                 <div>
                   <h4 className="font-bold text-white">{item.name}</h4>
                   <div className="flex items-center gap-2 mt-1">
-                    {item.currency === 'coins' ? (
+                    {selectedCurrency === 'coins' ? (
                       <Coins size={16} className="text-yellow-400" />
                     ) : (
                       <Star size={16} className="text-purple-400" />
                     )}
-                    <span className="text-white">{item.price} {item.currency}</span>
+                    <span className="text-white">{getPrice()} {selectedCurrency}</span>
                   </div>
                 </div>
               </div>
             </div>
-            
+
             <div className="flex gap-3">
               <button
                 onClick={resetToView}
@@ -145,16 +145,16 @@ const MarketModal = ({ item, isOpen, onClose, onBuy }: MarketModalProps) => {
           <div className="p-6">
             <h3 className="text-xl font-bold text-white mb-4">Подарок для друга</h3>
             <div className="mb-6">
-              <p className="text-gray-300 mb-4">Введите имя игрока, которому хотите подарить:</p>
+              <p className="text-gray-300 mb-4">Введите имя игрока:</p>
               <input
                 type="text"
                 value={giftPlayerName}
                 onChange={(e) => setGiftPlayerName(e.target.value)}
                 placeholder="Имя игрока"
-                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-f1-red"
+                className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none"
               />
             </div>
-            
+
             <div className="flex gap-3">
               <button
                 onClick={resetToView}

@@ -1,3 +1,4 @@
+// MarketCarousel.tsx
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Coins, Star } from 'lucide-react';
 import { MarketItem } from '../data/packs';
@@ -6,6 +7,8 @@ interface MarketCarouselProps {
   items: MarketItem[];
   onItemClick: (item: MarketItem) => void;
   onItemChange?: (item: MarketItem) => void;
+  onPackClick?: () => void;
+  hidePrices?: boolean;
 }
 
 const PACK_SVG_MAP: Record<string, string> = {
@@ -17,7 +20,13 @@ const PACK_SVG_MAP: Record<string, string> = {
   default: '/svg/packimage.svg'
 };
 
-const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProps) => {
+const MarketCarousel = ({ 
+  items, 
+  onItemClick, 
+  onItemChange, 
+  onPackClick, 
+  hidePrices = false 
+}: MarketCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const carouselRef = useRef<HTMLDivElement>(null);
@@ -84,22 +93,22 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
   const handleTouchMove = (e: React.TouchEvent) => {
     if (!isSwiping.current) return;
     touchEndX.current = e.touches[0].clientX;
-    
+
     const xDiff = Math.abs(e.touches[0].clientX - touchStartX.current);
     const yDiff = Math.abs(e.touches[0].clientY - touchStartY.current);
-    
+
     if (yDiff > xDiff) {
       isSwiping.current = false;
       return;
     }
-    
+
     e.preventDefault();
   };
 
   const handleTouchEnd = () => {
     if (!isSwiping.current) return;
     isSwiping.current = false;
-    
+
     const threshold = 50;
     const deltaX = touchEndX.current - touchStartX.current;
 
@@ -165,9 +174,7 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
           return (
             <div
               key={`${item.id}-${index}`}
-              className={`absolute transition-all duration-500 cursor-pointer ${
-                isCenter ? 'hover:scale-105' : 'hover:scale-95'
-              } touch-none`}
+              className={`absolute transition-all duration-500 cursor-pointer ${isCenter ? 'hover:scale-105' : 'hover:scale-95'} touch-none`}
               style={{
                 transform: `
                   translateX(${translateX + (isCenter ? mousePosition.x : 0)}px) 
@@ -178,7 +185,13 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
                 `,
                 zIndex,
               }}
-              onClick={() => isCenter ? onItemClick(item) : setCurrentIndex(index)}
+              onClick={() => {
+                if (isCenter) {
+                  onPackClick?.();
+                } else {
+                  setCurrentIndex(index);
+                }
+              }}
               onMouseMove={isCenter ? handleMouseMove : undefined}
               onMouseLeave={isCenter ? handleMouseLeave : undefined}
             >
@@ -188,14 +201,14 @@ const MarketCarousel = ({ items, onItemClick, onItemChange }: MarketCarouselProp
                   alt={item.name}
                   className="w-full h-full object-contain"
                 />
-                
-                {/* Отображение цены поверх SVG */}
-                <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-2">
-                  {getCurrencyIcon(item.currency)}
-                  <span className="text-white text-lg font-bold drop-shadow-lg">
-                    {item.price} {item.currency}
-                  </span>
-                </div>
+                {!hidePrices && (
+                  <div className="absolute bottom-6 left-0 right-0 flex items-center justify-center gap-2">
+                    {getCurrencyIcon(item.currency)}
+                    <span className="text-white text-lg font-bold drop-shadow-lg">
+                      {item.price} {item.currency}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           );
