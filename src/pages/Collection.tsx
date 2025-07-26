@@ -61,7 +61,7 @@ const Collection = () => {
                   </div>
 
                   {/* Название и иконка */}
-                  <div className="text-center text-white">
+                  <div className="text-center text-white z-10 relative">
                    <div className="text-sm font-semibold">{category.label}</div>
                    <div className="text-xs text-gray-400">{categoryCards.length} карт</div>
                   </div>
