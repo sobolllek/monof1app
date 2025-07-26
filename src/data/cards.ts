@@ -1,3 +1,5 @@
+import { createElement, ReactNode } from 'react';
+import { User, MapPin, Car, Calendar, Trophy } from 'lucide-react';
 
 export interface Card {
   id: number;
@@ -9,6 +11,44 @@ export interface Card {
   type: 'driver' | 'car' | 'track';
   image?: string;
 }
+
+export const CARD_WIDTH = 231;
+export const CARD_HEIGHT = 328;
+export const CARD_BORDER_RADIUS = 10;
+
+export interface CardCategory {
+  id: string;
+  label: string;
+  icon: () => ReactNode;
+}
+
+export const cardCategories: CardCategory[] = [
+  {
+    id: 'drivers',
+    label: 'Пилоты',
+    icon: () => createElement(User, { size: 20, className: 'text-blue-400' }),
+  },
+  {
+    id: 'circuits',
+    label: 'Трассы',
+    icon: () => createElement(MapPin, { size: 20, className: 'text-green-400' }),
+  },
+  {
+    id: 'cars',
+    label: 'Болиды',
+    icon: () => createElement(Car, { size: 20, className: 'text-red-400' }),
+  },
+  {
+    id: 'history',
+    label: 'История',
+    icon: () => createElement(Calendar, { size: 20, className: 'text-purple-400' }),
+  },
+  {
+    id: 'special',
+    label: 'Особые',
+    icon: () => createElement(Trophy, { size: 20, className: 'text-yellow-400' }),
+  },
+];
 
 export const cardsData: Card[] = [
   // Пилоты
