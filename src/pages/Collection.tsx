@@ -47,10 +47,10 @@ const Collection = () => {
                 <Link
                   key={category.id}
                   to={`/collection/${category.id}`}
-                  className="relative aspect-[3/4] flex items-center justify-center overflow-visible"
+                  className="flex flex-col items-center justify-start overflow-visible"
                 >
                   {/* 3 накладываемые карты */}
-                  <div className="relative w-[140px] h-[200px]">
+                  <div className="relative w-[140px] h-[200px] mb-3">
                     {visibleCards.map((card, i) => (
                       <MiniCard
                         key={card.id}
@@ -61,10 +61,9 @@ const Collection = () => {
                   </div>
 
                   {/* Название и иконка */}
-                  <div className="absolute bottom-2 left-0 right-0 text-center text-white">
-                    <div className="flex justify-center mb-1">{category.icon()}</div>
-                    <div className="text-sm font-semibold">{category.label}</div>
-                    <div className="text-xs text-gray-400">{categoryCards.length} карт</div>
+                  <div className="text-center text-white">
+                   <div className="text-sm font-semibold">{category.label}</div>
+                   <div className="text-xs text-gray-400">{categoryCards.length} карт</div>
                   </div>
                 </Link>
               );
