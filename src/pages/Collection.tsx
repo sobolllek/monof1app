@@ -47,7 +47,7 @@ const Collection = () => {
                 <Link
                   key={category.id}
                   to={`/collection/${category.id}`}
-                  className="relative aspect-[3/4] flex items-center justify-center overflow-hidden"
+                  className="relative aspect-[3/4] flex items-center justify-center overflow-visible"
                 >
                   {/* 3 накладываемые карты */}
                   <div className="relative w-[140px] h-[200px]">
