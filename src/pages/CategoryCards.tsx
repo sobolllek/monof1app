@@ -86,6 +86,9 @@ const CategoryCards = () => {
           cards={cards} 
           onCardClick={handleCardClick} 
           onCardChange={updateCurrentCardName} 
+          middleTilt={-15}
+          backTilt={-30}
+          bottomTilt={5}
         />
       </div>
   
