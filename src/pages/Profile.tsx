@@ -119,7 +119,7 @@ const Profile = () => {
       </div>
       <img src="/svg/rt1.svg" alt="right wreath" className="w-33 h-9" />
     </div>
-    <div className="relative w-[140px] h-[42px] top-full mt-4 left-1/2 translate-x-[-50%]">
+    <div className="relative w-[140px] h-[42px] top-full mt-4 left-1/2 translate-x-[-50%] box-border">
       <img
         src="/svg/mesto.svg"
         alt="place"
