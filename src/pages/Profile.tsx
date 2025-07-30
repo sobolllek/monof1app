@@ -111,26 +111,26 @@ const Profile = () => {
   </SvgCardBlock>
 
   <SvgCardBlock className="aspect-square w-full text-center">
-  <h3 className="text-[#505050] text-[17px] font-semibold mb-2">Weekly Rating</h3>
-  <div className="flex items-center justify-center gap-2 mb-2">
-    <img src="/svg/rt2.svg" alt="left wreath" className="w-33 h-9" />
-    <div className="text-[34px] font-bold bg-gradient-to-t from-neutral-500 to-white bg-clip-text text-transparent">
-      3.97
+    <h3 className="text-[#505050] text-[17px] font-semibold mb-2">Weekly Rating</h3>
+    <div className="flex items-center justify-center gap-2 mb-2">
+      <img src="/svg/rt2.svg" alt="left wreath" className="w-33 h-9" />
+      <div className="text-[34px] font-bold bg-gradient-to-t from-neutral-500 to-white bg-clip-text text-transparent">
+        3.97
+      </div>
+      <img src="/svg/rt1.svg" alt="right wreath" className="w-33 h-9" />
     </div>
-    <img src="/svg/rt1.svg" alt="right wreath" className="w-33 h-9" />
-  </div>
-  <div className="relative w-[140px] h-[54px] mx-auto mt-4"> {/* Увеличена высота и добавлен mx-auto */}
-    <img
-      src="/svg/mesto.svg"
-      alt="place"
-      className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-    />
-    <div className="relative z-10 w-full h-full flex items-center justify-between px-3 pb-3 box-border">
-      <span className="text-[#505050] font-bold text-sm">Место:</span>
-      <span className="text-white text-sm">#234</span>
+    <div className="relative w-[140px] h-[42px] top-full mt-4 left-1/2 translate-x-[-50%]">
+      <img
+        src="/svg/mesto.svg"
+        alt="place"
+        className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+      />
+      <div className="relative z-10 w-full h-full flex items-center justify-between px-3 pb-3">
+        <span className="text-[#505050] font-bold text-sm">Место:</span>
+        <span className="text-white text-sm">#234</span>
+      </div>
     </div>
-  </div>
-</SvgCardBlock>
+  </SvgCardBlock>
 </div>
         <MyPacksSection />
 
