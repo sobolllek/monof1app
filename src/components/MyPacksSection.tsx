@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Package, Gift, ChevronRight } from 'lucide-react';
 import PackOpeningAnimation from './PackOpeningAnimation';
+import SvgPackInfoBg from './SvgPackInfoBg';
 
 const MyPacksSection = () => {
   const [showPackOpening, setShowPackOpening] = useState(false);
@@ -71,30 +72,23 @@ const MyPacksSection = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Мои паки</h3>
-        <div className="text-white font-semibold">{totalPacks}</div>
-      </div>
-      
       {!showPacksList ? (
-        <button 
-          onClick={() => setShowPacksList(true)}
-          className="w-full f1-card p-4 flex items-center justify-between hover:bg-f1-gray-light/30 transition-colors"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-20 bg-f1-gray-light rounded-lg flex items-center justify-center text-2xl">
-              📦
-            </div>
-            
-            <div className="flex-1 text-left">
-              <h4 className="font-semibold text-white">Открыть паки</h4>
-              <p className="text-gray-300 text-sm">У вас {totalPacks} пак(ов)</p>
-            </div>
-          </div>
-          
-          <ChevronRight className="text-white" size={20} />
-        </button>
-      ) : (
+  <button 
+    onClick={() => setShowPacksList(true)}
+    className="relative w-full h-[59px] overflow-hidden rounded-[22px] transition-colors hover:bg-white/5"
+  >
+    <SvgPackInfoBg />
+
+    {/* Контент */}
+    <div className="relative z-10 px-4 h-full w-full flex items-center justify-between">
+      <h4 className="font-semibold text-[#505050] text-[17px]">Packs</h4>
+      <div className="flex items-center gap-2 text-white">
+        <span className="text-[25px] font-bold bg-gradient-to-t from-neutral-500 to-white bg-clip-text text-transparent">{totalPacks}</span>
+        <ChevronRight size={23} />
+      </div>
+    </div>
+  </button>
+) : (
         <div className="space-y-3">
           <button 
             onClick={() => setShowPacksList(false)}
