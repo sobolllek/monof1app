@@ -43,7 +43,7 @@ const Profile = () => {
         </div>
       </div>
 
-      <div className="pt-32 p-4 space-y-4 relative">
+      <div className="pt-20 p-4 space-y-4 relative">
         {/* Аватар */}
         <div className="relative flex justify-start p-6 z-20 -mb-20">
           <Avatar className="w-[86px] h-[86px]">
