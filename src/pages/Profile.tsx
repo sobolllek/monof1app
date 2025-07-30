@@ -125,7 +125,7 @@ const Profile = () => {
         alt="place"
         className="absolute inset-0 w-full h-full object-contain pointer-events-none"
       />
-      <div className="relative z-10 w-full h-full flex items-center justify-between px-3">
+      <div className="relative z-10 w-full h-full flex items-center justify-between px-3 px-3">
         <span className="text-[#505050] font-bold text-sm">Место:</span>
         <span className="text-white text-sm">#234</span>
       </div>
