@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { roulettePrizes, rouletteChances } from '@/data/roulettePrizes';
 
 const DailyRoulette = () => {
-  const navigate = useNavigate();
   const [isSpinning, setIsSpinning] = useState(false);
   const [canSpin, setCanSpin] = useState(true);
   const [nextSpinTime, setNextSpinTime] = useState<Date | null>(null);
@@ -11,53 +9,53 @@ const DailyRoulette = () => {
   const [rotation, setRotation] = useState(0);
   const [showPrize, setShowPrize] = useState(false);
   const [wonPrize, setWonPrize] = useState<any>(null);
+  const [userCoins, setUserCoins] = useState(100); // mock
+  const spinCost = 20;
   const wheelRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<number>();
 
-  const prizes = [
-    { id: 1, name: '500 монет', icon: '🪙', color: '#FFD700' },
-    { id: 2, name: 'Карта', icon: '🎴', color: '#FF6B6B' },
-    { id: 3, name: '100 монет', icon: '🪙', color: '#4ECDC4' },
-    { id: 4, name: 'Энергия', icon: '⚡', color: '#45B7D1' },
-    { id: 5, name: '1000 монет', icon: '🪙', color: '#96CEB4' },
-    { id: 6, name: 'Редкая карта', icon: '💎', color: '#FFEAA7' },
-    { id: 7, name: '200 монет', icon: '🪙', color: '#DDA0DD' },
-    { id: 8, name: 'Пак карт', icon: '📦', color: '#98D8C8' }
-  ];
+  const prizes = roulettePrizes;
+
+  const getWeightedRandomPrize = () => {
+    const totalWeight = rouletteChances.reduce((sum, chance) => sum + chance.weight, 0);
+    const rand = Math.random() * totalWeight;
+    let cumulative = 0;
+
+    for (const chance of rouletteChances) {
+      cumulative += chance.weight;
+      if (rand <= cumulative) {
+        return prizes.find(p => p.id === chance.prizeId)!;
+      }
+    }
+
+    return prizes[0]; // fallback
+  };
 
   const spin = () => {
     if (!canSpin || isSpinning) return;
 
     setIsSpinning(true);
     setShowPrize(false);
-    
-    // Определяем выигрышный приз
-    const prizeIndex = Math.floor(Math.random() * 8);
-    const prize = prizes[prizeIndex];
-    
-    // Вычисляем угол для остановки
-    const segmentAngle = 360 / 8;
+
+    const prize = getWeightedRandomPrize();
+    const prizeIndex = prizes.findIndex(p => p.id === prize.id);
+    const segmentAngle = 360 / prizes.length;
     const targetAngle = prizeIndex * segmentAngle + segmentAngle / 2;
-    
-    // Добавляем несколько полных оборотов
     const spins = 5 + Math.random() * 3;
     const totalRotation = spins * 360 + (360 - targetAngle);
-    
-    // Запускаем анимацию
     const startTime = performance.now();
-    const duration = 4000; // 4 секунды
-    
+    const duration = 4000;
+
     const animate = (currentTime: number) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      const easedProgress = 1 - Math.pow(1 - progress, 3); // easeOut cubic
-      
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
       const currentRotation = rotation + totalRotation * easedProgress;
-      
+
       if (wheelRef.current) {
         wheelRef.current.style.transform = `rotate(${currentRotation}deg)`;
       }
-      
+
       if (progress < 1) {
         animationRef.current = requestAnimationFrame(animate);
       } else {
@@ -67,14 +65,21 @@ const DailyRoulette = () => {
         setWonPrize(prize);
       }
     };
-    
+
     animationRef.current = requestAnimationFrame(animate);
   };
 
   const claimPrize = () => {
     setShowPrize(false);
     setCanSpin(false);
-    
+
+    if (wonPrize?.name === 'Еще попытка') {
+      setCanSpin(true);
+    } else if (wonPrize?.name.includes('монет')) {
+      const amount = parseInt(wonPrize.name.split(' ')[0]);
+      setUserCoins(prev => prev + amount);
+    }
+
     const nextSpin = new Date();
     nextSpin.setHours(nextSpin.getHours() + 24);
     setNextSpinTime(nextSpin);
@@ -85,140 +90,115 @@ const DailyRoulette = () => {
       const timer = setInterval(() => {
         const now = new Date();
         const diff = nextSpinTime.getTime() - now.getTime();
-        
+
         if (diff <= 0) {
           setCanSpin(true);
           setNextSpinTime(null);
           setTimeLeft('');
         } else {
-          const hours = Math.floor(diff / (1000 * 60 * 60));
-          const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-          setTimeLeft(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+          const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+          const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+          const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+          setTimeLeft(`${h}:${m}:${s}`);
         }
       }, 1000);
-
       return () => clearInterval(timer);
     }
   }, [nextSpinTime]);
 
   useEffect(() => {
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
     };
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white relative overflow-hidden">
-      {/* Background decoration */}
-      <div className="absolute inset-0">
-        <div className="absolute top-20 left-10 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-radial from-purple-500/5 to-transparent rounded-full"></div>
-      </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-4 pt-32">
+      <h1 className="text-2xl font-bold text-center mb-4">Ежедневная рулетка</h1>
 
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-gradient-to-b from-black via-black/80 to-transparent z-40">
-        <div className="p-4 pt-[3.75rem]">
-          <div className="flex items-center justify-center">
-           <h1 className="text-xl font-bold text-white">Ежедневная рулетка</h1>
-          </div>
-       </div>
-      </header>
+      {!canSpin && !showPrize && (
+        <div className="text-center mb-4">
+          <p className="text-lg">Следующий спин через</p>
+          <p className="text-3xl text-purple-400 font-mono">{timeLeft}</p>
+        </div>
+      )}
 
-      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-4 relative z-10 pt-32">
-        {/* Title */}
-        <h2 className="text-2xl font-bold mb-2 text-center">
-          Испытай удачу прямо сейчас!
-        </h2>
-        
-        {!canSpin && !showPrize && (
-          <div className="mb-6 text-center">
-            <div className="text-lg font-semibold mb-2">Следующий спин через</div>
-            <div className="text-3xl font-mono text-purple-400">{timeLeft}</div>
-          </div>
-        )}
-
-        {/* Roulette Wheel */}
-        <div className="relative mb-8">
-          {/* Pointer */}
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 z-20">
-            <div className="w-0 h-0 border-l-4 border-r-4 border-b-8 border-l-transparent border-r-transparent border-b-purple-400 drop-shadow-lg"></div>
-          </div>
-
-          {/* Wheel */}
-          <div 
-            ref={wheelRef}
-            className="relative w-80 h-80 rounded-full shadow-2xl"
-            style={{
-              transform: `rotate(${rotation}deg)`,
-              background: 'conic-gradient(from 0deg, #FF6B6B 0deg 45deg, #4ECDC4 45deg 90deg, #45B7D1 90deg 135deg, #96CEB4 135deg 180deg, #FFEAA7 180deg 225deg, #DDA0DD 225deg 270deg, #98D8C8 270deg 315deg, #FFD700 315deg 360deg)',
-              boxShadow: '0 0 50px rgba(147, 51, 234, 0.3), inset 0 0 30px rgba(0, 0, 0, 0.3)'
-            }}
-          >
-            {/* Prize sections */}
-            {prizes.map((prize, index) => {
-              const angle = (index * 45) - 22.5;
-              return (
-                <div
-                  key={prize.id}
-                  className="absolute w-full h-full flex items-center justify-center"
-                  style={{
-                    transform: `rotate(${angle}deg)`,
-                    transformOrigin: 'center'
-                  }}
-                >
-                  <div className="absolute top-8 flex flex-col items-center">
-                    <div className="text-3xl mb-1 drop-shadow-md">{prize.icon}</div>
-                    <div className="text-xs font-bold text-center px-2 py-1 bg-black/50 rounded-md whitespace-nowrap backdrop-blur-sm">
-                      {prize.name.split(' ').map((word, i) => (
-                        <div key={i}>{word}</div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-
-            {/* Center circle */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-white to-gray-200 rounded-full shadow-lg border-4 border-gray-300 flex items-center justify-center">
-              <div className="w-4 h-4 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full"></div>
-            </div>
-          </div>
+      <div className="relative mb-6 mx-auto w-80 h-80">
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 z-10">
+          <div className="w-0 h-0 border-l-4 border-r-4 border-b-8 border-transparent border-b-purple-400" />
         </div>
 
-        {/* Spin Button */}
+        <div
+          ref={wheelRef}
+          className="w-full h-full rounded-full shadow-xl"
+          style={{
+            transform: `rotate(${rotation}deg)`,
+            background: `conic-gradient(${prizes.map((p, i) =>
+              `${p.color} ${(360 / prizes.length) * i}deg ${(360 / prizes.length) * (i + 1)}deg`
+            ).join(', ')})`
+          }}
+        >
+          {prizes.map((prize, index) => {
+            const angle = (index * 360) / prizes.length - 360 / prizes.length / 2;
+            return (
+              <div
+                key={prize.id}
+                className="absolute w-full h-full flex items-center justify-center"
+                style={{ transform: `rotate(${angle}deg)` }}
+              >
+                <div className="absolute top-8 flex flex-col items-center">
+                  <div className="text-3xl">{prize.icon}</div>
+                  <div className="text-xs font-bold bg-black/50 px-2 py-1 rounded mt-1">
+                    {prize.name}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="text-center">
         <button
           onClick={spin}
           disabled={!canSpin || isSpinning || showPrize}
-          className={`px-12 py-4 rounded-full text-lg font-bold transition-all duration-200 ${
+          className={`px-10 py-3 rounded-full text-lg font-bold transition-all ${
             canSpin && !isSpinning && !showPrize
-              ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 hover:scale-105 shadow-lg hover:shadow-purple-500/25'
+              ? 'bg-purple-600 hover:bg-purple-700 text-white'
               : 'bg-gray-600 text-gray-400 cursor-not-allowed'
           }`}
         >
-          {isSpinning ? 'Крутится...' : canSpin && !showPrize ? 'Крутить' : 'Недоступно'}
+          {isSpinning ? 'Крутится...' : canSpin ? 'Крутить' : 'Недоступно'}
         </button>
 
-        {/* Info */}
-        <p className="text-gray-400 text-center mt-4 max-w-sm">
-          Вращайте рулетку каждый день и получайте потрясающие призы!
-        </p>
+        {!canSpin && !showPrize && (
+          <button
+            onClick={() => {
+              if (userCoins >= spinCost) {
+                setUserCoins(c => c - spinCost);
+                setCanSpin(true);
+              } else {
+                alert('Недостаточно монет!');
+              }
+            }}
+            className="mt-4 px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg"
+          >
+            Купить попытку за {spinCost} монет
+          </button>
+        )}
+
+        <p className="text-gray-400 mt-4">Монеты: {userCoins}</p>
       </div>
 
-      {/* Prize Modal */}
       {showPrize && wonPrize && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-8 rounded-2xl border border-gray-600 text-center max-w-sm mx-4 animate-scale-in shadow-2xl">
-            <div className="text-6xl mb-4 animate-bounce">{wonPrize.icon}</div>
-            <h3 className="text-2xl font-bold mb-2 text-yellow-400">Поздравляем!</h3>
-            <p className="text-lg mb-2">Вы выиграли:</p>
-            <p className="text-xl font-bold mb-6 text-white">{wonPrize.name}</p>
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-xl text-center max-w-sm shadow-lg">
+            <div className="text-6xl mb-3">{wonPrize.icon}</div>
+            <h2 className="text-xl font-bold text-yellow-400 mb-1">Поздравляем!</h2>
+            <p className="text-lg mb-3">Вы выиграли: {wonPrize.name}</p>
             <button
               onClick={claimPrize}
-              className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold py-3 px-6 rounded-lg transition-all duration-200 hover:scale-105 shadow-lg"
+              className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-bold"
             >
               Забрать приз
             </button>
