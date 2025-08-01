@@ -15,28 +15,30 @@ const Index = () => {
         showProfile
       />
       <div className="px-4 space-y-6 pt-32">
-  {/* Рейтинг - фиксированный вариант */}
+  {/* Рейтинг - 4K качество */}
   <Link 
     to="/rating"
     className="block relative aspect-[183/111] w-full rounded-[22px] overflow-hidden"
   >
-    {/* SVG фон */}
+    {/* Оптимизированный SVG фон */}
     <svg 
       viewBox="0 0 183 111" 
       className="w-full h-full"
       preserveAspectRatio="xMidYMid meet"
+      shape-rendering="crispEdges"
     >
       <image 
         href="/svg/rating-bg.svg" 
-        width="100%" 
-        height="100%"
+        width="183" 
+        height="111"
         preserveAspectRatio="xMidYMid slice"
+        image-rendering="optimizeQuality"
       />
     </svg>
     
-    {/* Адаптивный текст */}
+    {/* Текст с четким рендерингом */}
     <div className="absolute inset-0 flex items-center justify-center">
-      <span className="text-white font-bold text-[min(12vw,114px)]">5.00</span>
+      <span className="text-white font-bold text-[min(12vw,114px)] subpixel-antialiased">5.00</span>
     </div>
   </Link>
 
@@ -44,24 +46,27 @@ const Index = () => {
   <div className="grid grid-cols-2 gap-4">
     <StatsCard label="Коллекция" value="153 из 300 карт" />
     
-    {/* Монеты */}
+    {/* Монеты с улучшенным качеством */}
     <div className="relative aspect-[183/111] rounded-[22px] overflow-hidden">
       <svg 
         viewBox="0 0 183 111" 
         className="w-full h-full"
+        shape-rendering="geometricPrecision"
       >
         <image 
           href="/svg/coins-bg.svg" 
-          width="100%" 
-          height="100%"
+          width="183" 
+          height="111"
           preserveAspectRatio="xMidYMid slice"
+          image-rendering="optimizeQuality"
         />
       </svg>
       <div className="absolute top-[5%] right-[5%]">
-        <span className="text-white font-bold text-[min(4vw,24px)]">10,250</span>
+        <span className="text-white font-bold text-[min(4vw,24px)] subpixel-antialiased">10,250</span>
       </div>
     </div>
   </div>
+
 
 
 
