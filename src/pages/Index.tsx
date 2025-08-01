@@ -15,51 +15,54 @@ const Index = () => {
         showProfile
       />
       <div className="px-4 space-y-6 pt-32">
-  {/* Weekly Rating - FIXED версия */}
+  {/* Рейтинг - фиксированный вариант */}
   <Link 
     to="/rating"
-    className="block relative h-[111px] w-full rounded-[22px] overflow-hidden"
+    className="block relative aspect-[183/111] w-full rounded-[22px] overflow-hidden"
   >
     {/* SVG фон */}
     <svg 
-      width="100%" 
-      height="100%" 
       viewBox="0 0 183 111" 
-      preserveAspectRatio="xMidYMid slice"
-      className="absolute inset-0"
+      className="w-full h-full"
+      preserveAspectRatio="xMidYMid meet"
     >
       <image 
         href="/svg/rating-bg.svg" 
         width="100%" 
-        height="100%" 
+        height="100%"
         preserveAspectRatio="xMidYMid slice"
       />
     </svg>
     
-    {/* Контент */}
+    {/* Адаптивный текст */}
     <div className="absolute inset-0 flex items-center justify-center">
-      <span className="text-white font-bold text-[114px]">5.00</span>
+      <span className="text-white font-bold text-[min(12vw,114px)]">5.00</span>
     </div>
   </Link>
 
   {/* Stats Grid */}
   <div className="grid grid-cols-2 gap-4">
     <StatsCard label="Коллекция" value="153 из 300 карт" />
-    <div className="relative h-[111px] rounded-[22px] overflow-hidden">
+    
+    {/* Монеты */}
+    <div className="relative aspect-[183/111] rounded-[22px] overflow-hidden">
       <svg 
-        width="100%" 
-        height="100%" 
         viewBox="0 0 183 111" 
-        preserveAspectRatio="xMidYMid slice"
-        className="absolute inset-0"
+        className="w-full h-full"
       >
-        <image href="/svg/coins-bg.svg" width="100%" height="100%" />
+        <image 
+          href="/svg/coins-bg.svg" 
+          width="100%" 
+          height="100%"
+          preserveAspectRatio="xMidYMid slice"
+        />
       </svg>
-      <div className="absolute top-3 right-3">
-        <span className="text-white font-bold text-lg">10,250</span>
+      <div className="absolute top-[5%] right-[5%]">
+        <span className="text-white font-bold text-[min(4vw,24px)]">10,250</span>
       </div>
     </div>
   </div>
+
 
 
         {/* My Packs Section */}
