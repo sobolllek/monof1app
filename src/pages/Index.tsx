@@ -15,58 +15,41 @@ const Index = () => {
         showProfile
       />
       <div className="px-4 space-y-6 pt-32">
-  {/* Рейтинг - 4K качество */}
+  {/* Рейтинг - гарантированно рабочий вариант */}
   <Link 
     to="/rating"
-    className="block relative aspect-[183/111] w-full rounded-[22px] overflow-hidden"
+    className="block relative h-[111px] w-full rounded-[22px] overflow-hidden bg-gray-900"
   >
-    {/* Оптимизированный SVG фон */}
-    <svg 
-      viewBox="0 0 183 111" 
-      className="w-full h-full"
-      preserveAspectRatio="xMidYMid meet"
-      shape-rendering="crispEdges"
-    >
-      <image 
-        href="/svg/rating-bg.svg" 
-        width="183" 
-        height="111"
-        preserveAspectRatio="xMidYMid slice"
-        image-rendering="optimizeQuality"
-      />
-    </svg>
+    {/* 1. Альтернатива: используем div с фоновым изображением */}
+    <div 
+      className="absolute inset-0 bg-[url('/svg/rating-bg.svg')] bg-cover bg-center"
+      style={{
+        imageRendering: 'crisp-edges',
+        WebkitOptimizeContrast: 'true'
+      }}
+    />
     
-    {/* Текст с четким рендерингом */}
+    {/* 2. Текст поверх */}
     <div className="absolute inset-0 flex items-center justify-center">
-      <span className="text-white font-bold text-[min(12vw,114px)] subpixel-antialiased">5.00</span>
+      <span className="text-white font-bold text-6xl drop-shadow-lg">5.00</span>
     </div>
   </Link>
 
-  {/* Stats Grid */}
+  {/* Монеты - аналогичное решение */}
   <div className="grid grid-cols-2 gap-4">
     <StatsCard label="Коллекция" value="153 из 300 карт" />
     
-    {/* Монеты с улучшенным качеством */}
-    <div className="relative aspect-[183/111] rounded-[22px] overflow-hidden">
-      <svg 
-        viewBox="0 0 183 111" 
-        className="w-full h-full"
-        shape-rendering="geometricPrecision"
-      >
-        <image 
-          href="/svg/coins-bg.svg" 
-          width="183" 
-          height="111"
-          preserveAspectRatio="xMidYMid slice"
-          image-rendering="optimizeQuality"
-        />
-      </svg>
-      <div className="absolute top-[5%] right-[5%]">
-        <span className="text-white font-bold text-[min(4vw,24px)] subpixel-antialiased">10,250</span>
-      </div>
+    <div className="relative h-[111px] rounded-[22px] overflow-hidden">
+      <div 
+        className="absolute inset-0 bg-[url('/svg/coins-bg.svg')] bg-cover bg-center"
+        style={{
+          imageRendering: 'pixelated',
+          WebkitOptimizeContrast: 'true'
+        }}
+      />
+      <span className="absolute top-3 right-3 text-white font-bold text-lg backdrop-blur-sm">10,250</span>
     </div>
   </div>
-
 
 
 
