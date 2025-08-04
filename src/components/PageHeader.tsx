@@ -7,21 +7,24 @@ const PageHeader = ({
   disableGradient = false
 }) => {
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
-  const [toolbarHeight, setToolbarHeight] = useState('48px'); // дефолт высоты тулбара
+  const [headerOffset, setHeaderOffset] = useState('0px');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (isTelegramWebApp && webApp) {
-      let height = 48; // Android дефолт
+      let offset = 0;
 
-      if (webApp.platform === 'ios') {
-        height = 44;
+      // Берём safeAreaInsets.top или дефолты платформ
+      if (webApp.safeAreaInsets?.top) {
+        offset = webApp.safeAreaInsets.top;
+      } else {
+        offset = webApp.platform === 'ios' ? 44 : 48;
       }
-      // Если safeAreaInsets доступен, берём его высоту тулбара
-      if (webApp.safeAreaInsets && webApp.safeAreaInsets.top) {
-        height = webApp.safeAreaInsets.top;
-      }
-      setToolbarHeight(`${height}px`);
+
+      // Делаем поправку, чтобы текст выглядел по центру
+      setHeaderOffset(`${offset - 4}px`);
+    } else {
+      setHeaderOffset('48px'); // fallback
     }
   }, [isTelegramWebApp, webApp]);
 
@@ -29,14 +32,12 @@ const PageHeader = ({
     <>
       <header 
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center"
-        style={{ height: toolbarHeight }}
+        style={{ paddingTop: headerOffset }}
       >
         {!disableGradient && (
           <div 
-            className="absolute left-0 w-full pointer-events-none"
+            className="absolute inset-0 pointer-events-none"
             style={{
-              top: 0,
-              height: toolbarHeight,
               background: `linear-gradient(
                 to bottom,
                 rgba(0, 0, 0, 1) 0%,
