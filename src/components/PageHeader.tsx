@@ -7,39 +7,36 @@ const PageHeader = ({
   disableGradient = false
 }) => {
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
-  const [headerOffset, setHeaderOffset] = useState('3.75rem'); // дефолт
-  
+  const [paddingTop, setPaddingTop] = useState('3.75rem'); // fallback
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (isTelegramWebApp && webApp) {
-      // Подбираем высоту отступа в зависимости от платформы
-      const iosOffset = '3.75rem';     // примерно 60px
-      const androidOffset = '3.5rem';  // примерно 56px
-      const defaultOffset = '3.75rem'; // fallback
+      let topInset = 60; // дефолт (примерно iOS)
       
-      if (webApp.platform === 'ios') {
-        setHeaderOffset(iosOffset);
+      if (webApp.safeAreaInsets && webApp.safeAreaInsets.top) {
+        topInset = webApp.safeAreaInsets.top; // точное значение от Telegram
       } else if (webApp.platform === 'android') {
-        setHeaderOffset(androidOffset);
-      } else {
-        setHeaderOffset(defaultOffset);
+        topInset = 56;
       }
+      
+      // Переводим в px
+      setPaddingTop(`${topInset}px`);
     }
   }, [isTelegramWebApp, webApp]);
 
   return (
     <>
       <header 
-        className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black via-black/80 to-transparent"
-        style={{ paddingTop: headerOffset }}
+        className="fixed top-0 left-0 right-0 z-50"
+        style={{ paddingTop }}
       >
         {!disableGradient && (
           <div 
             className="absolute left-0 w-full pointer-events-none"
             style={{
-              top: `calc(-1 * ${headerOffset})`,
-              height: `calc(${headerOffset} * 2)`,
+              top: `calc(-1 * ${paddingTop})`,
+              height: `calc(${paddingTop} * 2)`,
               background: `linear-gradient(
                 to bottom,
                 rgba(0, 0, 0, 1) 0%,
