@@ -7,44 +7,53 @@ const PageHeader = ({
   disableGradient = false
 }) => {
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
-  const [toolbarHeight, setToolbarHeight] = useState(48);
+  const [paddingTop, setPaddingTop] = useState('3.75rem'); // fallback
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (isTelegramWebApp && webApp) {
-      let height = 48;
-
-      if (webApp.safeAreaInsets && webApp.safeAreaInsets.top > 0) {
-        height = webApp.safeAreaInsets.top;
-      } else if (webApp.platform === 'ios') {
-        height = 44;
+      let topInset = 60; // дефолт (примерно iOS)
+      
+      if (webApp.safeAreaInsets && webApp.safeAreaInsets.top) {
+        topInset = webApp.safeAreaInsets.top; // точное значение от Telegram
+      } else if (webApp.platform === 'android') {
+        topInset = 56;
       }
-
-      // Ограничиваем максимальную высоту, чтобы не было слишком высоко
-      if (height > 60) height = 60;
-
-      setToolbarHeight(height);
+      
+      // Переводим в px
+      setPaddingTop(`${topInset}px`);
     }
   }, [isTelegramWebApp, webApp]);
 
   return (
     <>
       <header 
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center"
-        style={{ 
-          height: toolbarHeight,
-          backgroundColor: disableGradient ? 'transparent' : 'rgba(0,0,0,0.9)',
-          paddingLeft: '10px', 
-          paddingRight: '10px',
-        }}
+        className="fixed top-0 left-0 right-0 z-50"
+        style={{ paddingTop }}
       >
-        <h1 
-          onClick={() => setIsMenuOpen(true)}
-          className="text-xl font-bold text-white cursor-pointer select-none"
-          style={{ lineHeight: 1 }}
-        >
-          {title || 'Заголовок'}
-        </h1>
+        {!disableGradient && (
+          <div 
+            className="absolute left-0 w-full pointer-events-none"
+            style={{
+              top: `calc(-1 * ${paddingTop})`,
+              height: `calc(${paddingTop} * 2)`,
+              background: `linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 1) 0%,
+                rgba(0, 0, 0, 0) 100%
+              )`,
+            }}
+          />
+        )}
+
+        <div className="flex items-center justify-center p-4">
+          <h1 
+            onClick={() => setIsMenuOpen(true)}
+            className="text-xl font-bold text-white hover:text-white/80 transition-colors cursor-pointer"
+          >
+            {title}
+          </h1>
+        </div>
       </header>
 
       <MenuOverlay isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
