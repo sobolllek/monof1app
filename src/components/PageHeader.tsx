@@ -7,22 +7,31 @@ const PageHeader = ({
   disableGradient = false
 }) => {
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
-  const [headerOffset, setHeaderOffset] = useState('0px');
+  const [headerOffset, setHeaderOffset] = useState('3.75rem'); // дефолт
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (isTelegramWebApp && webApp) {
-      const systemHeaderHeight = webApp.platform === 'ios' ? 44 : 48;
-      const customPadding = 40;
-      const totalOffset = systemHeaderHeight + customPadding;
-      setHeaderOffset(`${totalOffset}px`);
+      // Подбираем высоту отступа в зависимости от платформы
+      const iosOffset = '3.75rem';     // примерно 60px
+      const androidOffset = '3.5rem';  // примерно 56px
+      const defaultOffset = '3.75rem'; // fallback
+      
+      if (webApp.platform === 'ios') {
+        setHeaderOffset(iosOffset);
+      } else if (webApp.platform === 'android') {
+        setHeaderOffset(androidOffset);
+      } else {
+        setHeaderOffset(defaultOffset);
+      }
     }
   }, [isTelegramWebApp, webApp]);
 
   return (
     <>
       <header 
-        className="fixed top-0 left-0 right-0 z-50"
+        className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black via-black/80 to-transparent"
         style={{ paddingTop: headerOffset }}
       >
         {!disableGradient && (
@@ -43,7 +52,7 @@ const PageHeader = ({
         <div className="flex items-center justify-center p-4">
           <h1 
             onClick={() => setIsMenuOpen(true)}
-            className="text-xl font-bold text-white hover:text-white/80 transition-colors"
+            className="text-xl font-bold text-white hover:text-white/80 transition-colors cursor-pointer"
           >
             {title}
           </h1>
