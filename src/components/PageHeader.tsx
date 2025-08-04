@@ -7,20 +7,21 @@ const PageHeader = ({
   disableGradient = false
 }) => {
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
-  const [toolbarHeight, setToolbarHeight] = useState(48); // число, не строка
+  const [toolbarHeight, setToolbarHeight] = useState(48); // по умолчанию 48
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (isTelegramWebApp && webApp) {
+      console.log('webApp.safeAreaInsets:', webApp.safeAreaInsets);
       let height = 48;
 
-      if (webApp.platform === 'ios') {
+      if (webApp.safeAreaInsets && webApp.safeAreaInsets.top > 0) {
+        height = webApp.safeAreaInsets.top;
+      } else if (webApp.platform === 'ios') {
         height = 44;
       }
-      if (webApp.safeAreaInsets?.top) {
-        height = webApp.safeAreaInsets.top;
-      }
 
+      console.log('Calculated toolbar height:', height);
       setToolbarHeight(height);
     }
   }, [isTelegramWebApp, webApp]);
@@ -30,10 +31,11 @@ const PageHeader = ({
       <header 
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center"
         style={{ 
-          height: toolbarHeight, 
+          height: toolbarHeight || 48, 
+          backgroundColor: 'rgba(0,0,0,0.9)', // чтобы точно видеть хедер
+          borderBottom: '1px solid red', // чтобы видеть границы
           paddingLeft: '10px', 
           paddingRight: '10px',
-          background: disableGradient ? 'transparent' : 'linear-gradient(to bottom, black, transparent)'
         }}
       >
         <h1 
@@ -41,7 +43,7 @@ const PageHeader = ({
           className="text-xl font-bold text-white cursor-pointer select-none"
           style={{ lineHeight: 1 }}
         >
-          {title}
+          {title || 'Заголовок'}
         </h1>
       </header>
 
