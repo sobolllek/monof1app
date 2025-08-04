@@ -1,21 +1,11 @@
-import { ArrowLeft, Settings, Bell, User } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
-import InfoButton from './InfoButton';
-import useTelegramWebApp from '../hooks/useTelegramWebApp';
 import { useEffect, useState } from 'react';
+import useTelegramWebApp from '../hooks/useTelegramWebApp';
 import MenuOverlay from './MenuOverlay';
 
 const PageHeader = ({ 
   title, 
-  showBack = false, 
-  showSettings = false,
-  showNotifications = false,
-  showProfile = false,
-  infoTitle,
-  infoDescription,
   disableGradient = false
 }) => {
-  const navigate = useNavigate();
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
   const [headerOffset, setHeaderOffset] = useState('0px');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -29,13 +19,11 @@ const PageHeader = ({
     }
   }, [isTelegramWebApp, webApp]);
 
-  const shouldShowBack = showBack && !isTelegramWebApp;
-
   return (
     <>
       <header 
-        className="fixed left-0 w-full z-50"
-        style={{ top: headerOffset }}
+        className="fixed top-0 left-0 right-0 z-50"
+        style={{ paddingTop: headerOffset }}
       >
         {!disableGradient && (
           <div 
@@ -52,50 +40,13 @@ const PageHeader = ({
           />
         )}
 
-        <div className="relative flex items-center px-4 py-3">
-          {/* Левая часть */}
-          <div className="flex items-center gap-3 z-10">
-            {shouldShowBack && (
-              <button
-                onClick={() => navigate(-1)}
-                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-              >
-                <ArrowLeft size={20} />
-              </button>
-            )}
-          </div>
-
-          {/* Заголовок как кнопка меню по центру */}
-          <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0">
-            <button
-              onClick={() => setIsMenuOpen(true)}
-              className="text-xl font-bold hover:text-white/80 transition-colors"
-            >
-              {title}
-            </button>
-          </div>
-
-          {/* Правая часть */}
-          <div className="flex items-center gap-2 ml-auto z-10">
-            {infoTitle && infoDescription && (
-              <InfoButton title={infoTitle} description={infoDescription} />
-            )}
-            {showNotifications && (
-              <Link to="/notifications" className="p-2 rounded-lg hover:bg-white/10 transition-colors">
-                <Bell size={20} />
-              </Link>
-            )}
-            {showProfile && (
-              <Link to="/profile" className="p-2 rounded-lg hover:bg-white/10 transition-colors">
-                <User size={20} />
-              </Link>
-            )}
-            {showSettings && (
-              <button className="p-2 rounded-lg hover:bg-white/10 transition-colors">
-                <Settings size={20} />
-              </button>
-            )}
-          </div>
+        <div className="flex items-center justify-center p-4">
+          <h1 
+            onClick={() => setIsMenuOpen(true)}
+            className="text-xl font-bold text-white hover:text-white/80 transition-colors"
+          >
+            {title}
+          </h1>
         </div>
       </header>
 
