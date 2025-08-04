@@ -7,7 +7,7 @@ const PageHeader = ({
   disableGradient = false
 }) => {
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
-  const [toolbarHeight, setToolbarHeight] = useState('48px');
+  const [toolbarHeight, setToolbarHeight] = useState(48); // число, не строка
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const PageHeader = ({
         height = webApp.safeAreaInsets.top;
       }
 
-      setToolbarHeight(`${height}px`);
+      setToolbarHeight(height);
     }
   }, [isTelegramWebApp, webApp]);
 
@@ -29,24 +29,17 @@ const PageHeader = ({
     <>
       <header 
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center"
-        style={{ height: toolbarHeight }}
+        style={{ 
+          height: toolbarHeight, 
+          paddingLeft: '10px', 
+          paddingRight: '10px',
+          background: disableGradient ? 'transparent' : 'linear-gradient(to bottom, black, transparent)'
+        }}
       >
-        {!disableGradient && (
-          <div 
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background: `linear-gradient(
-                to bottom,
-                rgba(0, 0, 0, 1) 0%,
-                rgba(0, 0, 0, 0) 100%
-              )`,
-            }}
-          />
-        )}
-
         <h1 
           onClick={() => setIsMenuOpen(true)}
-          className="text-xl font-bold text-white hover:text-white/80 transition-colors cursor-pointer relative z-10"
+          className="text-xl font-bold text-white cursor-pointer select-none"
+          style={{ lineHeight: 1 }}
         >
           {title}
         </h1>
