@@ -14,8 +14,8 @@ const PageHeader = ({
     if (isTelegramWebApp && webApp) {
       let topInset = 60; // дефолт (примерно iOS)
       
-      if (webApp.safeAreaInsets && webApp.safeAreaInsets.top) {
-        topInset = webApp.safeAreaInsets.top; // точное значение от Telegram
+      if (webApp.safeAreaInset && webApp.safeAreaInset.top) {
+        topInset = webApp.safeAreaInset.top; // точное значение от Telegram
       } else if (webApp.platform === 'android') {
         topInset = 56;
       }
