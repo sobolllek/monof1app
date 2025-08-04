@@ -7,12 +7,11 @@ const PageHeader = ({
   disableGradient = false
 }) => {
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
-  const [toolbarHeight, setToolbarHeight] = useState(48); // по умолчанию 48
+  const [toolbarHeight, setToolbarHeight] = useState(48);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     if (isTelegramWebApp && webApp) {
-      console.log('webApp.safeAreaInsets:', webApp.safeAreaInsets);
       let height = 48;
 
       if (webApp.safeAreaInsets && webApp.safeAreaInsets.top > 0) {
@@ -21,7 +20,9 @@ const PageHeader = ({
         height = 44;
       }
 
-      console.log('Calculated toolbar height:', height);
+      // Ограничиваем максимальную высоту, чтобы не было слишком высоко
+      if (height > 60) height = 60;
+
       setToolbarHeight(height);
     }
   }, [isTelegramWebApp, webApp]);
@@ -31,9 +32,8 @@ const PageHeader = ({
       <header 
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center"
         style={{ 
-          height: toolbarHeight || 48, 
-          backgroundColor: 'rgba(0,0,0,0.9)', // чтобы точно видеть хедер
-          borderBottom: '1px solid red', // чтобы видеть границы
+          height: toolbarHeight,
+          backgroundColor: disableGradient ? 'transparent' : 'rgba(0,0,0,0.9)',
           paddingLeft: '10px', 
           paddingRight: '10px',
         }}
