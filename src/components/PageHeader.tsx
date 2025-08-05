@@ -1,10 +1,13 @@
-// PageHeader.tsx
 import { useEffect, useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import useTelegramWebApp from '../hooks/useTelegramWebApp';
+import MenuOverlay from './MenuOverlay';
 
 const PageHeader = ({ disableGradient = false }) => {
   const location = useLocation();
+  const [isMenuVisible, setIsMenuVisible] = useState(true);
+  const [isClosing, setIsClosing] = useState(false);
+  const [shouldAnimateOpen, setShouldAnimateOpen] = useState(true); // Initial open animation
 
   const menuItems = [
     { path: "/", label: "Главная" },
@@ -21,7 +24,12 @@ const PageHeader = ({ disableGradient = false }) => {
 
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
   const [headerHeight, setHeaderHeight] = useState(60);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [selectedPath, setSelectedPath] = useState(location.pathname);
+
+  useEffect(() => {
+    setSelectedPath(location.pathname);
+    setShouldAnimateOpen(false); // No animation on section switch
+  }, [location.pathname]);
 
   useEffect(() => {
     if (isTelegramWebApp && webApp) {
@@ -35,9 +43,22 @@ const PageHeader = ({ disableGradient = false }) => {
     }
   }, [isTelegramWebApp, webApp]);
 
+  const handleHeaderClick = () => {
+    if (isMenuVisible) {
+      setIsClosing(true);
+      setTimeout(() => {
+        setIsMenuVisible(false);
+        setIsClosing(false);
+        setShouldAnimateOpen(true); // Enable animation for next open
+      }, 300); // Match fadeOut duration
+    } else {
+      setIsMenuVisible(true);
+      setShouldAnimateOpen(true); // Enable opening animation
+    }
+  };
+
   return (
     <>
-      {/* Шапка */}
       <header
         className="fixed top-0 left-0 right-0 z-50 bg-black"
         style={{ paddingTop: headerHeight }}
@@ -55,33 +76,22 @@ const PageHeader = ({ disableGradient = false }) => {
 
         <div className="flex items-center justify-center p-4">
           <h1
-            onClick={() => setIsMenuOpen(prev => !prev)}
-            className="text-xl font-bold text-white hover:text-white/80 transition-colors cursor-pointer select-none"
+            className="text-xl font-bold text-white select-none cursor-pointer"
+            onClick={handleHeaderClick}
           >
             {currentItem.label}
           </h1>
         </div>
       </header>
 
-      {/* Меню поверх контента */}
-      {isMenuOpen && (
-        <div
-          className="fixed left-0 right-0 bg-black/95 backdrop-blur-sm flex flex-col items-center space-y-3 py-4 z-40"
-          style={{ top: headerHeight }}
-        >
-          {menuItems
-            .filter(item => item.path !== currentItem.path) // исключаем только текущий
-            .map(item => (
-              <Link
-                key={item.path}
-                to={item.path}
-                className="text-lg text-gray-400 hover:text-white/80 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-        </div>
+      {isMenuVisible && (
+        <MenuOverlay 
+          topOffset={headerHeight}
+          selectedPath={selectedPath}
+          onPathSelect={setSelectedPath}
+          isClosing={isClosing}
+          shouldAnimateOpen={shouldAnimateOpen}
+        />
       )}
     </>
   );
