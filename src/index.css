@@ -78,7 +78,7 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Фикс для Android */
+  /* Fix for Android */
   @supports (font-variation-settings: normal) {
     body {
       font-variation-settings: "wght" 400;
@@ -192,20 +192,33 @@
 @keyframes fadeOut {
   from {
     opacity: 1;
+    transform: translateY(0);
   }
   to {
     opacity: 0;
+    transform: translateY(-5px);
   }
 }
 
-@keyframes fade-in {
-  from {
+@keyframes itemAppear {
+  from { 
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(-10px);
   }
-  to {
+  to { 
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes itemDisappear {
+  from { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to { 
+    opacity: 0;
+    transform: translateY(-10px);
   }
 }
 
@@ -317,4 +330,16 @@
 
 .animate-prize-bounce {
   animation: prize-bounce 1s ease-in-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.animate-item-appear {
+  animation: itemAppear 0.2s ease-out forwards;
+}
+
+.animate-item-disappear {
+  animation: itemDisappear 0.2s ease-out forwards;
 }
