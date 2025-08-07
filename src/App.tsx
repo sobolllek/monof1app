@@ -23,6 +23,7 @@ import TeamManager from "./pages/TeamManager";
 import CategoryCards from './pages/CategoryCards';
 import PackOpening from './pages/PackOpening';
 import MarketCategory from './pages/MarketCategory';
+import CodeStrategy from './pages/CodeStrategy';
 
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ const App = () => {
                 <Route path="/legend-garage" element={<LegendGarage />} />
                 <Route path="/racer-map" element={<RacerMap />} />
                 <Route path="/team-manager" element={<TeamManager />} />
+                <Route path="/code-strategy" element={<CodeStrategy />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
