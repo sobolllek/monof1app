@@ -1,5 +1,4 @@
-
-import { Gamepad2, Car, Map, Users, ChevronRight } from 'lucide-react';
+import { Gamepad2, Car, Map, Users, ChevronRight, Code } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import PageHeader from '../components/PageHeader';
@@ -32,27 +31,15 @@ const Games = () => {
       color: 'from-green-600 to-green-700',
       path: '/team-manager',
       status: 'Доступно'
-    }
-  ];
-
-  const quickGames = [
-    {
-      title: 'Угадай пилота',
-      description: 'Угадывайте пилотов по силуэту шлема',
-      difficulty: 'Легко',
-      reward: '10-50 монет'
     },
     {
-      title: 'Трасса-викторина',
-      description: 'Определите трассу по повороту',
-      difficulty: 'Средне',
-      reward: '25-100 монет'
-    },
-    {
-      title: 'Исторические факты',
-      description: 'Вопросы об истории Формулы 1',
-      difficulty: 'Сложно',
-      reward: '50-200 монет'
+      id: 'code-strategy',
+      title: 'Код Стратегии',
+      description: 'Программируйте тактику гонки через специальный язык команд. Оптимизируйте алгоритмы победы.',
+      icon: Code,
+      color: 'from-amber-600 to-amber-700',
+      path: '/code-strategy',
+      status: 'Эксклюзив'
     }
   ];
 
@@ -65,7 +52,6 @@ const Games = () => {
       />
 
       <div className="p-4 space-y-6 pt-32">
-        {/* Meta Features */}
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-white">Флагманские функции</h2>
           <div className="space-y-3">
@@ -83,38 +69,17 @@ const Games = () => {
                     <h3 className="text-white font-semibold mb-1">{feature.title}</h3>
                     <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-green-400 text-xs font-semibold">{feature.status}</span>
+                      <span className={`text-xs font-semibold ${
+                        feature.status === 'Доступно' ? 'text-green-400' : 
+                        feature.status === 'Эксклюзив' ? 'text-amber-400' : 'text-purple-400'
+                      }`}>
+                        {feature.status}
+                      </span>
                     </div>
                   </div>
                 </div>
                 <ChevronRight className="text-f1-orange group-hover:translate-x-1 transition-transform" size={20} />
               </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Quick Games */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold text-white">Быстрые игры</h2>
-          <div className="grid gap-3">
-            {quickGames.map((game, index) => (
-              <div key={index} className="f1-card p-4 hover:bg-f1-gray-light/30 transition-colors cursor-pointer">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-white font-semibold">{game.title}</h3>
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    game.difficulty === 'Легко' ? 'bg-green-900/30 text-green-400' :
-                    game.difficulty === 'Средне' ? 'bg-yellow-900/30 text-yellow-400' :
-                    'bg-red-900/30 text-red-400'
-                  }`}>
-                    {game.difficulty}
-                  </span>
-                </div>
-                <p className="text-gray-400 text-sm mb-3">{game.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-f1-orange text-sm font-semibold">Награда: {game.reward}</span>
-                  <span className="text-gray-500 text-sm">Скоро</span>
-                </div>
-              </div>
             ))}
           </div>
         </div>
