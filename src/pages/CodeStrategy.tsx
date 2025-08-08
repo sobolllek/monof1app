@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, RefreshCw, Coins } from 'lucide-react';
+import { RefreshCw, Coins } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface CodeStrategyProps {
   userCoins?: number;
   onCoinsChange?: (newCoins: number) => void;
-  onBack?: () => void;
 }
 
 type CellStatus = 'hot-lap' | 'pit-hint' | 'dnf' | 'empty';
@@ -22,109 +21,104 @@ interface Attempt {
   results: GuessResult[];
 }
 
-export const CodeStrategy = ({ userCoins = 0, 
-  onCoinsChange = () => {}, 
-  onBack = () => {}  }: CodeStrategyProps) => {
-  const [secretCode] = useState(() => {
-    // Generate a random 6-digit code
-    return Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('');
-  });
-  
+export const CodeStrategy = ({
+  userCoins = 0,
+  onCoinsChange = () => {}
+}: CodeStrategyProps) => {
+  const [secretCode] = useState(() =>
+    Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('')
+  );
+
   const [currentGuess, setCurrentGuess] = useState('');
+  const [currentResults, setCurrentResults] = useState<GuessResult[]>(
+    Array.from({ length: 6 }, () => ({ digit: '', status: 'empty' }))
+  );
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [remainingAttempts, setRemainingAttempts] = useState(6);
   const [gameStatus, setGameStatus] = useState<'playing' | 'won' | 'lost'>('playing');
-  const [envelopeState, setEnvelopeState] = useState<'closed' | 'opening' | 'success' | 'failed'>('closed');
+  const [envelopeState, setEnvelopeState] = useState<'closed' | 'opening' | 'success' | 'failed'>(
+    'closed'
+  );
   const [buyAttemptCost, setBuyAttemptCost] = useState(100);
-  
+
   const { toast } = useToast();
 
   const checkGuess = (guess: string): GuessResult[] => {
-    const results: GuessResult[] = [];
     const secretDigits = secretCode.split('');
     const guessDigits = guess.split('');
-    
-    for (let i = 0; i < 6; i++) {
-      if (guessDigits[i] === secretDigits[i]) {
-        results.push({ digit: guessDigits[i], status: 'hot-lap' });
-      } else if (secretDigits.includes(guessDigits[i])) {
-        results.push({ digit: guessDigits[i], status: 'pit-hint' });
+
+    return guessDigits.map((digit, i) => {
+      if (digit === secretDigits[i]) return { digit, status: 'hot-lap' };
+      if (secretDigits.includes(digit)) return { digit, status: 'pit-hint' };
+      return { digit, status: 'dnf' };
+    });
+  };
+
+  const processGuess = (guess: string) => {
+    const results = checkGuess(guess);
+    const newAttempt: Attempt = { guess, results };
+    setAttempts((prev) => [...prev, newAttempt]);
+
+    const isWin = results.every((r) => r.status === 'hot-lap');
+
+    if (isWin) {
+      setGameStatus('won');
+      setEnvelopeState('success');
+      const reward = 500;
+      onCoinsChange(userCoins + reward);
+      toast({
+        title: 'ПОБЕДА! 🏆',
+        description: `Конверт взломан! +${reward} монет`
+      });
+    } else {
+      const newRemainingAttempts = remainingAttempts - 1;
+      setRemainingAttempts(newRemainingAttempts);
+
+      if (newRemainingAttempts === 0) {
+        setGameStatus('lost');
+        setEnvelopeState('failed');
       } else {
-        results.push({ digit: guessDigits[i], status: 'dnf' });
+        setEnvelopeState('closed');
       }
     }
-    
-    return results;
+
+    setCurrentGuess('');
+    setCurrentResults(Array.from({ length: 6 }, () => ({ digit: '', status: 'empty' })));
   };
 
   const handleSubmitGuess = () => {
-    if (currentGuess.length !== 6 || !/^\d{6}$/.test(currentGuess)) {
-      toast({
-        title: "Неверный формат",
-        description: "Введите 6 цифр",
-        variant: "destructive"
-      });
-      return;
-    }
-
+    if (currentGuess.length !== 6 || !/^\d{6}$/.test(currentGuess)) return;
     setEnvelopeState('opening');
-    
     setTimeout(() => {
-      const results = checkGuess(currentGuess);
-      const newAttempt: Attempt = { guess: currentGuess, results };
-      setAttempts(prev => [...prev, newAttempt]);
-      
-      const isWin = results.every(r => r.status === 'hot-lap');
-      
-      if (isWin) {
-        setGameStatus('won');
-        setEnvelopeState('success');
-        const reward = 500;
-        onCoinsChange(userCoins + reward);
-        toast({
-          title: "ПОБЕДА! 🏆",
-          description: `Конверт взломан! +${reward} монет`,
-        });
-      } else {
-        const newRemainingAttempts = remainingAttempts - 1;
-        setRemainingAttempts(newRemainingAttempts);
-        
-        if (newRemainingAttempts === 0) {
-          setGameStatus('lost');
-          setEnvelopeState('failed');
-        } else {
-          setEnvelopeState('closed');
-        }
-      }
-      
-      setCurrentGuess('');
+      processGuess(currentGuess);
     }, 1500);
   };
 
   const handleBuyAttempt = () => {
     if (userCoins < buyAttemptCost) {
       toast({
-        title: "Недостаточно монет",
+        title: 'Недостаточно монет',
         description: `Нужно ${buyAttemptCost} монет`,
-        variant: "destructive"
+        variant: 'destructive'
       });
       return;
     }
 
     onCoinsChange(userCoins - buyAttemptCost);
-    setRemainingAttempts(prev => prev + 1);
-    setBuyAttemptCost(prev => Math.floor(prev * 1.5));
+    setRemainingAttempts((prev) => prev + 1);
+    setBuyAttemptCost((prev) => Math.floor(prev * 1.5));
     setGameStatus('playing');
     setEnvelopeState('closed');
-    
+
     toast({
-      title: "Куплена попытка!",
-      description: `Следующая попытка: ${Math.floor(buyAttemptCost * 1.5)} монет`,
+      title: 'Куплена попытка!',
+      description: `Следующая попытка: ${Math.floor(buyAttemptCost * 1.5)} монет`
     });
   };
 
   const resetGame = () => {
     setCurrentGuess('');
+    setCurrentResults(Array.from({ length: 6 }, () => ({ digit: '', status: 'empty' })));
     setAttempts([]);
     setRemainingAttempts(6);
     setGameStatus('playing');
@@ -134,39 +128,37 @@ export const CodeStrategy = ({ userCoins = 0,
 
   const getCellStatusColor = (status: CellStatus) => {
     switch (status) {
-      case 'hot-lap': return 'bg-red-500 text-white';
-      case 'pit-hint': return 'bg-blue-500 text-white';
-      case 'dnf': return 'bg-gray-500 text-white';
-      default: return 'bg-gray-200 text-gray-800';
+      case 'hot-lap':
+        return 'bg-red-500 text-white';
+      case 'pit-hint':
+        return 'bg-blue-500 text-white';
+      case 'dnf':
+        return 'bg-gray-500 text-white';
+      default:
+        return 'bg-gray-800 text-white';
     }
   };
 
   const getEnvelopeClass = () => {
-    const baseClass = "envelope-container transition-all duration-1000";
+    const baseClass = 'envelope-container transition-all duration-1000';
     switch (envelopeState) {
-      case 'opening': return `${baseClass} envelope-opening`;
-      case 'success': return `${baseClass} envelope-success`;
-      case 'failed': return `${baseClass} envelope-failed`;
-      default: return `${baseClass} envelope-closed`;
+      case 'opening':
+        return `${baseClass} envelope-opening`;
+      case 'success':
+        return `${baseClass} envelope-success`;
+      case 'failed':
+        return `${baseClass} envelope-failed`;
+      default:
+        return `${baseClass} envelope-closed`;
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white p-4">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <Button
-          variant="ghost"
-          onClick={onBack}
-          className="text-white hover:bg-white/10"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Назад
-        </Button>
-        <div className="flex items-center space-x-2">
-          <Coins className="w-5 h-5 text-yellow-500" />
-          <span className="text-lg font-bold">{userCoins.toLocaleString()}</span>
-        </div>
+      {/* Coins */}
+      <div className="flex items-center justify-end mb-8">
+        <Coins className="w-5 h-5 text-yellow-500" />
+        <span className="ml-2 text-lg font-bold">{userCoins.toLocaleString()}</span>
       </div>
 
       {/* Game Title */}
@@ -207,33 +199,61 @@ export const CodeStrategy = ({ userCoins = 0,
             {Array.from({ length: 6 }).map((_, i) => (
               <Input
                 key={i}
+                data-index={i}
                 type="text"
                 maxLength={1}
                 value={currentGuess[i] || ''}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, '');
+                  if (!value) return; // запрещаем удаление
+
                   const newGuess = currentGuess.split('');
                   newGuess[i] = value;
-                  setCurrentGuess(newGuess.join('').slice(0, 6));
-                  
-                  // Auto-focus next input
+                  const joinedGuess = newGuess.join('').slice(0, 6);
+                  setCurrentGuess(joinedGuess);
+
+                  // динамическая подсветка
+                  const paddedGuess = joinedGuess.padEnd(6, ' ');
+                  const results: GuessResult[] = paddedGuess.split('').map((digit, idx) => {
+                    if (digit === ' ') return { digit: '', status: 'empty' };
+                    if (digit === secretCode[idx]) return { digit, status: 'hot-lap' };
+                    if (secretCode.includes(digit)) return { digit, status: 'pit-hint' };
+                    return { digit, status: 'dnf' };
+                  });
+                  setCurrentResults(results);
+
+                  // автофокус вперёд (стабильный через requestAnimationFrame)
                   if (value && i < 5) {
-                    const nextInput = e.target.parentElement?.nextElementSibling?.querySelector('input');
-                    nextInput?.focus();
+                    requestAnimationFrame(() => {
+                      const nextInput = document.querySelector<HTMLInputElement>(
+                        `input[data-index="${i + 1}"]`
+                      );
+                      nextInput?.focus();
+                    });
+                  }
+
+                  // автопроверка — если все 6 ячеек заполнены
+                  if (
+                    joinedGuess.length === 6 &&
+                    joinedGuess.split('').every((c) => c !== ' ' && c !== '')
+                  ) {
+                    setEnvelopeState('opening');
+                    setTimeout(() => {
+                      processGuess(joinedGuess);
+                    }, 1500);
                   }
                 }}
-                className="w-12 h-12 text-center text-lg font-bold bg-gray-800 border-gray-600 text-white"
+                onKeyDown={(e) => {
+                  if (e.key === 'Backspace') {
+                    e.preventDefault(); // блокируем удаление
+                  }
+                }}
+                className={`w-12 h-12 text-center text-lg font-bold border-gray-600 ${getCellStatusColor(
+                  currentResults[i]?.status || 'empty'
+                )}`}
               />
             ))}
           </div>
-          
-          <Button
-            onClick={handleSubmitGuess}
-            disabled={currentGuess.length !== 6 || envelopeState === 'opening'}
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3"
-          >
-            {envelopeState === 'opening' ? 'OPENING ENVELOPE...' : 'OPEN ENVELOPE'}
-          </Button>
         </div>
       )}
 
@@ -248,7 +268,9 @@ export const CodeStrategy = ({ userCoins = 0,
                 {attempt.results.map((result, cellIndex) => (
                   <div
                     key={cellIndex}
-                    className={`w-8 h-8 rounded flex items-center justify-center text-sm font-bold ${getCellStatusColor(result.status)}`}
+                    className={`w-8 h-8 rounded flex items-center justify-center text-sm font-bold ${getCellStatusColor(
+                      result.status
+                    )}`}
                   >
                     {result.digit}
                   </div>
@@ -273,11 +295,8 @@ export const CodeStrategy = ({ userCoins = 0,
               <p className="text-gray-300">Секретный код: {secretCode}</p>
             </div>
           )}
-          
-          <Button
-            onClick={resetGame}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
-          >
+
+          <Button onClick={resetGame} className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
             <RefreshCw className="w-4 h-4 mr-2" />
             NEXT LAP
           </Button>
