@@ -84,14 +84,14 @@ export const CodeStrategy = ({
 
     setCurrentGuess('');
     setCurrentResults(Array.from({ length: 6 }, () => ({ digit: '', status: 'empty' })));
-  };
 
-  const handleSubmitGuess = () => {
-    if (currentGuess.length !== 6 || !/^\d{6}$/.test(currentGuess)) return;
-    setEnvelopeState('opening');
-    setTimeout(() => {
-      processGuess(currentGuess);
-    }, 1500);
+    // вернуть фокус на первую ячейку
+    requestAnimationFrame(() => {
+      const firstInput = document.querySelector<HTMLInputElement>(
+        `input[data-index="0"]`
+      );
+      firstInput?.focus();
+    });
   };
 
   const handleBuyAttempt = () => {
@@ -124,19 +124,13 @@ export const CodeStrategy = ({
     setGameStatus('playing');
     setEnvelopeState('closed');
     setBuyAttemptCost(100);
-  };
 
-  const getCellStatusColor = (status: CellStatus) => {
-    switch (status) {
-      case 'hot-lap':
-        return 'bg-red-500 text-white';
-      case 'pit-hint':
-        return 'bg-blue-500 text-white';
-      case 'dnf':
-        return 'bg-gray-500 text-white';
-      default:
-        return 'bg-gray-800 text-white';
-    }
+    requestAnimationFrame(() => {
+      const firstInput = document.querySelector<HTMLInputElement>(
+        `input[data-index="0"]`
+      );
+      firstInput?.focus();
+    });
   };
 
   const getEnvelopeClass = () => {
@@ -195,7 +189,7 @@ export const CodeStrategy = ({
       {/* Input Section */}
       {gameStatus === 'playing' && (
         <div className="max-w-md mx-auto mb-8">
-          <div className="flex space-x-2 mb-4">
+          <div className="flex justify-center space-x-2 mb-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <Input
                 key={i}
@@ -222,7 +216,7 @@ export const CodeStrategy = ({
                   });
                   setCurrentResults(results);
 
-                  // автофокус вперёд (стабильный через requestAnimationFrame)
+                  // автофокус вперёд
                   if (value && i < 5) {
                     requestAnimationFrame(() => {
                       const nextInput = document.querySelector<HTMLInputElement>(
@@ -232,7 +226,7 @@ export const CodeStrategy = ({
                     });
                   }
 
-                  // автопроверка — если все 6 ячеек заполнены
+                  // автопроверка
                   if (
                     joinedGuess.length === 6 &&
                     joinedGuess.split('').every((c) => c !== ' ' && c !== '')
@@ -248,9 +242,16 @@ export const CodeStrategy = ({
                     e.preventDefault(); // блокируем удаление
                   }
                 }}
-                className={`w-12 h-12 text-center text-lg font-bold border-gray-600 ${getCellStatusColor(
-                  currentResults[i]?.status || 'empty'
-                )}`}
+                className={`w-[50px] h-[72px] text-center text-2xl font-bold border-none rounded 
+                  ${
+                    currentResults[i]?.status === 'hot-lap'
+                      ? 'bg-red-500 text-red-200'
+                      : currentResults[i]?.status === 'pit-hint'
+                      ? 'bg-blue-500 text-blue-200'
+                      : currentResults[i]?.status === 'dnf'
+                      ? 'bg-gray-500 text-gray-200'
+                      : 'bg-gray-800 text-white'
+                  }`}
               />
             ))}
           </div>
@@ -268,9 +269,15 @@ export const CodeStrategy = ({
                 {attempt.results.map((result, cellIndex) => (
                   <div
                     key={cellIndex}
-                    className={`w-8 h-8 rounded flex items-center justify-center text-sm font-bold ${getCellStatusColor(
-                      result.status
-                    )}`}
+                    className={`w-8 h-8 rounded flex items-center justify-center text-sm font-bold ${
+                      result.status === 'hot-lap'
+                        ? 'bg-red-500 text-red-100'
+                        : result.status === 'pit-hint'
+                        ? 'bg-blue-500 text-blue-100'
+                        : result.status === 'dnf'
+                        ? 'bg-gray-500 text-gray-100'
+                        : 'bg-gray-800 text-white'
+                    }`}
                   >
                     {result.digit}
                   </div>
