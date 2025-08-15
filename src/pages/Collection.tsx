@@ -2,7 +2,7 @@ import PageHeader from '../components/PageHeader';
 import Navigation from '../components/Navigation';
 import { cardCategories, cardsData } from '../data/cards';
 import { Link } from 'react-router-dom';
-import MiniCard from '../components/MiniCard';
+import { CARD_WIDTH, CARD_HEIGHT, CARD_BORDER_RADIUS } from '../data/cards';
 
 const Collection = () => {
   const cards = cardsData;
@@ -15,15 +15,6 @@ const Collection = () => {
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
-      {/* SVG фон */}
-      <div className="absolute top-0 left-0 w-full h-[400px] z-0 pointer-events-none">
-        <img 
-          src="/svg/collectionsvg1.svg" 
-          alt=""
-          className="w-full h-full object-cover object-top opacity-60"
-        />
-      </div>
-
       {/* Заголовок */}
       <div className="fixed top-0 left-0 right-0 z-40">
         <PageHeader 
@@ -51,19 +42,56 @@ const Collection = () => {
                 >
                   {/* 3 накладываемые карты */}
                   <div className="relative w-[140px] h-[200px] mb-3">
-                    {visibleCards.map((card, i) => (
-                      <MiniCard
-                        key={card.id}
-                        card={card}
-                        position={-2 + i}
-                      />
-                    ))}
+                    {visibleCards.map((card, i) => {
+                      const position = -2 + i;
+                      let transform = '';
+                      let zIndex = 0;
+
+                      if (position === 0) {
+                        transform = `translateY(0px) scale(1) rotateZ(0deg)`;
+                        zIndex = 30;
+                      } else if (position === -1) {
+                        transform = `translateY(0px) scale(1) rotateZ(-10deg)`;
+                        zIndex = 20;
+                      } else if (position === -2) {
+                        transform = `translateY(0px) scale(1) rotateZ(-20deg)`;
+                        zIndex = 10;
+                      }
+
+                      return (
+                        <div
+                          key={card.id}
+                          className="absolute left-1/2 top-1/2 transition-all duration-300 ease-in-out"
+                          style={{
+                            transform: `translate(-50%, -50%) ${transform}`,
+                            zIndex,
+                            width: CARD_WIDTH * 0.5,
+                            height: CARD_HEIGHT * 0.5,
+                            borderRadius: CARD_BORDER_RADIUS,
+                          }}
+                        >
+                          <div className={`w-full h-full bg-gray-900 rounded-[10px] overflow-hidden`}>
+                            {card.image ? (
+                              <img
+                                src={card.image}
+                                alt={card.name}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-4xl bg-gray-800">
+                                {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
 
-                  {/* Название и иконка */}
+                  {/* Название категории и количество карт */}
                   <div className="text-center text-white z-10 relative">
-                   <div className="text-sm font-semibold">{category.label}</div>
-                   <div className="text-xs text-gray-400">{categoryCards.length} карт</div>
+                    <div className="text-sm font-semibold">{category.label}</div>
+                    <div className="text-xs text-gray-400">{categoryCards.length} карт</div>
                   </div>
                 </Link>
               );
