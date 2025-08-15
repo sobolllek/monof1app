@@ -23,13 +23,16 @@ import TeamManager from "./pages/TeamManager";
 import CategoryCards from './pages/CategoryCards';
 import PackOpening from './pages/PackOpening';
 import MarketCategory from './pages/MarketCategory';
-import CodeStrategy from './pages/CodeStrategy';
-
+import CodeStrategy from './components/games/CodeStrategy';
+import CoinFlip from "./components/games/CoinFlip";
+import RacingSapper from "./components/games/RacingSapper";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [coins, setCoins] = useState(1000); // Начальное количество монет
+  const [stars, setStars] = useState(10);   // Начальное количество звёзд
 
   if (isLoading) {
     return <LoadingScreen onLoadingComplete={() => setIsLoading(false)} />;
@@ -60,6 +63,27 @@ const App = () => {
                 <Route path="/racer-map" element={<RacerMap />} />
                 <Route path="/team-manager" element={<TeamManager />} />
                 <Route path="/code-strategy" element={<CodeStrategy />} />
+                <Route 
+                  path="/racing-sapper" 
+                  element={
+                    <RacingSapper 
+                      userCoins={coins} 
+                      onCoinsChange={setCoins} 
+                      onBack={() => window.history.back()} 
+                    />
+                  } 
+                />
+                <Route 
+                  path="/coin-flip" 
+                  element={
+                    <CoinFlip 
+                      userCoins={coins} 
+                      userStars={stars} 
+                      onCoinsChange={setCoins} 
+                      onBack={() => window.history.back()} 
+                    />
+                  } 
+                />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>
