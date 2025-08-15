@@ -2,57 +2,6 @@
 
 Все изображения карт должны располагаться в папке `public/image/cards/` со следующей структурой:
 
-## Структура папок:
-
-```
-public/image/cards/
-├── drivers/           # Карты пилотов
-│   ├── verstappen/
-│   │   └── verstappen-1.png
-│   ├── hamilton/
-│   │   └── hamilton-1.png
-│   ├── leclerc/
-│   │   └── leclerc-1.png
-│   └── ...
-├── duos/             # Карты дуэтов
-│   ├── redbull-duo-1.png
-│   ├── ferrari-duo-1.png
-│   └── ...
-├── teams/            # Карты команд
-│   ├── redbull-1.png
-│   ├── ferrari-1.png
-│   └── ...
-├── principals/       # Руководители команд
-│   ├── horner-1.png
-│   ├── wolff-1.png
-│   └── ...
-├── tracks/           # Трассы
-│   ├── monaco-1.png
-│   ├── silverstone-1.png
-│   └── ...
-├── cars/             # Машины
-│   ├── rb20-1.png
-│   ├── w15-1.png
-│   └── ...
-├── collabs/          # Коллаборации
-│   ├── collab-1.png
-│   └── ...
-├── historical/       # Исторические карты
-│   ├── senna-1.png
-│   ├── schumacher-1.png
-│   └── ...
-├── race_results/     # Результаты гонок
-│   ├── monaco-2024-1.png
-│   ├── silverstone-2024-1.png
-│   └── ...
-├── limited/          # Лимитированные
-│   ├── limited-1.png
-│   └── ...
-└── special/          # Специальные
-    ├── diamond-helmet-1.png
-    └── ...
-```
-
 ## Правила именования:
 
 1. **Пилоты**: `drivers/{фамилия}/{фамилия}-{номер}.png`
@@ -69,7 +18,6 @@ public/image/cards/
 
 ## Форматы изображений:
 - Рекомендуемый формат: PNG с прозрачным фоном
-- Разрешение: минимум 300x400 пикселей
 - Соотношение сторон: 3:4 (портретная ориентация)
 
 ## Как добавить новое изображение:
