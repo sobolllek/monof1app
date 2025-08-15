@@ -9,7 +9,7 @@ const Collection = () => {
 
   // Группируем карты по категориям
   const cardsByCategory = cardCategories.reduce((acc, category) => {
-    acc[category.id] = cards.filter(card => card.category === category.id);
+    acc[category.id] = cards.filter(card => card.type === category.id);
     return acc;
   }, {} as Record<string, typeof cardsData>);
 

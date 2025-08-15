@@ -23,10 +23,10 @@ const Index = () => {
     {/* 1. Альтернатива: используем div с фоновым изображением */}
     <div 
       className="absolute inset-0 bg-[url('/svg/rating-bg.svg')] bg-cover bg-center"
-      style={{
-        imageRendering: 'crisp-edges',
-        WebkitOptimizeContrast: 'true'
-      }}
+        style={{
+          imageRendering: 'crisp-edges',
+          WebkitFontSmoothing: 'antialiased'
+        }}
     />
     
     {/* 2. Текст поверх */}
@@ -44,7 +44,7 @@ const Index = () => {
         className="absolute inset-0 bg-[url('/svg/coins-bg.svg')] bg-cover bg-center"
         style={{
           imageRendering: 'pixelated',
-          WebkitOptimizeContrast: 'true'
+          WebkitFontSmoothing: 'antialiased'
         }}
       />
       <span className="absolute top-3 right-3 text-white font-bold text-lg backdrop-blur-sm">10,250</span>

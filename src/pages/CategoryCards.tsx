@@ -4,14 +4,15 @@ import { cardsData } from '../data/cards';
 import CardCarousel from '../components/CardCarousel';
 import CardModal from '../components/CardModal';
 import { useState } from 'react';
-import { Card } from '../data/cards';
+import { Card } from '../types/cards';
+import { cardCategories } from '../data/cards';
 
 const CategoryCards = () => {
   const { categoryId } = useParams();
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showCardModal, setShowCardModal] = useState(false);
   const [currentCardName, setCurrentCardName] = useState('');
-  const [cards, setCards] = useState<Card[]>(cardsData.filter(card => card.category === categoryId));
+  const [cards, setCards] = useState<Card[]>(cardsData.filter(card => card.type === categoryId));
   const { toast } = useToast();
 
   const categoryNames = {
@@ -27,7 +28,7 @@ const CategoryCards = () => {
     setShowCardModal(true);
   };
 
-  const handleSellCard = (cardId: number, price: number) => {
+  const handleSellCard = (cardId: string, price: number) => {
     setCards(cards.filter(card => card.id !== cardId));
     toast({
       title: "Карта продана!",
@@ -35,7 +36,7 @@ const CategoryCards = () => {
     });
   };
 
-  const handleGiftCard = (cardId: number, playerName: string) => {
+  const handleGiftCard = (cardId: string, playerName: string) => {
     setCards(cards.filter(card => card.id !== cardId));
     toast({
       title: "Карта подарена!",
