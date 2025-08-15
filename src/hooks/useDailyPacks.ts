@@ -116,6 +116,7 @@ export const useDailyPacks = () => {
     dailyPacks,
     unclaimedPacks: getUnclaimedPacks(),
     nextUnclaimedPack: getNextUnclaimedPack(),
+    availablePack: getNextUnclaimedPack(),
     claimPack,
     checkAndGeneratePacks
   };
