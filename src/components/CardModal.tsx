@@ -3,10 +3,10 @@ import { useState } from 'react';
 import { X, Gift, Coins } from 'lucide-react';
 
 interface Card {
-  id: number;
+  id: string;
   name: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  type: 'driver' | 'car' | 'track';
+  rarity: 'ultrasoft' | 'supersoft' | 'soft' | 'medium' | 'hard' | 'intermediate' | 'wet';
+  type: 'driver' | 'duo' | 'team' | 'team_principal' | 'track' | 'car' | 'collab' | 'historical' | 'race_results' | 'limited' | 'special';
   team?: string;
   location?: string;
 }
@@ -15,8 +15,8 @@ interface CardModalProps {
   card: Card | null;
   isOpen: boolean;
   onClose: () => void;
-  onSell: (cardId: number, price: number) => void;
-  onGift: (cardId: number, playerName: string) => void;
+  onSell: (cardId: string, price: number) => void;
+  onGift: (cardId: string, playerName: string) => void;
 }
 
 const CardModal = ({ card, isOpen, onClose, onSell, onGift }: CardModalProps) => {
@@ -28,9 +28,13 @@ const CardModal = ({ card, isOpen, onClose, onSell, onGift }: CardModalProps) =>
 
   const getRarityColors = (rarity: string) => {
     switch (rarity) {
-      case 'legendary': return 'from-yellow-400 to-orange-500 border-yellow-400';
-      case 'epic': return 'from-purple-400 to-pink-500 border-purple-400';
-      case 'rare': return 'from-blue-400 to-cyan-500 border-blue-400';
+      case 'ultrasoft': return 'from-pink-400 to-pink-600 border-pink-400';
+      case 'supersoft': return 'from-red-400 to-red-600 border-red-400';
+      case 'soft': return 'from-yellow-400 to-yellow-600 border-yellow-400';
+      case 'medium': return 'from-white to-gray-200 border-white';
+      case 'hard': return 'from-orange-400 to-orange-600 border-orange-400';
+      case 'intermediate': return 'from-green-400 to-green-600 border-green-400';
+      case 'wet': return 'from-blue-400 to-blue-600 border-blue-400';
       default: return 'from-gray-400 to-gray-500 border-gray-400';
     }
   };

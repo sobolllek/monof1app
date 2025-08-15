@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Card, CARD_WIDTH, CARD_HEIGHT, CARD_BORDER_RADIUS } from '../data/cards';
+import { Card } from '../types/cards';
+import { CARD_WIDTH, CARD_HEIGHT, CARD_BORDER_RADIUS } from '../data/cards';
 
 interface CardCarouselProps {
   cards: Card[];
@@ -46,15 +47,6 @@ const CardCarousel = ({
     document.addEventListener('touchmove', preventDefault, { passive: false });
     return () => document.removeEventListener('touchmove', preventDefault);
   }, []);
-
-  const getRarityBorder = (rarity: string) => {
-    switch (rarity) {
-      case 'legendary': return 'border-yellow-400';
-      case 'epic': return 'border-purple-400';
-      case 'rare': return 'border-blue-400';
-      default: return 'border-gray-400';
-    }
-  };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!carouselRef.current) return;
@@ -208,12 +200,12 @@ const CardCarousel = ({
               onMouseMove={isCenter ? handleMouseMove : undefined}
               onMouseLeave={isCenter ? handleMouseLeave : undefined}
             >
-              <div className={`border-4 ${getRarityBorder(card.rarity)} bg-black overflow-hidden`}
-              style={{
-                width: `${CARD_WIDTH}px`,
-                height: `${CARD_HEIGHT}px`,
-                borderRadius: `${CARD_BORDER_RADIUS}px`,
-              }}>
+              <div className="bg-black overflow-hidden"
+                style={{
+                  width: `${CARD_WIDTH}px`,
+                  height: `${CARD_HEIGHT}px`,
+                  borderRadius: `${CARD_BORDER_RADIUS}px`,
+                }}>
                 {card.image ? (
                   <img
                     src={card.image}

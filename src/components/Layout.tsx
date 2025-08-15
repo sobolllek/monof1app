@@ -1,3 +1,4 @@
+// Layout.tsx
 import React from "react";
 import { useLocation } from "react-router-dom";
 import TelegramNavigationHandler from "./TelegramNavigationHandler";
@@ -8,25 +9,30 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isMarketCategoryPage = location.pathname.startsWith("/market/");
 
   return (
-    <div
-      className={`relative w-full text-white overflow-x-hidden ${
-        isCollectionPage ? "h-screen overflow-y-auto bg-black" : "min-h-screen bg-black"
-      }`}
-    >
+    <div className="flex justify-center bg-black min-h-screen text-white">
       <TelegramNavigationHandler />
 
-      {/* Контент */}
-      <div className={isCollectionPage ? "w-full h-full" : "w-full h-full"}>
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "420px",
+          minWidth: "420px", // чтобы в Telegram и браузере одинаково
+          height: "100%",
+        }}
+        className={`relative overflow-x-hidden ${
+          isCollectionPage
+            ? "h-screen overflow-y-auto"
+            : "min-h-screen"
+        }`}
+      >
         {children}
-      </div>
 
-      {/* Нижний градиент — скрыт на страницах коллекции и маркет-категорий */}
-      {!isCollectionPage && !isMarketCategoryPage && (
-        <div className="pointer-events-none fixed bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-40" />
-      )}
+        {!isCollectionPage && !isMarketCategoryPage && (
+          <div className="pointer-events-none fixed bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-40" />
+        )}
+      </div>
     </div>
   );
 };
-
 
 export default Layout;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Coins, Star } from 'lucide-react';
-import { MarketItem } from '../data/packs';
+import { MarketItem } from '@/types/cards';
 
 interface MarketCoinPurchaseProps {
   item: MarketItem;
