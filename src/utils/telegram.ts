@@ -1,4 +1,3 @@
-// Telegram Web App utilities
 declare global {
   interface Window {
     Telegram?: {
@@ -19,22 +18,20 @@ declare global {
           onClick: (callback: () => void) => void;
           offClick: (callback: () => void) => void;
         };
-        initData?: string;
-        initDataUnsafe?: any;
-        platform?: string;
-        colorScheme?: 'light' | 'dark';
+        themeParams: {
+          bg_color?: string;
+          text_color?: string;
+          hint_color?: string;
+          link_color?: string;
+          button_color?: string;
+          button_text_color?: string;
+        };
+        colorScheme: 'light' | 'dark';
+        platform: 'android' | 'ios' | 'web';
+        isExpanded: boolean;
+        viewportHeight: number;
+        viewportStableHeight: number;
       };
     };
   }
 }
-
-export const initTelegram = () => {
-  if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
-    window.Telegram.WebApp.ready();
-    window.Telegram.WebApp.expand();
-  }
-};
-
-export const getTelegramWebApp = () => {
-  return typeof window !== 'undefined' ? window.Telegram?.WebApp : null;
-};
