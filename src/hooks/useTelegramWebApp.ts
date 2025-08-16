@@ -8,15 +8,6 @@ interface TelegramWebAppConfig {
   autoExpand?: boolean;
 }
 
-interface ThemeParams {
-  bg_color?: string;
-  text_color?: string;
-  hint_color?: string;
-  link_color?: string;
-  button_color?: string;
-  button_text_color?: string;
-}
-
 const defaultConfig: TelegramWebAppConfig = {
   mainPages: ['/', '/collection', '/market', '/trades', '/games'],
   enableClosingConfirmation: false,
@@ -26,55 +17,117 @@ const defaultConfig: TelegramWebAppConfig = {
 const useTelegramWebApp = (config: Partial<TelegramWebAppConfig> = {}) => {
   const location = useLocation();
   const navigate = useNavigate();
+
   const finalConfig = useMemo(() => ({ ...defaultConfig, ...config }), [config]);
 
   const isMainPage = useMemo(
-    () => finalConfig.mainPages.some(path => location.pathname.startsWith(path)),
+    () => finalConfig.mainPages.includes(location.pathname),
     [location.pathname, finalConfig.mainPages]
   );
 
-  const isTelegramWebApp = useMemo(() => Boolean(WebApp.platform), []);
-  const webApp = useMemo(() => isTelegramWebApp ? WebApp : null, [isTelegramWebApp]);
+  const tg = useMemo(() => WebApp, []);
+  const isTelegramWebApp = useMemo(() => WebApp.isVersionAtLeast('6.0'), []);
 
-  const handleBackButton = useCallback(() => navigate(-1), [navigate]);
+  const handleBackButton = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
 
-  useEffect(() => {
-    if (!isTelegramWebApp) return;
+  const closeTelegramApp = useCallback(() => {
+    WebApp.close();
+  }, []);
 
-    WebApp.ready();
-    
-    if (finalConfig.autoExpand && !WebApp.isExpanded) {
-      WebApp.expand();
+  const expandApp = useCallback(() => {
+    WebApp.expand();
+  }, []);
+
+  const enableClosingConfirmation = useCallback(() => {
+    WebApp.enableClosingConfirmation();
+  }, []);
+
+  const disableClosingConfirmation = useCallback(() => {
+    WebApp.disableClosingConfirmation();
+  }, []);
+
+  // Инициализация Telegram WebApp
+  // Инициализация Telegram WebApp
+useEffect(() => {
+  if (!isTelegramWebApp) {
+    console.log('Telegram WebApp не доступен');
+    return;
+  }
+
+  console.log('Инициализация Telegram WebApp:', {
+    version: WebApp.version,
+    platform: WebApp.platform,
+    colorScheme: WebApp.colorScheme,
+    user: WebApp.initDataUnsafe.user
+  });
+
+  WebApp.ready();
+
+  WebApp.setHeaderColor('#000000');
+  WebApp.setBackgroundColor('#000000');
+
+  if (finalConfig.autoExpand && !WebApp.isExpanded) {
+    WebApp.expand();
+  }
+
+  if (WebApp.viewportHeight) {
+    document.body.style.height = `${WebApp.viewportHeight}px`;
+  }
+
+  const handleViewportChange = () => {
+    if (WebApp.viewportHeight) {
+      document.body.style.height = `${WebApp.viewportHeight}px`;
     }
+  };
 
-    return () => {
-      WebApp.disableClosingConfirmation();
-    };
-  }, [isTelegramWebApp, finalConfig.autoExpand]);
+  WebApp.onEvent('viewportChanged', handleViewportChange);
 
+  if (finalConfig.enableClosingConfirmation) {
+    WebApp.enableClosingConfirmation();
+  } else {
+    WebApp.disableClosingConfirmation();
+  }
+
+  return () => {
+    WebApp.offEvent('viewportChanged', handleViewportChange);
+  };
+}, [isTelegramWebApp, finalConfig]);
+
+
+  // Управление кнопкой "Назад"
   useEffect(() => {
     if (!isTelegramWebApp) return;
 
     if (isMainPage) {
       WebApp.BackButton.hide();
+      console.log('Скрыта кнопка "Назад" для главной страницы:', location.pathname);
     } else {
       WebApp.BackButton.show();
       WebApp.BackButton.onClick(handleBackButton);
+      console.log('Показана кнопка "Назад" для подстраницы:', location.pathname);
     }
 
     return () => {
-      WebApp.BackButton.offClick(handleBackButton);
-      WebApp.BackButton.hide();
+      if (isTelegramWebApp && !isMainPage) {
+        WebApp.BackButton.offClick(handleBackButton);
+      }
     };
   }, [location.pathname, isMainPage, handleBackButton, isTelegramWebApp]);
 
   return {
     isTelegramWebApp,
     isMainPage,
-    webApp, // Теперь возвращаем webApp
-    themeParams: isTelegramWebApp ? WebApp.themeParams : undefined,
-    expand: () => WebApp.expand(),
-    close: () => WebApp.close()
+    user: isTelegramWebApp ? WebApp.initDataUnsafe.user : undefined,
+    platform: isTelegramWebApp ? WebApp.platform : undefined,
+    colorScheme: isTelegramWebApp ? WebApp.colorScheme : undefined,
+    version: isTelegramWebApp ? WebApp.version : undefined,
+    closeTelegramApp,
+    expandApp,
+    enableClosingConfirmation,
+    disableClosingConfirmation,
+    webApp: isTelegramWebApp ? WebApp : undefined
   };
 };
 
