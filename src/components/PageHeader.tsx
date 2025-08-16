@@ -34,8 +34,8 @@ const PageHeader = ({
   infoTitle,
   infoDescription,
   disableGradient = false,
-  topOffset = 16,
-  headerHeight = 56
+  topOffset = 8,
+  headerHeight = 36
 }: PageHeaderProps) => {
   const navigate = useNavigate();
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
@@ -133,3 +133,4 @@ const SettingsButton = () => (
 );
 
 export default PageHeader;
+
