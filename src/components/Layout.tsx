@@ -1,35 +1,35 @@
-// Layout.tsx
-import React from "react";
-import { useLocation } from "react-router-dom";
-import TelegramNavigationHandler from "./TelegramNavigationHandler";
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
-  const isCollectionPage = location.pathname.startsWith("/collection/");
-  const isMarketCategoryPage = location.pathname.startsWith("/market/");
+  const isCollectionPage = location.pathname.startsWith('/collection/');
 
   return (
-    <div className="flex justify-center bg-black min-h-screen text-white">
-      <TelegramNavigationHandler />
-
+    <div 
+      className="flex justify-center bg-black min-h-screen text-white"
+      style={
+        {
+          '--tg-bg-color': '#000000',
+          '--tg-text-color': '#ffffff',
+          '--tg-viewport-height': isCollectionPage ? '100vh' : 'var(--tg-viewport-height)'
+        } as React.CSSProperties
+      }
+    >
       <div
-        style={{
-          width: "100%",
-          maxWidth: "420px",
-          minWidth: "420px", // чтобы в Telegram и браузере одинаково
-          height: "100%",
-        }}
         className={`relative overflow-x-hidden ${
-          isCollectionPage
-            ? "h-screen overflow-y-auto"
-            : "min-h-screen"
+          isCollectionPage ? 'h-screen overflow-y-auto' : 'min-h-screen'
         }`}
+        style={
+          {
+            width: '100%',
+            maxWidth: '420px',
+            minWidth: '420px',
+            height: 'var(--tg-viewport-height)'
+          } as React.CSSProperties
+        }
       >
         {children}
-
-        {!isCollectionPage && !isMarketCategoryPage && (
-          <div className="pointer-events-none fixed bottom-0 left-0 w-full h-32 bg-gradient-to-t from-black to-transparent z-40" />
-        )}
       </div>
     </div>
   );
