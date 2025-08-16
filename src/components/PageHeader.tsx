@@ -13,6 +13,16 @@ interface PageHeaderProps {
   infoTitle?: string;
   infoDescription?: string;
   disableGradient?: boolean;
+  /**
+   * Отступ от системных кнопок Telegram в пикселях
+   * @default 16 (Telegram) / 60 (браузер)
+   */
+  topOffset?: number;
+  /**
+   * Высота самого заголовка в пикселях
+   * @default 56
+   */
+  headerHeight?: number;
 }
 
 const PageHeader = ({
@@ -23,22 +33,21 @@ const PageHeader = ({
   showProfile = false,
   infoTitle,
   infoDescription,
-  disableGradient = false
+  disableGradient = false,
+  topOffset = 16,
+  headerHeight = 56
 }: PageHeaderProps) => {
   const navigate = useNavigate();
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
 
-  // Фиксированный отступ под системные кнопки Telegram
-  const [headerOffset, setHeaderOffset] = useState('60px'); // Дефолтное значение для браузера
+  const [offset, setOffset] = useState(isTelegramWebApp ? topOffset + headerHeight : 60);
 
   useEffect(() => {
     if (!isTelegramWebApp || !webApp) return;
 
     const updateOffset = () => {
-      // Высота системной панели Telegram + наш отступ
       const safeInset = webApp.safeAreaInset?.top ?? 0;
-      const telegramHeaderHeight = 56; // Примерная высота системного заголовка Telegram
-      setHeaderOffset(`${safeInset + telegramHeaderHeight}px`);
+      setOffset(safeInset + topOffset + headerHeight);
     };
 
     updateOffset();
@@ -47,47 +56,28 @@ const PageHeader = ({
     return () => {
       webApp.offEvent('viewportChanged', updateOffset);
     };
-  }, [isTelegramWebApp, webApp]);
+  }, [isTelegramWebApp, webApp, topOffset, headerHeight]);
 
   const shouldShowBack = showBack && !isTelegramWebApp;
 
   return (
     <>
-      {/* Отступ для системных кнопок Telegram */}
-      <div style={{ height: isTelegramWebApp ? headerOffset : '0' }} />
-      
-      {/* Основной заголовок */}
+      {/* Основной заголовок с автоматическим отступом */}
       <header
         className="fixed left-1/2 -translate-x-1/2 z-50 w-full max-w-[420px] bg-black/80 backdrop-blur-sm"
-        style={{
-          top: isTelegramWebApp ? headerOffset : '0'
+        style={{ 
+          top: `${offset}px`,
+          height: `${headerHeight}px`
         }}
       >
-        {/* Градиент сверху */}
-        {!disableGradient && (
-          <div
-            className="absolute bottom-full left-0 w-full pointer-events-none"
-            style={{
-              height: headerOffset,
-              background: `
-                linear-gradient(
-                  to bottom,
-                  rgba(0, 0, 0, 1) 0%,
-                  rgba(0, 0, 0, 0.8) 50%,
-                  rgba(0, 0, 0, 0) 100%
-                )
-              `
-            }}
-          />
-        )}
-
-        {/* Содержимое заголовка */}
-        <div className="flex items-center justify-between px-4 py-3">
+        {/* Контент заголовка */}
+        <div className="flex items-center justify-between h-full px-4">
           <div className="flex items-center gap-3">
             {shouldShowBack && (
               <button
                 onClick={() => navigate(-1)}
                 className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+                aria-label="Назад"
               >
                 <ArrowLeft size={20} />
               </button>
@@ -99,38 +89,47 @@ const PageHeader = ({
             {infoTitle && infoDescription && (
               <InfoButton title={infoTitle} description={infoDescription} />
             )}
-
-            {showNotifications && (
-              <Link
-                to="/notifications"
-                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-              >
-                <Bell size={20} />
-              </Link>
-            )}
-
-            {showProfile && (
-              <Link
-                to="/profile"
-                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-              >
-                <User size={20} />
-              </Link>
-            )}
-
-            {showSettings && (
-              <button className="p-2 rounded-lg hover:bg-white/10 transition-colors">
-                <Settings size={20} />
-              </button>
-            )}
+            {showNotifications && <NotificationButton />}
+            {showProfile && <ProfileButton />}
+            {showSettings && <SettingsButton />}
           </div>
         </div>
       </header>
 
-      {/* Отступ для контента под заголовком */}
-      <div style={{ height: '56px' }} />
+      {/* Отступ для контента */}
+      <div style={{ height: `${offset + headerHeight}px` }} />
     </>
   );
 };
+
+// Вынесенные компоненты кнопок для чистоты
+const NotificationButton = () => (
+  <Link
+    to="/notifications"
+    className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+    aria-label="Уведомления"
+  >
+    <Bell size={20} />
+  </Link>
+);
+
+const ProfileButton = () => (
+  <Link
+    to="/profile"
+    className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+    aria-label="Профиль"
+  >
+    <User size={20} />
+  </Link>
+);
+
+const SettingsButton = () => (
+  <button 
+    className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+    aria-label="Настройки"
+  >
+    <Settings size={20} />
+  </button>
+);
 
 export default PageHeader;
