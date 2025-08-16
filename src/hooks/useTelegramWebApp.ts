@@ -2,132 +2,93 @@ import { useEffect, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import WebApp from '@twa-dev/sdk';
 
+type TelegramColor = 'bg_color' | 'secondary_bg_color' | `#${string}`;
+
 interface TelegramWebAppConfig {
   mainPages: string[];
   enableClosingConfirmation?: boolean;
   autoExpand?: boolean;
+  headerColor?: TelegramColor;
+  backgroundColor?: TelegramColor;
+  textColor?: string;
 }
 
 const defaultConfig: TelegramWebAppConfig = {
   mainPages: ['/', '/collection', '/market', '/trades', '/games'],
   enableClosingConfirmation: false,
-  autoExpand: true
+  autoExpand: true,
+  headerColor: '#000000', // Чёрная шапка
+  backgroundColor: '#000000', // Чёрный фон
+  textColor: '#ffffff' // Белый текст
 };
 
 const useTelegramWebApp = (config: Partial<TelegramWebAppConfig> = {}) => {
   const location = useLocation();
   const navigate = useNavigate();
-
   const finalConfig = useMemo(() => ({ ...defaultConfig, ...config }), [config]);
 
+  // Валидация цветов Telegram
+  const validateColor = (color: string): TelegramColor => {
+    if (color === 'bg_color' || color === 'secondary_bg_color') return color;
+    return /^#[0-9A-Fa-f]{6}$/.test(color) ? color as `#${string}` : '#000000';
+  };
+
+  const safeHeaderColor = validateColor(finalConfig.headerColor || '#000000');
+  const safeBackgroundColor = validateColor(finalConfig.backgroundColor || '#000000');
+
   const isMainPage = useMemo(
-    () => finalConfig.mainPages.includes(location.pathname),
+    () => finalConfig.mainPages.some(path => location.pathname.startsWith(path)),
     [location.pathname, finalConfig.mainPages]
   );
 
-  const tg = useMemo(() => WebApp, []);
-  const isTelegramWebApp = useMemo(() => WebApp.isVersionAtLeast('6.0'), []);
+  const isTelegramWebApp = useMemo(() => Boolean(WebApp.platform), []);
 
-  const handleBackButton = useCallback(() => {
-    navigate(-1);
-  }, [navigate]);
+  // Инициализация WebApp
+  useEffect(() => {
+    if (!isTelegramWebApp) return;
 
-  const closeTelegramApp = useCallback(() => {
-    WebApp.close();
-  }, []);
+    WebApp.ready();
+    WebApp.setHeaderColor(safeHeaderColor);
+    WebApp.setBackgroundColor(safeBackgroundColor);
 
-  const expandApp = useCallback(() => {
-    WebApp.expand();
-  }, []);
-
-  const enableClosingConfirmation = useCallback(() => {
-    WebApp.enableClosingConfirmation();
-  }, []);
-
-  const disableClosingConfirmation = useCallback(() => {
-    WebApp.disableClosingConfirmation();
-  }, []);
-
-  // Инициализация Telegram WebApp
-  // Инициализация Telegram WebApp
-useEffect(() => {
-  if (!isTelegramWebApp) {
-    console.log('Telegram WebApp не доступен');
-    return;
-  }
-
-  console.log('Инициализация Telegram WebApp:', {
-    version: WebApp.version,
-    platform: WebApp.platform,
-    colorScheme: WebApp.colorScheme,
-    user: WebApp.initDataUnsafe.user
-  });
-
-  WebApp.ready();
-
-  WebApp.setHeaderColor('#000000');
-  WebApp.setBackgroundColor('#000000');
-
-  if (finalConfig.autoExpand && !WebApp.isExpanded) {
-    WebApp.expand();
-  }
-
-  if (WebApp.viewportHeight) {
-    document.body.style.height = `${WebApp.viewportHeight}px`;
-  }
-
-  const handleViewportChange = () => {
-    if (WebApp.viewportHeight) {
-      document.body.style.height = `${WebApp.viewportHeight}px`;
+    if (finalConfig.autoExpand && !WebApp.isExpanded) {
+      WebApp.expand();
     }
-  };
 
-  WebApp.onEvent('viewportChanged', handleViewportChange);
+    // Применяем глобальные стили
+    document.documentElement.style.setProperty('--tg-bg-color', safeBackgroundColor);
+    document.documentElement.style.setProperty('--tg-text-color', finalConfig.textColor || '#ffffff');
 
-  if (finalConfig.enableClosingConfirmation) {
-    WebApp.enableClosingConfirmation();
-  } else {
-    WebApp.disableClosingConfirmation();
-  }
-
-  return () => {
-    WebApp.offEvent('viewportChanged', handleViewportChange);
-  };
-}, [isTelegramWebApp, finalConfig]);
-
+    return () => {
+      WebApp.disableClosingConfirmation();
+    };
+  }, [isTelegramWebApp, safeHeaderColor, safeBackgroundColor, finalConfig]);
 
   // Управление кнопкой "Назад"
+  const handleBackButton = useCallback(() => navigate(-1), [navigate]);
+  
   useEffect(() => {
     if (!isTelegramWebApp) return;
 
     if (isMainPage) {
       WebApp.BackButton.hide();
-      console.log('Скрыта кнопка "Назад" для главной страницы:', location.pathname);
     } else {
       WebApp.BackButton.show();
       WebApp.BackButton.onClick(handleBackButton);
-      console.log('Показана кнопка "Назад" для подстраницы:', location.pathname);
     }
 
     return () => {
-      if (isTelegramWebApp && !isMainPage) {
-        WebApp.BackButton.offClick(handleBackButton);
-      }
+      WebApp.BackButton.offClick(handleBackButton);
+      WebApp.BackButton.hide();
     };
   }, [location.pathname, isMainPage, handleBackButton, isTelegramWebApp]);
 
   return {
     isTelegramWebApp,
     isMainPage,
-    user: isTelegramWebApp ? WebApp.initDataUnsafe.user : undefined,
-    platform: isTelegramWebApp ? WebApp.platform : undefined,
-    colorScheme: isTelegramWebApp ? WebApp.colorScheme : undefined,
-    version: isTelegramWebApp ? WebApp.version : undefined,
-    closeTelegramApp,
-    expandApp,
-    enableClosingConfirmation,
-    disableClosingConfirmation,
-    webApp: isTelegramWebApp ? WebApp : undefined
+    themeParams: isTelegramWebApp ? WebApp.themeParams : undefined,
+    expand: () => WebApp.expand(),
+    close: () => WebApp.close()
   };
 };
 
