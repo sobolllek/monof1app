@@ -34,7 +34,7 @@ const PageHeader = ({
   infoTitle,
   infoDescription,
   disableGradient = false,
-  topOffset = 8,
+  topOffset = 10,
   headerHeight = 36
 }: PageHeaderProps) => {
   const navigate = useNavigate();
@@ -133,4 +133,5 @@ const SettingsButton = () => (
 );
 
 export default PageHeader;
+
 
