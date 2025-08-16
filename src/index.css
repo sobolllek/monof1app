@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --tg-viewport-height: 100vh;
-  --tg-bg-color: #000000;
-  --tg-text-color: #ffffff;
-}
-
 @font-face {
   font-family: 'SF Pro Display';
   src: url('/fonts/SFProDisplay-Regular.woff2') format('woff2');
@@ -405,5 +399,6 @@
     opacity: 0;
   }
 }
+
 
 
