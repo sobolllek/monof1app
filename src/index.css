@@ -399,3 +399,23 @@
     opacity: 0;
   }
 }
+
+/* Центрируем заголовок между кнопками */
+.telegram-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 500;
+  font-size: 17px;
+  color: white;
+  pointer-events: none; /* Чтобы не мешал кликам */
+}
+
+/* Telegram иногда добавляет свои стили, переопределяем если нужно */
+.tg-headered .back-button {
+  margin-right: auto;
+}
+
+.tg-headered .menu-button {
+  margin-left: auto;
+}
