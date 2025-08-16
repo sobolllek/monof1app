@@ -5,7 +5,6 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
-    "typeRoots": ["./node_modules/@types", "./src/globals.d.ts"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
