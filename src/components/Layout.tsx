@@ -1,7 +1,7 @@
+// Layout.tsx
 import React from "react";
 import { useLocation } from "react-router-dom";
 import TelegramNavigationHandler from "./TelegramNavigationHandler";
-import TelegramTitle from "./TelegramTitle";
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
@@ -11,7 +11,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="flex justify-center bg-black min-h-screen text-white">
       <TelegramNavigationHandler />
-      <TelegramTitle />
 
       <div
         style={{
