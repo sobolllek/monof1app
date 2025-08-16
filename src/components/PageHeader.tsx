@@ -13,16 +13,6 @@ interface PageHeaderProps {
   infoTitle?: string;
   infoDescription?: string;
   disableGradient?: boolean;
-  /**
-   * Отступ от системных кнопок Telegram в пикселях
-   * @default 16 (Telegram) / 60 (браузер)
-   */
-  topOffset?: number;
-  /**
-   * Высота самого заголовка в пикселях
-   * @default 56
-   */
-  headerHeight?: number;
 }
 
 const PageHeader = ({
@@ -33,105 +23,124 @@ const PageHeader = ({
   showProfile = false,
   infoTitle,
   infoDescription,
-  disableGradient = false,
-  topOffset = 10,
-  headerHeight = 36
+  disableGradient = false
 }: PageHeaderProps) => {
   const navigate = useNavigate();
   const { isTelegramWebApp, webApp } = useTelegramWebApp();
 
-  const [offset, setOffset] = useState(isTelegramWebApp ? topOffset + headerHeight : 60);
+  // Сразу вычисляем начальный отступ (без прыжка)
+  const initialOffset = (() => {
+    if (isTelegramWebApp && webApp) {
+      const safeInset = webApp.safeAreaInset?.top ?? 0;
+      const customPadding = 40;
+      return `${safeInset + customPadding}px`;
+    }
+    return '40px'; // дефолт для браузера
+  })();
+
+  const [headerOffset, setHeaderOffset] = useState(initialOffset);
 
   useEffect(() => {
-    if (!isTelegramWebApp || !webApp) return;
+    if (isTelegramWebApp && webApp) {
+      const updateOffset = () => {
+        const safeInset = webApp.safeAreaInset?.top ?? 0;
+        const customPadding = 40;
+        setHeaderOffset(`${safeInset + customPadding}px`);
+      };
 
-    const updateOffset = () => {
-      const safeInset = webApp.safeAreaInset?.top ?? 0;
-      setOffset(safeInset + topOffset + headerHeight);
-    };
+      webApp.onEvent('viewportChanged', updateOffset);
+      window.addEventListener('resize', updateOffset);
 
-    updateOffset();
-    webApp.onEvent('viewportChanged', updateOffset);
-
-    return () => {
-      webApp.offEvent('viewportChanged', updateOffset);
-    };
-  }, [isTelegramWebApp, webApp, topOffset, headerHeight]);
+      return () => {
+        webApp.offEvent('viewportChanged', updateOffset);
+        window.removeEventListener('resize', updateOffset);
+      };
+    }
+  }, [isTelegramWebApp, webApp]);
 
   const shouldShowBack = showBack && !isTelegramWebApp;
 
   return (
-    <>
-      {/* Основной заголовок с автоматическим отступом */}
-      <header
-        className="fixed left-1/2 -translate-x-1/2 z-50 w-full max-w-[420px] bg-black/80 backdrop-blur-sm"
-        style={{ 
-          top: `${offset}px`,
-          height: `${headerHeight}px`
-        }}
-      >
-        {/* Контент заголовка */}
-        <div className="flex items-center justify-between h-full px-4">
-          <div className="flex items-center gap-3">
-            {shouldShowBack && (
-              <button
-                onClick={() => navigate(-1)}
-                className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-                aria-label="Назад"
-              >
-                <ArrowLeft size={20} />
-              </button>
-            )}
-            <h1 className="text-xl font-bold">{title}</h1>
-          </div>
+    <header
+      className="fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-200"
+      style={{
+        top: headerOffset,
+        width: '100%',
+        maxWidth: '420px'
+      }}
+    >
+      {/* Градиент под шапкой */}
+      {!disableGradient && (
+        <div
+          className="absolute left-0 w-full pointer-events-none"
+          style={{
+            top: `calc(-1 * ${headerOffset})`,
+            height: `calc(${headerOffset} * 2)`,
+            background: `
+              linear-gradient(
+                to bottom,
+                rgba(0, 0, 0, 1) 0%,
+                rgba(0, 0, 0, 0.98) 15%,
+                rgba(0, 0, 0, 0.95) 30%,
+                rgba(0, 0, 0, 0.9) 45%,
+                rgba(0, 0, 0, 0.8) 60%,
+                rgba(0, 0, 0, 0.6) 75%,
+                rgba(0, 0, 0, 0.4) 85%,
+                rgba(0, 0, 0, 0.2) 92%,
+                rgba(0, 0, 0, 0.1) 96%,
+                rgba(0, 0, 0, 0) 100%
+              )
+            `
+          }}
+        />
+      )}
 
-          <div className="flex items-center gap-2">
-            {infoTitle && infoDescription && (
-              <InfoButton title={infoTitle} description={infoDescription} />
-            )}
-            {showNotifications && <NotificationButton />}
-            {showProfile && <ProfileButton />}
-            {showSettings && <SettingsButton />}
-          </div>
+      {/* Содержимое заголовка */}
+      <div className="relative flex items-center justify-between px-4 py-3">
+        <div className="flex items-center gap-3">
+          {shouldShowBack && (
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
+          )}
+          <h1 className="text-xl font-bold">{title}</h1>
         </div>
-      </header>
 
-      {/* Отступ для контента */}
-      <div style={{ height: `${offset + headerHeight}px` }} />
-    </>
+        <div className="flex items-center gap-2">
+          {infoTitle && infoDescription && (
+            <InfoButton title={infoTitle} description={infoDescription} />
+          )}
+
+          {showNotifications && (
+            <Link
+              to="/notifications"
+              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            >
+              <Bell size={20} />
+            </Link>
+          )}
+
+          {showProfile && (
+            <Link
+              to="/profile"
+              className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+            >
+              <User size={20} />
+            </Link>
+          )}
+
+          {showSettings && (
+            <button className="p-2 rounded-lg hover:bg-white/10 transition-colors">
+              <Settings size={20} />
+            </button>
+          )}
+        </div>
+      </div>
+    </header>
   );
 };
 
-// Вынесенные компоненты кнопок для чистоты
-const NotificationButton = () => (
-  <Link
-    to="/notifications"
-    className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-    aria-label="Уведомления"
-  >
-    <Bell size={20} />
-  </Link>
-);
-
-const ProfileButton = () => (
-  <Link
-    to="/profile"
-    className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-    aria-label="Профиль"
-  >
-    <User size={20} />
-  </Link>
-);
-
-const SettingsButton = () => (
-  <button 
-    className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-    aria-label="Настройки"
-  >
-    <Settings size={20} />
-  </button>
-);
-
 export default PageHeader;
-
-

@@ -2,11 +2,13 @@ import { ReactNode } from 'react';
 import useTelegramWebApp from '../hooks/useTelegramWebApp';
 
 interface TelegramWebAppProviderProps {
-  children?: ReactNode;
+  children: ReactNode;
 }
 
 const TelegramWebAppProvider = ({ children }: TelegramWebAppProviderProps) => {
-  useTelegramWebApp();
+  // Инициализируем Telegram Web App хук на верхнем уровне
+  const _telegramWebApp = useTelegramWebApp();
+  
   return <>{children}</>;
 };
 
