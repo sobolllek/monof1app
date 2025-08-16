@@ -400,23 +400,5 @@
   }
 }
 
-/* Переопределяем стили Telegram */
-.tg-headered,
-.tg-navbar {
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  padding: 0 16px !important;
-}
 
-/* Заголовок между кнопками */
-.mono-f1-title {
-  position: absolute !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  font-weight: 600 !important;
-  font-size: 18px !important;
-  color: white !important;
-  pointer-events: none !important;
-}
 
