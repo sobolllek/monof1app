@@ -17,21 +17,18 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // Добавь эти настройки для корректной работы с Vercel
   build: {
     outDir: "dist",
     emptyOutDir: true,
-    sourcemap: false,
-    chunkSizeWarningLimit: 1600,
+    // УБИРАЕМ проблемные manualChunks
     rollupOptions: {
       output: {
-        manualChunks: {
-          react: ['react', 'react-dom'],
-          tw: ['@radix-ui/react-*', 'tailwind-merge'],
-        },
-      },
-    },
-  },
-  // Для мини-приложения в Telegram
-  base: '/',
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        }
+      }
+    }
+  }
 }));
