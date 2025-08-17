@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Секретные файлы
+.env
+backend/.env
+
+# Папки зависимостей
+node_modules/
+backend/node_modules/
