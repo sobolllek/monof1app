@@ -3,15 +3,33 @@ import Navigation from '../components/Navigation';
 import { cardCategories, cardsData } from '../data/cards';
 import { Link } from 'react-router-dom';
 import { CARD_WIDTH, CARD_HEIGHT, CARD_BORDER_RADIUS } from '../data/cards';
+import OptimizedImage from '../components/OptimizedImage';
+import { useImagePreloader } from '../hooks/useImagePreloader';
+import { useEffect } from 'react';
 
 const Collection = () => {
   const cards = cardsData;
+  const { preloadCriticalImages } = useImagePreloader();
 
   // Группируем карты по категориям
   const cardsByCategory = cardCategories.reduce((acc, category) => {
     acc[category.id] = cards.filter(card => card.type === category.id);
     return acc;
   }, {} as Record<string, typeof cardsData>);
+
+  // Прелоадинг первых изображений каждой категории
+  useEffect(() => {
+    const priorityImages = cardCategories
+      .flatMap(category => {
+        const categoryCards = cardsByCategory[category.id] || [];
+        return categoryCards.slice(0, 3).map(card => card.image).filter(Boolean);
+      })
+      .filter(Boolean) as string[];
+
+    if (priorityImages.length > 0) {
+      preloadCriticalImages(priorityImages);
+    }
+  }, [cardsByCategory, preloadCriticalImages]);
 
   return (
     <div className="min-h-screen bg-black relative overflow-hidden">
@@ -72,10 +90,18 @@ const Collection = () => {
                         >
                           <div className={`w-full h-full bg-gray-900 rounded-[10px] overflow-hidden`}>
                             {card.image ? (
-                              <img
+                              <OptimizedImage
                                 src={card.image}
                                 alt={card.name}
+                                width={CARD_WIDTH * 0.5}
+                                height={CARD_HEIGHT * 0.5}
                                 className="w-full h-full object-cover"
+                                priority={i === 0} // Приоритет только для передней карты
+                                fallbackIcon={
+                                  <div className="text-2xl">
+                                    {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
+                                  </div>
+                                }
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-4xl bg-gray-800">
