@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Card } from '../types/cards';
 import { CARD_WIDTH, CARD_HEIGHT, CARD_BORDER_RADIUS } from '../data/cards';
+import OptimizedImage from './OptimizedImage';
+import { useImagePreloader } from '../hooks/useImagePreloader';
 
 interface CardCarouselProps {
   cards: Card[];
@@ -27,14 +29,51 @@ const CardCarousel = ({
   const touchStartY = useRef(0);
   const touchEndX = useRef(0);
   const isSwiping = useRef(false);
+  const { preloadCriticalImages, preloadBackgroundImages } = useImagePreloader();
 
   const getCenterCard = useCallback(() => cards[currentIndex], [cards, currentIndex]);
+
+  const getVisibleCards = useCallback(() => {
+    const visible = [];
+    for (let i = -2; i <= 1; i++) {
+      const index = (currentIndex + i + cards.length) % cards.length;
+      visible.push({
+        card: cards[index],
+        position: i,
+        index,
+      });
+    }
+    return visible;
+  }, [cards, currentIndex]);
 
   useEffect(() => {
     if (onCardChange && cards.length > 0) {
       onCardChange(getCenterCard());
     }
   }, [currentIndex, cards, onCardChange, getCenterCard]);
+
+  // Прелоадинг изображений
+  useEffect(() => {
+    if (cards.length === 0) return;
+
+    const visibleCardImages = getVisibleCards()
+      .map(({ card }) => card.image)
+      .filter(Boolean) as string[];
+
+    const nextCardImages = [];
+    for (let i = 1; i <= 3; i++) {
+      const nextIndex = (currentIndex + i) % cards.length;
+      const prevIndex = (currentIndex - i + cards.length) % cards.length;
+      if (cards[nextIndex]?.image) nextCardImages.push(cards[nextIndex].image);
+      if (cards[prevIndex]?.image) nextCardImages.push(cards[prevIndex].image);
+    }
+
+    // Приоритетная загрузка видимых карт
+    preloadCriticalImages(visibleCardImages);
+    
+    // Фоновая загрузка соседних карт
+    preloadBackgroundImages(nextCardImages);
+  }, [currentIndex, cards, getVisibleCards, preloadCriticalImages, preloadBackgroundImages]);
 
   useEffect(() => {
     setPreviousIndex(currentIndex);
@@ -62,18 +101,6 @@ const CardCarousel = ({
     setMousePosition({ x: 0, y: 0 });
   };
 
-  const getVisibleCards = useCallback(() => {
-    const visible = [];
-    for (let i = -2; i <= 1; i++) {
-      const index = (currentIndex + i + cards.length) % cards.length;
-      visible.push({
-        card: cards[index],
-        position: i,
-        index,
-      });
-    }
-    return visible;
-  }, [cards, currentIndex]);
 
   const handleCardNavigation = useCallback((direction: 'left' | 'right') => {
     if (direction === 'left') {
@@ -200,30 +227,32 @@ const CardCarousel = ({
               onMouseMove={isCenter ? handleMouseMove : undefined}
               onMouseLeave={isCenter ? handleMouseLeave : undefined}
             >
-              <div className="bg-black overflow-hidden"
-                style={{
-                  width: `${CARD_WIDTH}px`,
-                  height: `${CARD_HEIGHT}px`,
-                  borderRadius: `${CARD_BORDER_RADIUS}px`,
-                }}>
-                {card.image ? (
-                  <img
-                    src={card.image}
-                    alt={card.name}
-                    className="w-full h-full object-cover touch-none"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const fallback = target.parentElement?.querySelector('.fallback-icon');
-                      if (fallback) (fallback as HTMLElement).style.display = 'flex';
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-4xl fallback-icon bg-black">
-                    {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
-                  </div>
-                )}
-              </div>
+                <div className="bg-black overflow-hidden"
+                  style={{
+                    width: `${CARD_WIDTH}px`,
+                    height: `${CARD_HEIGHT}px`,
+                    borderRadius: `${CARD_BORDER_RADIUS}px`,
+                  }}>
+                  {card.image ? (
+                    <OptimizedImage
+                      src={card.image}
+                      alt={card.name}
+                      width={CARD_WIDTH}
+                      height={CARD_HEIGHT}
+                      className="w-full h-full object-cover touch-none"
+                      priority={isCenter}
+                      fallbackIcon={
+                        <div className="text-4xl">
+                          {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
+                        </div>
+                      }
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-4xl fallback-icon bg-black">
+                      {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
+                    </div>
+                  )}
+                </div>
             </div>
           );
         })}
