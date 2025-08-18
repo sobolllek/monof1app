@@ -78,7 +78,7 @@ export const cardsData: Card[] = [
     team: 'Red Bull', 
     rarity: 'intermediate', 
     type: 'driver', 
-    image: '/image/cards/drivers/verstappen/verstappen-1.png',
+    image: '/image/cards/drivers/verstappen-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 100, year: 2024 }
   },
@@ -88,7 +88,7 @@ export const cardsData: Card[] = [
     team: 'Ferrari', 
     rarity: 'soft', 
     type: 'driver', 
-    image: '/image/cards/drivers/leclerc/leclerc-1.png',
+    image: '/image/cards/drivers/leclerc-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 150, year: 2024 }
   },
@@ -98,7 +98,7 @@ export const cardsData: Card[] = [
     team: 'Red Bull', 
     rarity: 'supersoft', 
     type: 'driver', 
-    image: '/image/cards/drivers/perez/perez-1.png',
+    image: '/image/cards/drivers/perez-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 200, year: 2024 }
   },
@@ -108,7 +108,7 @@ export const cardsData: Card[] = [
     team: 'Ferrari', 
     rarity: 'soft', 
     type: 'driver', 
-    image: '/image/cards/drivers/sainz/sainz-1.png',
+    image: '/image/cards/drivers/sainz-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 160, year: 2024 }
   },
@@ -118,7 +118,7 @@ export const cardsData: Card[] = [
     team: 'McLaren', 
     rarity: 'soft', 
     type: 'driver', 
-    image: '/image/cards/drivers/norris/norris-1.png',
+    image: '/image/cards/drivers/norris-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 180, year: 2024 }
   },
@@ -128,7 +128,7 @@ export const cardsData: Card[] = [
     team: 'Mercedes', 
     rarity: 'intermediate', 
     type: 'driver', 
-    image: '/image/cards/drivers/hamilton/hamilton-1.png',
+    image: '/image/cards/drivers/hamilton-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 120, year: 2024 }
   },
@@ -138,7 +138,7 @@ export const cardsData: Card[] = [
     team: 'McLaren', 
     rarity: 'soft', 
     type: 'driver', 
-    image: '/image/cards/drivers/piastri/piastri-1.png',
+    image: '/image/cards/drivers/piastri-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 200, year: 2024 }
   },
@@ -148,7 +148,7 @@ export const cardsData: Card[] = [
     team: 'Aston Martin', 
     rarity: 'intermediate', 
     type: 'driver', 
-    image: '/image/cards/drivers/alonso/alonso-1.png',
+    image: '/image/cards/drivers/alonso-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 130, year: 2024 }
   },
@@ -158,7 +158,7 @@ export const cardsData: Card[] = [
     team: 'Aston Martin', 
     rarity: 'supersoft', 
     type: 'driver', 
-    image: '/image/cards/drivers/stroll/stroll-1.png',
+    image: '/image/cards/drivers/stroll-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 220, year: 2024 }
   },
@@ -168,7 +168,7 @@ export const cardsData: Card[] = [
     team: 'Alpine', 
     rarity: 'supersoft', 
     type: 'driver', 
-    image: '/image/cards/drivers/ocon/ocon-1.png',
+    image: '/image/cards/drivers/ocon-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 210, year: 2024 }
   },
@@ -178,7 +178,7 @@ export const cardsData: Card[] = [
     team: 'Williams', 
     rarity: 'supersoft', 
     type: 'driver', 
-    image: '/image/cards/drivers/albon/albon-1.png',
+    image: '/image/cards/drivers/albon-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 190, year: 2024 }
   },
@@ -188,7 +188,7 @@ export const cardsData: Card[] = [
     team: 'Williams', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/drivers/colapinto/colapinto-1.png',
+    image: '/image/cards/drivers/colapinto-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 300, year: 2024 }
   },
@@ -198,7 +198,7 @@ export const cardsData: Card[] = [
     team: 'Racing Bulls', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/drivers/lawson/lawson-1.png',
+    image: '/image/cards/drivers/lawson-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 320, year: 2024 }
   },
@@ -208,7 +208,7 @@ export const cardsData: Card[] = [
     team: 'Mercedes', 
     rarity: 'soft', 
     type: 'driver', 
-    image: '/image/cards/drivers/russell/russell-1.png',
+    image: '/image/cards/drivers/russell-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 170, year: 2024 }
   },
@@ -218,7 +218,7 @@ export const cardsData: Card[] = [
     team: 'Alpine', 
     rarity: 'supersoft', 
     type: 'driver', 
-    image: '/image/cards/drivers/gasly/gasly-1.png',
+    image: '/image/cards/drivers/gasly-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 200, year: 2024 }
   },
@@ -228,7 +228,7 @@ export const cardsData: Card[] = [
     team: 'Racing Bulls', 
     rarity: 'supersoft', 
     type: 'driver', 
-    image: '/image/cards/drivers/tsunoda/tsunoda-1.png',
+    image: '/image/cards/drivers/tsunoda-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 230, year: 2024 }
   },
@@ -238,7 +238,7 @@ export const cardsData: Card[] = [
     team: 'Sauber', 
     rarity: 'supersoft', 
     type: 'driver', 
-    image: '/image/cards/drivers/bottas/bottas-1.png',
+    image: '/image/cards/drivers/bottas-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 240, year: 2024 }
   },
@@ -248,7 +248,7 @@ export const cardsData: Card[] = [
     team: 'Sauber', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/drivers/zhou/zhou-1.png',
+    image: '/image/cards/drivers/zhou-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 310, year: 2024 }
   },
@@ -258,7 +258,7 @@ export const cardsData: Card[] = [
     team: 'Haas', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/drivers/magnussen/magnussen-1.png',
+    image: '/image/cards/drivers/magnussen-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 290, year: 2024 }
   },
@@ -268,7 +268,7 @@ export const cardsData: Card[] = [
     team: 'Haas', 
     rarity: 'supersoft', 
     type: 'driver', 
-    image: '/image/cards/drivers/hulkenberg/hulkenberg-1.png',
+    image: '/image/cards/drivers/hulkenberg-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 280, year: 2024 }
   },
@@ -1278,7 +1278,7 @@ export const cardsData: Card[] = [
     team: 'Red Bull', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/verstappen-vl-1.png',
+    image: '/image/cards/valentine/verstappen-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1288,7 +1288,7 @@ export const cardsData: Card[] = [
     team: 'Ferrari', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/sainz-vl-1.png',
+    image: '/image/cards/valentine/sainz-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1298,7 +1298,7 @@ export const cardsData: Card[] = [
     team: 'Ferrari', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/leclerc-vl-1.png',
+    image: '/image/cards/valentine/leclerc-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1308,7 +1308,7 @@ export const cardsData: Card[] = [
     team: 'Red Bull', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/verstappen-vl-2.png',
+    image: '/image/cards/valentine/verstappen-v1-2.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1318,7 +1318,7 @@ export const cardsData: Card[] = [
     team: 'McLaren', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/norris-vl-1.png',
+    image: '/image/cards/valentine/norris-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1328,7 +1328,7 @@ export const cardsData: Card[] = [
     team: 'Ferrari', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/leclerc-vl-2.png',
+    image: '/image/cards/valentine/leclerc-v1-2.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1338,7 +1338,7 @@ export const cardsData: Card[] = [
     team: 'Racing Bulls', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/ricciardo-vl-1.png',
+    image: '/image/cards/valentine/ricciardo-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1348,7 +1348,7 @@ export const cardsData: Card[] = [
     team: 'Williams', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/colapinto-vl-1.png',
+    image: '/image/cards/valentine/colapinto-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1358,7 +1358,7 @@ export const cardsData: Card[] = [
     team: 'Williams', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/sargeant-vl-1.png',
+    image: '/image/cards/valentine/sargeant-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1368,7 +1368,7 @@ export const cardsData: Card[] = [
     team: 'Ferrari', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/leclerc-vl-3.png',
+    image: '/image/cards/valentine/leclerc-v1-3.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1378,7 +1378,7 @@ export const cardsData: Card[] = [
     team: 'Aston Martin', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/alonso-vl-1.png',
+    image: '/image/cards/valentine/alonso-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1388,7 +1388,7 @@ export const cardsData: Card[] = [
     team: 'Haas', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/hulkenberg-vl-1.png',
+    image: '/image/cards/valentine/hulkenberg-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1398,7 +1398,7 @@ export const cardsData: Card[] = [
     team: 'McLaren', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/piastri-vl-1.png',
+    image: '/image/cards/valentine/piastri-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1408,7 +1408,7 @@ export const cardsData: Card[] = [
     team: 'Ferrari', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/raikkonen-vl-1.png',
+    image: '/image/cards/valentine/raikkonen-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1418,7 +1418,7 @@ export const cardsData: Card[] = [
     team: 'Mercedes', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/hamilton-vl-1.png',
+    image: '/image/cards/valentine/hamilton-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1428,7 +1428,7 @@ export const cardsData: Card[] = [
     team: 'Ferrari', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/sainz-vl-2.png',
+    image: '/image/cards/valentine/sainz-v1-2.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1438,7 +1438,7 @@ export const cardsData: Card[] = [
     team: 'Haas', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/magnussen-vl-1.png',
+    image: '/image/cards/valentine/magnussen-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1448,7 +1448,7 @@ export const cardsData: Card[] = [
     team: 'Ferrari', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/raikkonen-vl-2.png',
+    image: '/image/cards/valentine/raikkonen-v1-2.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1458,7 +1458,7 @@ export const cardsData: Card[] = [
     team: 'Williams', 
     rarity: 'hard', 
     type: 'driver', 
-    image: '/image/cards/valentine/albon-vl-1.png',
+    image: '/image/cards/valentine/albon-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1467,7 +1467,7 @@ export const cardsData: Card[] = [
     name: 'Valentine Tyres', 
     rarity: 'hard', 
     type: 'special', 
-    image: '/image/cards/valentine/tyres-vl-1.png',
+    image: '/image/cards/valentine/tyres-v1-1.png',
     description: '',
     dropInfo: { isDroppable: false, dropLimit: 0, year: 2024 }
   },
@@ -1746,7 +1746,7 @@ export const cardsData: Card[] = [
     name: 'Nico 2025 first podium', 
     rarity: 'hard', 
     type: 'race_results',  
-    image: '/image/cards/results/nico-first-podium.png',
+    image: '/image/cards/special/nico-first-podium.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 0, year: 2025 }
   },
@@ -1754,8 +1754,28 @@ export const cardsData: Card[] = [
     id: '179', 
     name: 'Vitali Petrov', 
     rarity: 'hard', 
-    type: 'special',  
+    type: 'special',
+    team: 'Toro Rosso',  
     image: '/image/cards/limited/vitali-petrov-1.png',
+    description: '',
+    dropInfo: { isDroppable: true, dropLimit: 0, year: 2025 }
+  },
+  { 
+    id: '180', 
+    name: 'Yas Marina Circuit | Abu Dhabi', 
+    rarity: 'soft', 
+    type: 'track', 
+    image: '/image/cards/tracks/uae-1.png',
+    description: 'Современная трасса, известная своей роскошной инфраструктурой. Гонка начинается днем и заканчивается ночью. Часто является финальным этапом сезона',
+    dropInfo: { isDroppable: true, dropLimit: 240, year: 2024 }
+  },
+  { 
+    id: '181', 
+    name: 'Daniil Kvyat', 
+    rarity: 'hard', 
+    type: 'special',  
+    team: 'Toro Rosso',
+    image: '/image/cards/limited/kvyat-1.png',
     description: '',
     dropInfo: { isDroppable: true, dropLimit: 0, year: 2025 }
   }
