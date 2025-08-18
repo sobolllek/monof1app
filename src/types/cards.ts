@@ -15,7 +15,7 @@ export interface Card {
   description: string;
   dropInfo: {
     isDroppable: boolean;
-    dropLimit?: number;
+    dropLimit?: number | 'infinity';
     year: number;
   };
   isHidden?: boolean;
