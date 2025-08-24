@@ -258,35 +258,6 @@ export const CodeStrategy = ({
         </div>
       )}
 
-      {/* Previous Attempts */}
-      {attempts.length > 0 && (
-        <div className="max-w-md mx-auto mb-8">
-          <h3 className="text-lg font-bold mb-4 text-center">Попытки:</h3>
-          <div className="space-y-3">
-            {attempts.map((attempt, attemptIndex) => (
-              <div key={attemptIndex} className="flex items-center justify-center space-x-2">
-                <span className="text-gray-400 w-8">#{attemptIndex + 1}</span>
-                {attempt.results.map((result, cellIndex) => (
-                  <div
-                    key={cellIndex}
-                    className={`w-8 h-8 rounded flex items-center justify-center text-sm font-bold ${
-                      result.status === 'hot-lap'
-                        ? 'bg-red-500 text-red-100'
-                        : result.status === 'pit-hint'
-                        ? 'bg-blue-500 text-blue-100'
-                        : result.status === 'dnf'
-                        ? 'bg-gray-500 text-gray-100'
-                        : 'bg-gray-800 text-white'
-                    }`}
-                  >
-                    {result.digit}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Game Over Actions */}
       {gameStatus !== 'playing' && (
