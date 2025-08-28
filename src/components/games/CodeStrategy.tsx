@@ -62,6 +62,32 @@ export const CodeStrategy = ({
     initializeGame();
   }, [initializeGame]);
 
+const handleTimeOut = useCallback(() => {
+  setIsTimerRunning(false);
+  const newRemainingAttempts = remainingAttempts - 1;
+  setRemainingAttempts(newRemainingAttempts);
+
+  if (newRemainingAttempts === 0) {
+    setGameStatus('lost');
+    setEnvelopeState('failed');
+  } else {
+    setTimeout(() => {
+      setSecondsLeft(30);
+      setIsTimerRunning(true);
+      setCurrentGuess('');
+      setCurrentResults(Array.from({ length: 6 }, () => ({ digit: '', status: 'empty' })));
+      
+      requestAnimationFrame(() => {
+        const firstInput = document.querySelector<HTMLInputElement>(
+          `input[data-index="0"]`
+        );
+        firstInput?.focus();
+      });
+    }, 100);
+  }
+}, [remainingAttempts]);
+
+
   // Таймер
   useEffect(() => {
     if (!isTimerRunning || gameStatus !== 'playing') return;
@@ -78,34 +104,9 @@ export const CodeStrategy = ({
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isTimerRunning, gameStatus]);
+  }, [isTimerRunning, gameStatus, handleTimeOut]);
 
-  const handleTimeOut = () => {
-    setIsTimerRunning(false);
-    const newRemainingAttempts = remainingAttempts - 1;
-    setRemainingAttempts(newRemainingAttempts);
-
-    if (newRemainingAttempts === 0) {
-      setGameStatus('lost');
-      setEnvelopeState('failed');
-    } else {
-      // Автоматический перезапуск таймера
-      setTimeout(() => {
-        setSecondsLeft(30);
-        setIsTimerRunning(true);
-        setCurrentGuess('');
-        setCurrentResults(Array.from({ length: 6 }, () => ({ digit: '', status: 'empty' })));
-        
-        requestAnimationFrame(() => {
-          const firstInput = document.querySelector<HTMLInputElement>(
-            `input[data-index="0"]`
-          );
-          firstInput?.focus();
-        });
-      }, 100);
-    }
-  };
-
+  
   const resetGame = () => {
     initializeGame();
     
