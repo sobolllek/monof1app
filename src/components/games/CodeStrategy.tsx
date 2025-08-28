@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RefreshCw, Coins } from 'lucide-react';
@@ -25,10 +25,7 @@ export const CodeStrategy = ({
   userCoins = 0,
   onCoinsChange = () => {}
 }: CodeStrategyProps) => {
-  const [secretCode] = useState(() =>
-    Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('')
-  );
-
+  const [secretCode, setSecretCode] = useState('');
   const [currentGuess, setCurrentGuess] = useState('');
   const [currentResults, setCurrentResults] = useState<GuessResult[]>(
     Array.from({ length: 6 }, () => ({ digit: '', status: 'empty' }))
@@ -40,8 +37,85 @@ export const CodeStrategy = ({
     'closed'
   );
   const [buyAttemptCost, setBuyAttemptCost] = useState(100);
+  const [secondsLeft, setSecondsLeft] = useState(30);
+  const [isTimerRunning, setIsTimerRunning] = useState(true);
 
   const { toast } = useToast();
+
+  // Инициализация игры
+  const initializeGame = useCallback(() => {
+    const newSecretCode = Array.from({ length: 6 }, () => Math.floor(Math.random() * 10)).join('');
+    setSecretCode(newSecretCode);
+    setCurrentGuess('');
+    setCurrentResults(Array.from({ length: 6 }, () => ({ digit: '', status: 'empty' })));
+    setAttempts([]);
+    setRemainingAttempts(6);
+    setGameStatus('playing');
+    setEnvelopeState('closed');
+    setBuyAttemptCost(100);
+    setSecondsLeft(30);
+    setIsTimerRunning(true);
+  }, []);
+
+  // Инициализация при первом рендере
+  useEffect(() => {
+    initializeGame();
+  }, [initializeGame]);
+
+  // Таймер
+  useEffect(() => {
+    if (!isTimerRunning || gameStatus !== 'playing') return;
+
+    const timer = setInterval(() => {
+      setSecondsLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          handleTimeOut();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isTimerRunning, gameStatus]);
+
+  const handleTimeOut = () => {
+    setIsTimerRunning(false);
+    const newRemainingAttempts = remainingAttempts - 1;
+    setRemainingAttempts(newRemainingAttempts);
+
+    if (newRemainingAttempts === 0) {
+      setGameStatus('lost');
+      setEnvelopeState('failed');
+    } else {
+      // Автоматический перезапуск таймера
+      setTimeout(() => {
+        setSecondsLeft(30);
+        setIsTimerRunning(true);
+        setCurrentGuess('');
+        setCurrentResults(Array.from({ length: 6 }, () => ({ digit: '', status: 'empty' })));
+        
+        requestAnimationFrame(() => {
+          const firstInput = document.querySelector<HTMLInputElement>(
+            `input[data-index="0"]`
+          );
+          firstInput?.focus();
+        });
+      }, 100);
+    }
+  };
+
+  const resetGame = () => {
+    initializeGame();
+    
+    requestAnimationFrame(() => {
+      const firstInput = document.querySelector<HTMLInputElement>(
+        `input[data-index="0"]`
+      );
+      firstInput?.focus();
+    });
+  };
 
   const checkGuess = (guess: string): GuessResult[] => {
     const secretDigits = secretCode.split('');
@@ -55,6 +129,8 @@ export const CodeStrategy = ({
   };
 
   const processGuess = (guess: string) => {
+    setIsTimerRunning(false); 
+    
     const results = checkGuess(guess);
     const newAttempt: Attempt = { guess, results };
     setAttempts((prev) => [...prev, newAttempt]);
@@ -78,14 +154,18 @@ export const CodeStrategy = ({
         setGameStatus('lost');
         setEnvelopeState('failed');
       } else {
-        setEnvelopeState('closed');
+        // Перезапускаем таймер для следующей попытки
+        setTimeout(() => {
+          setSecondsLeft(30);
+          setIsTimerRunning(true);
+          setEnvelopeState('closed');
+        }, 100);
       }
     }
 
     setCurrentGuess('');
     setCurrentResults(Array.from({ length: 6 }, () => ({ digit: '', status: 'empty' })));
 
-    // вернуть фокус на первую ячейку
     requestAnimationFrame(() => {
       const firstInput = document.querySelector<HTMLInputElement>(
         `input[data-index="0"]`
@@ -109,27 +189,12 @@ export const CodeStrategy = ({
     setBuyAttemptCost((prev) => Math.floor(prev * 1.5));
     setGameStatus('playing');
     setEnvelopeState('closed');
+    setSecondsLeft(30);
+    setIsTimerRunning(true);
 
     toast({
       title: 'Куплена попытка!',
       description: `Следующая попытка: ${Math.floor(buyAttemptCost * 1.5)} монет`
-    });
-  };
-
-  const resetGame = () => {
-    setCurrentGuess('');
-    setCurrentResults(Array.from({ length: 6 }, () => ({ digit: '', status: 'empty' })));
-    setAttempts([]);
-    setRemainingAttempts(6);
-    setGameStatus('playing');
-    setEnvelopeState('closed');
-    setBuyAttemptCost(100);
-
-    requestAnimationFrame(() => {
-      const firstInput = document.querySelector<HTMLInputElement>(
-        `input[data-index="0"]`
-      );
-      firstInput?.focus();
     });
   };
 
@@ -155,25 +220,54 @@ export const CodeStrategy = ({
         <span className="ml-2 text-lg font-bold">{userCoins.toLocaleString()}</span>
       </div>
 
-      {/* Game Title */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-red-500 to-blue-500 bg-clip-text text-transparent">
-          F1 SECRET: CODE BREAKER
-        </h1>
-        <p className="text-gray-400">Взломайте конверт за 6 попыток</p>
+      {/* Timer */}
+<div className="flex justify-center mb-8">
+  <div className={getEnvelopeClass()}>
+    <div className="envelope w-64 relative">
+      {/* Контур, укорачивающийся по часовой стрелке */}
+      <div className="envelope-body bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg shadow-2xl relative">
+        <div className="envelope-glow"></div>
+        <div className="envelope-content p-6 text-center relative z-10">
+          <div className="text-2xl font-bold mb-2 p-2">
+            {Math.floor(secondsLeft / 60)}:{(secondsLeft % 60).toString().padStart(2, '0')}
+          </div>
+        </div>
+        
+        {/* Анимированный контур */}
+        <div 
+          className="absolute inset-0 rounded-lg"
+          style={{
+            background: `conic-gradient(
+              transparent 0deg,
+              #10B981 0deg,
+              #10B981 ${(secondsLeft / 30) * 360}deg,
+              transparent ${(secondsLeft / 30) * 360}deg,
+              transparent 360deg
+            )`,
+            mask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
+            maskComposite: 'exclude',
+            padding: '4px'
+          }}
+        />
       </div>
-
-      {/* Envelope */}
-      <div className="flex justify-center mb-8">
-        <div className={getEnvelopeClass()}>
-          <div className="envelope w-64 h-40 relative">
-            <div className="envelope-body bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg shadow-2xl">
-              <div className="envelope-glow"></div>
-              <div className="envelope-content p-6 text-center">
-                <div className="text-2xl font-bold mb-2">SECRET</div>
-                <div className="text-sm opacity-75">CODE: ??? ??? ???</div>
-              </div>
-            </div>
+    </div>
+  </div>
+</div>
+      {/* Legend */}
+      <div className="max-w-md mx-auto mt-8 p-4 bg-gray-800/50 rounded-lg mb-8">
+        <h4 className="text-sm font-bold mb-3 text-center">Подсказки:</h4>
+        <div className="space-y-2 text-sm">
+          <div className="flex items-center space-x-3">
+            <div className="w-6 h-6 bg-red-500 rounded"></div>
+            <span>HOT LAP - цифра и позиция верны</span>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="w-6 h-6 bg-blue-500 rounded"></div>
+            <span>PIT HINT - цифра есть, но не здесь</span>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="w-6 h-6 bg-gray-500 rounded"></div>
+            <span>DNF - цифры нет в коде</span>
           </div>
         </div>
       </div>
@@ -199,14 +293,13 @@ export const CodeStrategy = ({
                 value={currentGuess[i] || ''}
                 onChange={(e) => {
                   const value = e.target.value.replace(/\D/g, '');
-                  if (!value) return; // запрещаем удаление
+                  if (!value) return;
 
                   const newGuess = currentGuess.split('');
                   newGuess[i] = value;
                   const joinedGuess = newGuess.join('').slice(0, 6);
                   setCurrentGuess(joinedGuess);
 
-                  // динамическая подсветка
                   const paddedGuess = joinedGuess.padEnd(6, ' ');
                   const results: GuessResult[] = paddedGuess.split('').map((digit, idx) => {
                     if (digit === ' ') return { digit: '', status: 'empty' };
@@ -216,7 +309,6 @@ export const CodeStrategy = ({
                   });
                   setCurrentResults(results);
 
-                  // автофокус вперёд
                   if (value && i < 5) {
                     requestAnimationFrame(() => {
                       const nextInput = document.querySelector<HTMLInputElement>(
@@ -226,20 +318,16 @@ export const CodeStrategy = ({
                     });
                   }
 
-                  // автопроверка
-                  if (
-                    joinedGuess.length === 6 &&
-                    joinedGuess.split('').every((c) => c !== ' ' && c !== '')
-                  ) {
+                  if (joinedGuess.length === 6) {
                     setEnvelopeState('opening');
                     setTimeout(() => {
                       processGuess(joinedGuess);
-                    }, 1500);
+                    }, 900);
                   }
                 }}
                 onKeyDown={(e) => {
                   if (e.key === 'Backspace') {
-                    e.preventDefault(); // блокируем удаление
+                    e.preventDefault();
                   }
                 }}
                 className={`w-[50px] h-[72px] text-center text-2xl font-bold border-none rounded 
@@ -257,7 +345,6 @@ export const CodeStrategy = ({
           </div>
         </div>
       )}
-
 
       {/* Game Over Actions */}
       {gameStatus !== 'playing' && (
@@ -295,25 +382,6 @@ export const CodeStrategy = ({
           </Button>
         </div>
       )}
-
-      {/* Legend */}
-      <div className="max-w-md mx-auto mt-8 p-4 bg-gray-800/50 rounded-lg">
-        <h4 className="text-sm font-bold mb-3 text-center">Подсказки:</h4>
-        <div className="space-y-2 text-sm">
-          <div className="flex items-center space-x-3">
-            <div className="w-6 h-6 bg-red-500 rounded"></div>
-            <span>HOT LAP - цифра и позиция верны</span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="w-6 h-6 bg-blue-500 rounded"></div>
-            <span>PIT HINT - цифра есть, но не здесь</span>
-          </div>
-          <div className="flex items-center space-x-3">
-            <div className="w-6 h-6 bg-gray-500 rounded"></div>
-            <span>DNF - цифры нет в коде</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
