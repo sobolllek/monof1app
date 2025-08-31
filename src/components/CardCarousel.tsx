@@ -1,261 +1,189 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card } from '../types/cards';
 import { CARD_WIDTH, CARD_HEIGHT, CARD_BORDER_RADIUS } from '../data/cards';
-import OptimizedImage from './OptimizedImage';
-import { useImagePreloader } from '../hooks/useImagePreloader';
 
 interface CardCarouselProps {
   cards: Card[];
   onCardClick: (card: Card) => void;
   onCardChange?: (card: Card) => void;
-  middleTilt?: number;
-  backTilt?: number;
-  bottomTilt?: number;
 }
 
-const CardCarousel = ({
-  cards,
-  onCardClick,
-  onCardChange,
-  middleTilt = -7,
-  backTilt = -15,
-  bottomTilt = 0,
-}: CardCarouselProps) => {
+const CardCarousel = ({ cards, onCardClick, onCardChange }: CardCarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [previousIndex, setPreviousIndex] = useState(0);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const carouselRef = useRef<HTMLDivElement>(null);
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
-  const touchEndX = useRef(0);
-  const isSwiping = useRef(false);
-  const { preloadCriticalImages, preloadBackgroundImages } = useImagePreloader();
+  const [direction, setDirection] = useState<'left' | 'right'>('right');
+  const [isAnimating, setIsAnimating] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const getCenterCard = useCallback(() => cards[currentIndex], [cards, currentIndex]);
+  const currentCard = cards[currentIndex];
 
-  const getVisibleCards = useCallback(() => {
-    const visible = [];
-    for (let i = -2; i <= 1; i++) {
-      const index = (currentIndex + i + cards.length) % cards.length;
-      visible.push({
-        card: cards[index],
-        position: i,
-        index,
+  // Инициализация Vanilla Tilt JS один раз при монтировании
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    script.onload = () => {
+      const applyTilt = () => {
+        const tiltElement = containerRef.current?.querySelector('.dm-3d-tilt');
+        if (tiltElement && (window as any).VanillaTilt) {
+          (window as any).VanillaTilt.init(tiltElement, {
+            max: 25,
+            speed: 200,
+            perspective: 1000,
+            glare: true,
+            'max-glare': 0.5,
+            reset: true,
+            reverse: false,
+            scale: 1.05,
+            gyroscope: true,
+            'full-page-listening': false,
+          });
+        }
+      };
+
+      // Применяем эффект сразу и после каждой анимации
+      applyTilt();
+
+      // Наблюдатель за появлением новых карт
+      const observer = new MutationObserver(() => {
+        applyTilt();
       });
-    }
-    return visible;
-  }, [cards, currentIndex]);
 
-  useEffect(() => {
-    if (onCardChange && cards.length > 0) {
-      onCardChange(getCenterCard());
-    }
-  }, [currentIndex, cards, onCardChange, getCenterCard]);
+      if (containerRef.current) {
+        observer.observe(containerRef.current, {
+          childList: true,
+          subtree: true,
+        });
+      }
 
-  // Прелоадинг изображений
-  useEffect(() => {
-    if (cards.length === 0) return;
-
-    const visibleCardImages = getVisibleCards()
-      .map(({ card }) => card.image)
-      .filter(Boolean) as string[];
-
-    const nextCardImages = [];
-    for (let i = 1; i <= 3; i++) {
-      const nextIndex = (currentIndex + i) % cards.length;
-      const prevIndex = (currentIndex - i + cards.length) % cards.length;
-      if (cards[nextIndex]?.image) nextCardImages.push(cards[nextIndex].image);
-      if (cards[prevIndex]?.image) nextCardImages.push(cards[prevIndex].image);
-    }
-
-    // Приоритетная загрузка видимых карт
-    preloadCriticalImages(visibleCardImages);
-    
-    // Фоновая загрузка соседних карт
-    preloadBackgroundImages(nextCardImages);
-  }, [currentIndex, cards, getVisibleCards, preloadCriticalImages, preloadBackgroundImages]);
-
-  useEffect(() => {
-    setPreviousIndex(currentIndex);
-  }, [currentIndex]);
-
-  useEffect(() => {
-    const preventDefault = (e: TouchEvent) => {
-      if (isSwiping.current) e.preventDefault();
+      return () => {
+        observer.disconnect();
+      };
     };
-    document.addEventListener('touchmove', preventDefault, { passive: false });
-    return () => document.removeEventListener('touchmove', preventDefault);
-  }, []);
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!carouselRef.current) return;
-    const rect = carouselRef.current.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const deltaX = (e.clientX - centerX) / (rect.width / 2);
-    const deltaY = (e.clientY - centerY) / (rect.height / 2);
-    setMousePosition({ x: deltaX * 20, y: deltaY * 20 });
-  };
+    return () => {
+      const tiltElement = containerRef.current?.querySelector('.dm-3d-tilt');
+      if (tiltElement && (tiltElement as any).vanillaTilt) {
+        (tiltElement as any).vanillaTilt.destroy();
+      }
+      document.body.removeChild(script);
+    };
+  }, []); // Пустой массив зависимостей для однократной инициализации
 
-  const handleMouseLeave = () => {
-    setMousePosition({ x: 0, y: 0 });
-  };
+  useEffect(() => {
+    if (onCardChange && currentCard) onCardChange(currentCard);
+  }, [currentCard, onCardChange]);
 
-
-  const handleCardNavigation = useCallback((direction: 'left' | 'right') => {
-    if (direction === 'left') {
-      setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
-    } else {
+  const goNext = useCallback(() => {
+    if (cards.length <= 1 || isAnimating) return;
+    setIsAnimating(true);
+    setDirection('right');
+    setTimeout(() => {
       setCurrentIndex((prev) => (prev + 1) % cards.length);
-    }
-  }, [cards.length]);
+      setIsAnimating(false);
+    }, 400);
+  }, [cards.length, isAnimating]);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-    touchEndX.current = e.touches[0].clientX;
-    isSwiping.current = true;
-  };
+  const goPrev = useCallback(() => {
+    if (cards.length <= 1 || isAnimating) return;
+    setIsAnimating(true);
+    setDirection('left');
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev - 1 + cards.length) % cards.length);
+      setIsAnimating(false);
+    }, 400);
+  }, [cards.length, isAnimating]);
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isSwiping.current) return;
-    touchEndX.current = e.touches[0].clientX;
-    const xDiff = Math.abs(e.touches[0].clientX - touchStartX.current);
-    const yDiff = Math.abs(e.touches[0].clientY - touchStartY.current);
-    if (yDiff > xDiff) {
-      isSwiping.current = false;
-      return;
-    }
-    e.preventDefault();
-  };
-
-  const handleTouchEnd = () => {
-    if (!isSwiping.current) return;
-    isSwiping.current = false;
-    const deltaX = touchEndX.current - touchStartX.current;
-    const threshold = 50;
-    if (deltaX < -threshold) handleCardNavigation('right');
-    else if (deltaX > threshold) handleCardNavigation('left');
-  };
-
-  const handleWheel = (e: React.WheelEvent) => {
-    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-      e.preventDefault();
-      if (e.deltaX > 0) handleCardNavigation('right');
-      else handleCardNavigation('left');
-    }
-  };
-
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') handleCardNavigation('left');
-      if (e.key === 'ArrowRight') handleCardNavigation('right');
-    };
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [handleCardNavigation]);
-
-  const visibleCards = getVisibleCards();
-
-  if (cards.length === 0) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <p className="text-gray-400 text-lg">Карты не найдены</p>
-      </div>
-    );
-  }
+  if (!currentCard) return <div>Карты не найдены</div>;
 
   return (
-    <div className="w-full">
-      <div className="text-center mb-4 h-6">
-        <p className="text-white text-lg font-medium">
-          {getCenterCard()?.name || ''}
-        </p>
+    <div className="w-full min-h-screen flex flex-col items-center justify-center perspective-1000" ref={containerRef}>
+      <div className="text-center mb-8 h-6">
+        <p className="text-white text-lg font-medium dm-3d-element">{currentCard.name}</p>
       </div>
 
-      <div
-        ref={carouselRef}
-        className="relative h-96 flex items-center justify-center touch-none"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onWheel={handleWheel}
-      >
-        {visibleCards.map(({ card, position, index }) => {
-          const isCenter = position === 0;
-          let transform = '';
-          let zIndex = 0;
-
-          const isNewBackCard =
-            position === -2 &&
-            (index + cards.length) % cards.length ===
-              (currentIndex - 2 + cards.length) % cards.length &&
-            (index + cards.length) % cards.length !==
-              (previousIndex - 2 + cards.length) % cards.length;
-
-          if (position === 0) {
-            transform = `translateY(${mousePosition.y}px) scale(1) rotateZ(0deg)`;
-            zIndex = 30;
-          } else if (position === -1) {
-            transform = `translateY(0px) scale(1) rotateZ(${middleTilt}deg)`;
-            zIndex = 20;
-          } else if (position === -2) {
-            const translateY = isNewBackCard ? '800px' : '0px';
-            transform = `translateY(${translateY}) scale(1) rotateZ(${backTilt}deg)`;
-            zIndex = 10;
-          } else if (position === 1) {
-            transform = `translateY(400px) scale(1) rotateZ(${bottomTilt}deg)`;
-            zIndex = 20;
-          }
-
-          return (
-            <div
-              key={`${card.id}-${index}`}
-              className={`absolute transition-all duration-500 ease-in-out cursor-pointer touch-none ${isCenter ? 'hover:scale-105' : ''}`}
+      <AnimatePresence mode="wait" custom={direction}>
+        <motion.div
+          key={currentCard.id}
+          className="relative rounded-lg bg-black overflow-hidden cursor-pointer preserve-3d dm-3d-tilt"
+          style={{
+            width: `${CARD_WIDTH}px`,
+            height: `${CARD_HEIGHT}px`,
+            borderRadius: `${CARD_BORDER_RADIUS}px`,
+          }}
+          custom={direction}
+          variants={{
+            enter: (direction: 'left' | 'right') => ({
+              rotateY: direction === 'right' ? 90 : -90,
+              opacity: 0,
+              scale: 0.85,
+              z: -100,
+            }),
+            center: {
+              rotateY: 0,
+              opacity: 1,
+              scale: 1,
+              z: 0,
+            },
+            exit: (direction: 'left' | 'right') => ({
+              rotateY: direction === 'right' ? -90 : 90,
+              opacity: 0,
+              scale: 0.85,
+              z: -100,
+            }),
+          }}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{
+            duration: 0.4,
+            ease: "easeOut",
+          }}
+          onClick={() => onCardClick(currentCard)}
+        >
+          {currentCard.image ? (
+            <motion.img
+              src={currentCard.image}
+              alt={currentCard.name}
+              className="w-full h-full object-cover dm-3d-element"
               style={{
-                transform,
-                zIndex,
-                left: '50%',
-                top: '50%',
-                transformOrigin: 'center center',
-                translate: '-50% -50%',
+                transform: 'translate3d(0px, 0px, 30px)',
               }}
-              onClick={() => {
-                if (isCenter) onCardClick(card);
-                else setCurrentIndex(index);
-              }}
-              onMouseMove={isCenter ? handleMouseMove : undefined}
-              onMouseLeave={isCenter ? handleMouseLeave : undefined}
-            >
-                <div className="bg-black overflow-hidden"
-                  style={{
-                    width: `${CARD_WIDTH}px`,
-                    height: `${CARD_HEIGHT}px`,
-                    borderRadius: `${CARD_BORDER_RADIUS}px`,
-                  }}>
-                  {card.image ? (
-                    <OptimizedImage
-                      src={card.image}
-                      alt={card.name}
-                      width={CARD_WIDTH}
-                      height={CARD_HEIGHT}
-                      className="w-full h-full object-cover touch-none"
-                      priority={isCenter}
-                      fallbackIcon={
-                        <div className="text-4xl">
-                          {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
-                        </div>
-                      }
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-4xl fallback-icon bg-black">
-                      {card.type === 'driver' ? '🏎️' : card.type === 'car' ? '🚗' : '🏁'}
-                    </div>
-                  )}
-                </div>
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-4xl text-white dm-3d-element">
+              {currentCard.type === 'driver'
+                ? '🏎️'
+                : currentCard.type === 'car'
+                ? '🚗'
+                : '🏁'}
             </div>
-          );
-        })}
+          )}
+          <div className="vanilla-tilt-glare" />
+        </motion.div>
+      </AnimatePresence>
+
+      <div className="mt-8 flex gap-3 justify-center">
+        <button
+          className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+          onClick={goPrev}
+          disabled={isAnimating || cards.length <= 1}
+        >
+          Prev
+        </button>
+        <button
+          className="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors"
+          onClick={goNext}
+          disabled={isAnimating || cards.length <= 1}
+        >
+          Next
+        </button>
+      </div>
+
+      <div className="mt-8 text-sm text-gray-400">
+        Наведите на карту и двигайте мышью для 3D эффекта
       </div>
     </div>
   );
