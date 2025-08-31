@@ -6,14 +6,14 @@
       "use": "@vercel/static-build"
     },
     {
-      "src": "backend/src/**/*.ts",
+      "src": "backend/src/index.ts",  // Только главный файл!
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/backend/src/$1"
+      "dest": "/backend/src/index.ts"  // Все API через один файл
     },
     {
       "src": "/(.*)",
