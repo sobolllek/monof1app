@@ -1,0 +1,16 @@
+TELEGRAM_BOT_TOKEN=7989164779:AAFSHjvRSBfQvnzeH_UHTx4vQIoL1jZu1uw
+TELEGRAM_CHANNEL_ID=@mvmusicokdanet
+DATABASE_URL="postgresql://monof1user:sobolek1K@localhost:5432/monof1app"
+VITE_API_URL=http://localhost:3001
+ADMIN_IDS=766648788, 2020059725, 400977526, 1161121344, 522033389, 923966516, 05780605
+
+//@F1_Rus1 – 2020059725
+//@puffskein_01 – 400977526
+//@vroom_vrooomm – 1161121344
+//@Vickey_Lil_Jesus_cat – 522033389
+//@scerlix – 923966516
+//@gottbleed – 205780605
+//@soboll_ek - 766648788
+
+BLOB_READ_WRITE_TOKEN="vercel_blob_rw_EgocL7rxZcUxYJYi_CWHIlAFW46hq95yCrPtkp8JT6YjD6x"
+NEXT_PUBLIC_BLOB_READ_URL=https://egocl7rxzcuxyjyi.public.blob.vercel-storage.com
