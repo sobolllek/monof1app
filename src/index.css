@@ -22,34 +22,24 @@
   :root {
     --background: 0 0% 3%;
     --foreground: 0 0% 98%;
-
     --card: 0 0% 6%;
     --card-foreground: 0 0% 95%;
-
     --popover: 0 0% 6%;
     --popover-foreground: 0 0% 95%;
-
     --primary: 4 95% 45%;
     --primary-foreground: 0 0% 98%;
-
     --secondary: 0 0% 12%;
     --secondary-foreground: 0 0% 95%;
-
     --muted: 0 0% 9%;
     --muted-foreground: 0 0% 65%;
-
     --accent: 26 100% 50%;
     --accent-foreground: 0 0% 98%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 0 0% 15%;
     --input: 0 0% 9%;
     --ring: 4 95% 45%;
-
     --radius: 0.75rem;
-
     --sidebar-background: 0 0% 3%;
     --sidebar-foreground: 0 0% 95%;
     --sidebar-primary: 4 95% 45%;
@@ -58,8 +48,6 @@
     --sidebar-accent-foreground: 0 0% 95%;
     --sidebar-border: 0 0% 15%;
     --sidebar-ring: 4 95% 45%;
-
-    /* F1 Colors */
     --f1-red: 4 95% 45%;
     --f1-orange: 26 100% 50%;
   }
@@ -78,7 +66,6 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Fix for Android */
   @supports (font-variation-settings: normal) {
     body {
       font-variation-settings: "wght" 400;
@@ -126,57 +113,40 @@
     animation: pulse-glow 2s infinite;
   }
 
-  /* Racing Animation Components */
-  .racing-track {
-    position: relative;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, #444 0%, #666 50%, #444 100%);
-    border-radius: 2px;
-    margin-bottom: 20px;
+  .dm-3d-tilt {
+    transform-style: preserve-3d;
+    box-shadow: 
+      0 25px 50px rgba(0, 0, 0, 0.3),
+      0 15px 30px rgba(0, 0, 0, 0.2);
   }
 
-  .racing-track::before {
-    content: '';
+  .dm-3d-tilt:hover {
+    box-shadow: 
+      0 35px 60px rgba(0, 0, 0, 0.25),
+      0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+
+  .dm-3d-element {
+    transform: translate3d(0px, 0px, 30px);
+  }
+
+  .vanilla-tilt-glare {
     position: absolute;
-    top: 50%;
+    top: 0;
     left: 0;
     width: 100%;
-    height: 1px;
-    background: repeating-linear-gradient(
-      90deg,
-      transparent 0%,
-      transparent 10px,
-      #fff 10px,
-      #fff 20px
+    height: 100%;
+    pointer-events: none;
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 255, 255, 0.3) 0%,
+      transparent 50%
     );
-    transform: translateY(-50%);
-    animation: track-lines 1s linear infinite;
-  }
-
-  .racing-car {
-    position: absolute;
-    top: -30px;
-    left: calc(var(--progress) - 20px);
-    font-size: 2rem;
-    filter: drop-shadow(0 4px 8px rgba(225, 6, 0, 0.3));
-    animation: car-bounce 0.5s ease-in-out infinite alternate;
-    transition: left 0.1s ease-out;
-  }
-
-  .racing-lines {
-    background: repeating-linear-gradient(
-      90deg,
-      transparent 0px,
-      transparent 20px,
-      rgba(255, 255, 255, 0.1) 20px,
-      rgba(255, 255, 255, 0.1) 40px
-    );
-    animation: racing-stripes 2s linear infinite;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
   }
 }
 
-/* Keyframes for InfoButton */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -274,7 +244,6 @@
   }
 }
 
-/* Racing specific animations */
 @keyframes track-lines {
   0% {
     transform: translateY(-50%) translateX(0);
@@ -302,13 +271,12 @@
   }
 }
 
-/* Roulette specific animations */
 @keyframes roulette-spin {
   0% {
     transform: rotate(0deg);
   }
   100% {
-    transform: rotate(1800deg); /* 5 full rotations */
+    transform: rotate(1800deg);
   }
 }
 
@@ -342,10 +310,11 @@
 .animate-item-disappear {
   animation: itemDisappear 0.2s ease-out forwards;
 }
+
 .metal-shine-text {
   font-family: 'Orbitron', sans-serif;
   font-weight: bold;
-  color: #131313; /* базовый цвет */
+  color: #131313;
   background: linear-gradient(
     120deg,
     #222 0%,
@@ -400,5 +369,52 @@
   }
 }
 
+.perspective-1000 {
+  perspective: 1200px;
+}
 
+.preserve-3d {
+  transform-style: preserve-3d;
+}
 
+.card-content-3d {
+  transform: translateZ(20px);
+}
+
+.parallax-item {
+  transition: transform 0.1s ease-out;
+}
+
+@keyframes cardAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(50px) rotateX(-15deg) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0) scale(1);
+  }
+}
+
+.card-3d-tilt {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.3),
+    0 15px 30px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.card-3d-tilt:hover {
+  box-shadow: 
+    0 35px 60px rgba(0, 0, 0, 0.25),
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+}
+
+.card-appear {
+  animation: cardAppear 0.6s ease-out;
+}
